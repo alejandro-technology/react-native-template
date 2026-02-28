@@ -21,7 +21,14 @@ if (result instanceof Error) throw result;
 
 **Adapters** transform data between layers (form data → API payload, API response → domain entity). Located in `domain/*.adapter.ts`.
 
-**Zod schemas** define form validation and infer TypeScript types via `z.infer<typeof schema>`. Located in `domain/*.scheme.ts`.
+**Zod schemas** define form validation and infer TypeScript types via `z.infer<typeof schema>`. Located in `domain/*.scheme.ts`. Validation rules:
+- Error messages in Spanish
+- Use string format: `.min(1, 'message')` NOT object format: `.min(1, { message: 'message' })`
+- Optional fields: use `.optional()` suffix
+- Type coercion: use `z.coerce.TYPE()` when form data needs conversion (e.g., string to number)
+- Max length: define for all string fields with user input
+
+**Shared hooks** located in `src/hooks/` are accessible via `@hooks/*` alias. Use for cross-cutting concerns like debouncing, not feature-specific logic.
 
 ## Theme System
 

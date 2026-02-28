@@ -6,7 +6,7 @@ import { Button } from '@components/core';
 import { TextInput } from '@components/core';
 import { ProductList } from './components/ProductList';
 // Hooks
-import { useDebounce } from '../application/useDebounce';
+import { useDebounce } from '@hooks/useDebounce';
 // Routes
 import { ProductsRoutes } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';

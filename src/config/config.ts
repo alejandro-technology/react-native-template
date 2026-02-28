@@ -1,9 +1,10 @@
-export type ProductServiceProvider = 'http' | 'firebase';
+export type ServiceProvider = 'http' | 'firebase';
+
+interface Config {
+  SERVICE_PROVIDER: ServiceProvider;
+}
+
 
 export const CONFIG: Config = {
   SERVICE_PROVIDER: 'firebase',
 };
-
-interface Config {
-  SERVICE_PROVIDER: ProductServiceProvider;
-}

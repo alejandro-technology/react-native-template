@@ -6,7 +6,7 @@ export function productFormToPayloadAdapter(
 ): CreateProductPayload {
   return {
     name: form.name,
-    description: form.description || '',
+    description: form.description,
     price: form.price,
   };
 }

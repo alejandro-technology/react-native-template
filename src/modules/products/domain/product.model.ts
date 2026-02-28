@@ -9,7 +9,7 @@ export interface ProductEntity {
 
 export interface CreateProductPayload {
   name: string;
-  description: string;
+  description?: string;
   price: number;
 }
 
