@@ -1,13 +1,12 @@
 import React from 'react';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { FlatList, StyleSheet } from 'react-native';
 // Components
-import { Text } from '@components/core';
 import { ProductItem } from './ProductItem';
 // Hooks
 import { useProducts } from '@modules/products/application/product.queries';
 // Theme
 import { spacing } from '@theme/index';
-import { LoadingState } from '@components/layout';
+import { EmptyState, ErrorState, LoadingState } from '@components/layout';
 
 interface ProductListProps {
   searchText: string;
@@ -26,27 +25,20 @@ export function ProductList({ searchText }: ProductListProps) {
 
   if (isError) {
     return (
-      <View style={styles.centered}>
-        <Text variant="h3" style={styles.errorTitle}>
-          Error
-        </Text>
-        <Text variant="body" style={styles.errorText}>
-          {error?.message || 'Error al cargar los productos'}
-        </Text>
-      </View>
+      <ErrorState
+        title="Error al cargar"
+        message={error?.message || 'No se pudo cargar el producto'}
+      />
     );
   }
 
   if (!products || products.length === 0) {
     return (
-      <View style={styles.centered}>
-        <Text variant="h3" style={styles.emptyTitle}>
-          Sin productos
-        </Text>
-        <Text variant="body" style={styles.emptyText}>
-          No hay productos disponibles
-        </Text>
-      </View>
+      <EmptyState
+        title="Producto no encontrado"
+        message="El producto que buscas no existe o fue eliminado"
+        icon="📦"
+      />
     );
   }
 
@@ -66,29 +58,5 @@ export function ProductList({ searchText }: ProductListProps) {
 const styles = StyleSheet.create({
   list: {
     padding: spacing.lg,
-  },
-  centered: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.xl,
-  },
-  loadingText: {
-    marginTop: spacing.md,
-  },
-  errorTitle: {
-    color: 'red',
-    marginBottom: spacing.sm,
-  },
-  errorText: {
-    textAlign: 'center',
-    opacity: 0.7,
-  },
-  emptyTitle: {
-    marginBottom: spacing.sm,
-  },
-  emptyText: {
-    textAlign: 'center',
-    opacity: 0.7,
   },
 });
