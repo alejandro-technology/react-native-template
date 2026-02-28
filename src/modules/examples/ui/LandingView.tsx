@@ -11,11 +11,17 @@ import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import ComponentCard from './ComponentCard';
 import { COMPONENTS_CONFIG } from './componentsConfig';
-import type { ExamplesStackParamList } from './navigation';
+import {
+  ExamplesRoutes,
+  type ExamplesStackParamList,
+} from '@navigation/routes/examples.routes';
+import { ProductsRoutes, RootRoutes } from '@navigation/routes';
+import { useNavigationRoot } from '@navigation/hooks';
 
 function LandingView() {
   const navigation =
     useNavigation<NativeStackNavigationProp<ExamplesStackParamList>>();
+  const { navigate } = useNavigationRoot();
   const { mode } = useTheme();
   const headerFadeAnim = useRef(new Animated.Value(0)).current;
   const headerTranslateY = useRef(new Animated.Value(-30)).current;
@@ -113,7 +119,15 @@ function LandingView() {
             icon={component.icon}
             color={component.color}
             delay={200 + index * 100}
-            onPress={() => navigation.navigate(component.screen)}
+            onPress={() => {
+              if (component.screen in ExamplesRoutes) {
+                navigation.navigate(component.screen as ExamplesRoutes);
+              } else if (component.screen in ProductsRoutes) {
+                navigate(RootRoutes.Products, {
+                  screen: ProductsRoutes.ProductList,
+                });
+              }
+            }}
           />
         ))}
       </View>

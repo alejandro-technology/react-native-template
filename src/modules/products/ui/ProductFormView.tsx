@@ -13,10 +13,7 @@ import {
 import type { ProductFormData } from '../domain/product.scheme';
 import { productFormToPayloadAdapter } from '../domain/product.adapter';
 // Navigation
-import {
-  ProductsRoutes,
-  ProductsScreenProps,
-} from '@navigation/routes';
+import { ProductsRoutes, ProductsScreenProps } from '@navigation/routes';
 // Theme
 import { spacing } from '@theme/index';
 

@@ -7,10 +7,7 @@ import { DeleteConfirmationSheet } from './components/DeleteConfirmationSheet';
 import { useProduct } from '../application/product.queries';
 import { useProductDelete } from '../application/product.mutations';
 // Navigation
-import {
-  ProductsRoutes,
-  ProductsScreenProps,
-} from '@navigation/routes';
+import { ProductsRoutes, ProductsScreenProps } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';
 // Theme
 import { spacing } from '@theme/index';

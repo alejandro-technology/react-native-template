@@ -1,6 +1,6 @@
-import { ExamplesStackParamList } from "@modules/examples/ui/navigation";
-import { NavigatorScreenParams } from "@react-navigation/native";
-import { ProductsStackParamList } from "./products.routes";
+import { NavigatorScreenParams } from '@react-navigation/native';
+import { ExamplesStackParamList } from './examples.routes';
+import { ProductsStackParamList } from './products.routes';
 
 export enum RootRoutes {
   Examples = 'Examples',
