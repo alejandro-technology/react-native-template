@@ -1,9 +1,12 @@
 import React from 'react';
 import { View, Pressable, StyleSheet } from 'react-native';
-import { Text } from '@components/core';
-import { Card } from '@components/core';
-import { useTheme, spacing } from '@theme/index';
+// Components
+import { Text, Card } from '@components/core';
+// Types
 import type { ProductEntity } from '../../domain/product.model';
+// Theme
+import { useTheme, spacing } from '@theme/index';
+// Navigation
 import { ProductsRoutes } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';
 

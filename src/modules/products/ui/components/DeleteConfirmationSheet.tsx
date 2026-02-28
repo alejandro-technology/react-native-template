@@ -1,8 +1,8 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Text } from '@components/core';
-import { Button } from '@components/core';
-import { Modal } from '@components/core';
+// Components
+import { Text, Button, Modal } from '@components/core';
+// Theme
 import { spacing } from '@theme/index';
 
 interface DeleteConfirmationSheetProps {

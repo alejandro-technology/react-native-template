@@ -22,7 +22,7 @@ export function ProductsListView() {
   const onAddProduct = () => navigate(ProductsRoutes.ProductForm);
 
   return (
-    <RootLayout>
+    <RootLayout scroll={false}>
       <View style={styles.header}>
         <Text variant="h1">Productos</Text>
         <Button onPress={onAddProduct}>Agregar</Button>
@@ -46,11 +46,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
   },
   searchContainer: {
-    paddingHorizontal: spacing.md,
+    paddingHorizontal: spacing.lg,
     marginBottom: spacing.sm,
   },
 });

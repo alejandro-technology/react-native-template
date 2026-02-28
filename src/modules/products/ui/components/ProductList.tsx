@@ -63,13 +63,15 @@ export function ProductList({ searchText }: ProductListProps) {
       renderItem={({ item }) => <ProductItem product={item} />}
       contentContainerStyle={styles.list}
       showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
     />
   );
 }
 
 const styles = StyleSheet.create({
   list: {
-    padding: spacing.md,
+    padding: spacing.lg,
   },
   centered: {
     flex: 1,

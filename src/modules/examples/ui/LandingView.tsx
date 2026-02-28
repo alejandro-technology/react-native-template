@@ -44,7 +44,8 @@ function LandingView() {
   return (
     <ScrollView
       contentContainerStyle={styles.landingContainer}
-      showsVerticalScrollIndicator={false}
+      keyboardShouldPersistTaps="handled"
+      keyboardDismissMode="on-drag"
     >
       <Animated.View
         style={[

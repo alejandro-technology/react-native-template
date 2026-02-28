@@ -27,12 +27,12 @@ export function ProductForm({
     handleSubmit,
     formState: { errors },
   } = useForm<ProductFormData>({
-    resolver: zodResolver(productSchema),
+    resolver: zodResolver(productSchema) as any,
     defaultValues: initialData
       ? {
           name: initialData.name,
           description: initialData.description || '',
-          price: initialData.price.toString(),
+          price: initialData.price,
         }
       : productFormDefaultsAdapter(),
   });

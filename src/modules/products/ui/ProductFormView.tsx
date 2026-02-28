@@ -37,6 +37,7 @@ export function ProductFormView({
     } else {
       createProduct(payload, {});
     }
+    goBack();
   };
 
   return (

@@ -1,19 +1,28 @@
 import React, { PropsWithChildren } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, StyleSheet, View } from 'react-native';
 // Theme
-import { spacing } from '@theme/spacing';
+import { useTheme } from '@theme/index';
 
-export function RootLayout({ children }: PropsWithChildren) {
-  return (
-    <ScrollView contentContainerStyle={styles.contentContainer}>
-      {children}
-    </ScrollView>
-  );
+interface Props {
+  scroll?: boolean;
+}
+export function RootLayout({
+  children,
+  scroll = true,
+}: PropsWithChildren<Props>) {
+  const { colors } = useTheme();
+  const { background: backgroundColor } = colors;
+  const style = [styles.contentContainer, { backgroundColor }];
+
+  if (scroll) {
+    return <ScrollView contentContainerStyle={style}>{children}</ScrollView>;
+  }
+
+  return <View style={style}>{children}</View>;
 }
 
 const styles = StyleSheet.create({
   contentContainer: {
-    padding: spacing.md,
-    gap: spacing.lg,
+    flex: 1,
   },
 });
