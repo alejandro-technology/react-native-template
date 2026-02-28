@@ -7,15 +7,16 @@ import type {
   ProductFilter,
   UpdateProductPayload,
 } from '../domain/product.model';
-
-const COLLECTION = 'products';
+import { COLLECTIONS } from '@config/collections.routes';
 
 class ProductService implements ProductRepository {
   private firestore = firestore();
 
   async getAll(filter?: ProductFilter): Promise<ProductEntity[] | Error> {
     try {
-      const snapshot = await this.firestore.collection(COLLECTION).get();
+      const snapshot = await this.firestore
+        .collection(COLLECTIONS.PRODUCTS)
+        .get();
 
       let products = snapshot.docs.map(doc => ({
         id: doc.id,
@@ -40,7 +41,7 @@ class ProductService implements ProductRepository {
 
   async getById(id: string): Promise<ProductEntity | Error> {
     try {
-      const docRef = this.firestore.collection(COLLECTION).doc(id);
+      const docRef = this.firestore.collection(COLLECTIONS.PRODUCTS).doc(id);
       const snapshot = await docRef.get();
 
       if (!snapshot.exists) {
@@ -59,7 +60,7 @@ class ProductService implements ProductRepository {
   async create(data: CreateProductPayload): Promise<ProductEntity | Error> {
     try {
       const now = new Date().toISOString();
-      const docRef = await this.firestore.collection(COLLECTION).add({
+      const docRef = await this.firestore.collection(COLLECTIONS.PRODUCTS).add({
         ...data,
         createdAt: now,
         updatedAt: now,
@@ -81,7 +82,7 @@ class ProductService implements ProductRepository {
     data: UpdateProductPayload,
   ): Promise<ProductEntity | Error> {
     try {
-      const docRef = this.firestore.collection(COLLECTION).doc(id);
+      const docRef = this.firestore.collection(COLLECTIONS.PRODUCTS).doc(id);
       const now = new Date().toISOString();
 
       await docRef.update({
@@ -102,7 +103,7 @@ class ProductService implements ProductRepository {
 
   async delete(id: string): Promise<void | Error> {
     try {
-      const docRef = this.firestore.collection(COLLECTION).doc(id);
+      const docRef = this.firestore.collection(COLLECTIONS.PRODUCTS).doc(id);
       await docRef.delete();
       return;
     } catch (error) {

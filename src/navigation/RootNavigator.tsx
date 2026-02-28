@@ -2,9 +2,9 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
 import { ExamplesNavigator } from '@modules/examples/ui/navigation';
-import { ProductsNavigator } from '@modules/products/ui/navigation';
 
 import type { RootStackParamList } from './root.navigator.types';
+import ProductsNavigator from './stacks/ProductsStackNavigator';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 

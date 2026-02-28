@@ -1,76 +1,65 @@
 import React from 'react';
-import { View, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { View, StyleSheet } from 'react-native';
+// Components
 import { Button } from '@components/core';
 import { RootLayout } from '@components/layout';
 import { ProductForm } from './components/ProductForm';
-import { spacing } from '@theme/index';
+// Application
 import {
-  useCreateProduct,
-  useUpdateProduct,
-} from '../application/product.queries';
-import { productFormToPayloadAdapter } from '../domain/product.adapter';
-import type { ProductEntity } from '../domain/product.model';
+  useProductCreate,
+  useProductUpdate,
+} from '../application/product.mutations';
+// Domain
 import type { ProductFormData } from '../domain/product.scheme';
-
-interface ProductFormViewProps {
-  product?: ProductEntity;
-  onSuccess: () => void;
-  onCancel: () => void;
-}
+import { productFormToPayloadAdapter } from '../domain/product.adapter';
+// Navigation
+import {
+  ProductsRoutes,
+  ProductsScreenProps,
+} from '@navigation/routes/products.routes';
+// Theme
+import { spacing } from '@theme/index';
 
 export function ProductFormView({
-  product,
-  onSuccess,
-  onCancel,
-}: ProductFormViewProps) {
-  const { mutate: createProduct, isPending: isCreating } = useCreateProduct();
-  const { mutate: updateProduct, isPending: isUpdating } = useUpdateProduct();
+  route: { params },
+  navigation: { goBack },
+}: ProductsScreenProps<ProductsRoutes.ProductForm>) {
+  const { mutate: createProduct, isPending: isCreating } = useProductCreate();
+  const { mutate: updateProduct, isPending: isUpdating } = useProductUpdate();
 
   const isLoading = isCreating || isUpdating;
+
+  const product = params?.product;
   const isEditing = !!product;
 
   const handleSubmit = (data: ProductFormData) => {
     const payload = productFormToPayloadAdapter(data);
 
     if (isEditing) {
-      updateProduct({ id: product.id, data: payload }, { onSuccess });
+      updateProduct({ id: product.id, data: payload }, {});
     } else {
-      createProduct(payload, { onSuccess });
+      createProduct(payload, {});
     }
   };
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}
-      >
-        <RootLayout>
-          <View style={styles.header}>
-            <Button variant="ghost" onPress={onCancel}>
-              Cancelar
-            </Button>
-          </View>
+    <RootLayout>
+      <View style={styles.header}>
+        <Button variant="ghost" onPress={goBack}>
+          Cancelar
+        </Button>
+      </View>
 
-          <ProductForm
-            onSubmit={handleSubmit}
-            isLoading={isLoading}
-            initialData={product}
-          />
-        </RootLayout>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
+      <ProductForm
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+        initialData={product}
+      />
+    </RootLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  keyboardView: {
-    flex: 1,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'flex-start',

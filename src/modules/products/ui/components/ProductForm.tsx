@@ -1,13 +1,15 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
 import { useForm } from 'react-hook-form';
+import { View, StyleSheet } from 'react-native';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { TextInput } from '@components/form';
-import { Button } from '@components/core';
+// Components
 import { spacing } from '@theme/index';
-import { productSchema, ProductFormData } from '../../domain/product.scheme';
-import { productFormDefaultsAdapter } from '../../domain/product.adapter';
+import { Button } from '@components/core';
+import { TextInput } from '@components/form';
+// Domain
 import type { ProductEntity } from '../../domain/product.model';
+import { productFormDefaultsAdapter } from '../../domain/product.adapter';
+import { productSchema, ProductFormData } from '../../domain/product.scheme';
 
 interface ProductFormProps {
   onSubmit: (data: ProductFormData) => void;
@@ -30,7 +32,7 @@ export function ProductForm({
       ? {
           name: initialData.name,
           description: initialData.description || '',
-          price: initialData.price,
+          price: initialData.price.toString(),
         }
       : productFormDefaultsAdapter(),
   });

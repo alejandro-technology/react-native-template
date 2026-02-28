@@ -1,26 +1,24 @@
 import React from 'react';
 import { View, FlatList, StyleSheet, ActivityIndicator } from 'react-native';
+// Components
 import { Text } from '@components/core';
 import { ProductItem } from './ProductItem';
+// Hooks
+import { useProducts } from '@modules/products/application/product.queries';
+// Theme
 import { spacing } from '@theme/index';
-import type { ProductEntity } from '../../domain/product.model';
 
 interface ProductListProps {
-  products: ProductEntity[];
-  isLoading: boolean;
-  isError: boolean;
-  error?: Error | null;
-  onProductPress: (product: ProductEntity) => void;
-  onRetry?: () => void;
+  searchText: string;
 }
 
-export function ProductList({
-  products,
-  isLoading,
-  isError,
-  error,
-  onProductPress,
-}: ProductListProps) {
+export function ProductList({ searchText }: ProductListProps) {
+  const {
+    data: products,
+    isLoading,
+    isError,
+    error,
+  } = useProducts({ searchText });
   if (isLoading) {
     return (
       <View style={styles.centered}>
@@ -62,9 +60,7 @@ export function ProductList({
     <FlatList
       data={products}
       keyExtractor={item => item.id}
-      renderItem={({ item }) => (
-        <ProductItem product={item} onPress={onProductPress} />
-      )}
+      renderItem={({ item }) => <ProductItem product={item} />}
       contentContainerStyle={styles.list}
       showsVerticalScrollIndicator={false}
     />

@@ -4,17 +4,21 @@ import { Text } from '@components/core';
 import { Card } from '@components/core';
 import { useTheme, spacing } from '@theme/index';
 import type { ProductEntity } from '../../domain/product.model';
+import { ProductsRoutes } from '@navigation/routes/products.routes';
+import { useNavigationProducts } from '@navigation/hooks/useNavigation';
 
 interface ProductItemProps {
   product: ProductEntity;
-  onPress: (product: ProductEntity) => void;
 }
 
-export function ProductItem({ product, onPress }: ProductItemProps) {
+export function ProductItem({ product }: ProductItemProps) {
   const theme = useTheme();
+  const { navigate } = useNavigationProducts();
+  const onPress = () =>
+    navigate(ProductsRoutes.ProductDetail, { productId: product.id });
 
   return (
-    <Pressable onPress={() => onPress(product)}>
+    <Pressable onPress={onPress}>
       <Card style={styles.card}>
         <View style={styles.content}>
           <View style={styles.info}>

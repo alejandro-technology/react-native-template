@@ -1,55 +1,60 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { Text } from '@components/core';
-import { Button } from '@components/core';
-import { Card } from '@components/core';
+// Components
+import { Text, Card, Button } from '@components/core';
 import { DeleteConfirmationSheet } from './components/DeleteConfirmationSheet';
+// Application
+import { useProduct } from '../application/product.queries';
+import { useProductDelete } from '../application/product.mutations';
+// Navigation
+import {
+  ProductsRoutes,
+  ProductsScreenProps,
+} from '@navigation/routes/products.routes';
+import { useNavigationProducts } from '@navigation/hooks/useNavigation';
+// Theme
 import { spacing } from '@theme/index';
-import { useProduct, useDeleteProduct } from '../application/product.queries';
-import type { ProductEntity } from '../domain/product.model';
-
-interface ProductDetailViewProps {
-  productId: string;
-  onBack: () => void;
-  onEdit: (product: ProductEntity) => void;
-}
 
 export function ProductDetailView({
-  productId,
-  onBack,
-  onEdit,
-}: ProductDetailViewProps) {
+  route: {
+    params: { productId },
+  },
+}: ProductsScreenProps<ProductsRoutes.ProductDetail>) {
+  const { goBack, navigate } = useNavigationProducts();
   const [showDeleteSheet, setShowDeleteSheet] = useState(false);
 
   const { data: product, isLoading, isError, error } = useProduct(productId);
-  const { mutate: deleteProduct, isPending: isDeleting } = useDeleteProduct();
+  const { mutate: deleteProduct, isPending: isDeleting } = useProductDelete();
 
   const handleDelete = () => {
     deleteProduct(productId, {
       onSuccess: () => {
         setShowDeleteSheet(false);
-        onBack();
+        goBack();
       },
     });
   };
 
+  function handleEdit() {
+    product && navigate(ProductsRoutes.ProductForm, { product });
+  }
+
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <View>
         <View style={styles.centered}>
           <ActivityIndicator size="large" />
           <Text variant="body" style={styles.loadingText}>
             Cargando...
           </Text>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
 
   if (isError || !product) {
     return (
-      <SafeAreaView style={styles.container}>
+      <View>
         <View style={styles.centered}>
           <Text variant="h3" style={styles.errorTitle}>
             Error
@@ -57,21 +62,21 @@ export function ProductDetailView({
           <Text variant="body">
             {error?.message || 'Producto no encontrado'}
           </Text>
-          <Button onPress={onBack} style={styles.button}>
+          <Button onPress={goBack} style={styles.button}>
             Volver
           </Button>
         </View>
-      </SafeAreaView>
+      </View>
     );
   }
-
+  console.log('product', product, product.name, product.description);
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View>
       <View style={styles.header}>
-        <Button variant="ghost" onPress={onBack}>
+        <Button variant="ghost" onPress={goBack}>
           Volver
         </Button>
-        <Button variant="outlined" onPress={() => onEdit(product)}>
+        <Button variant="outlined" onPress={handleEdit}>
           Editar
         </Button>
       </View>
@@ -117,14 +122,11 @@ export function ProductDetailView({
         isLoading={isDeleting}
         productName={product.name}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -133,7 +135,6 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   content: {
-    flex: 1,
     padding: spacing.md,
     gap: spacing.md,
   },

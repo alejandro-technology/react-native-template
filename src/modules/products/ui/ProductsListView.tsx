@@ -1,35 +1,28 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
+// Componentes
 import { Text } from '@components/core';
-import { TextInput } from '@components/core';
 import { Button } from '@components/core';
+import { TextInput } from '@components/core';
 import { ProductList } from './components/ProductList';
-import { spacing } from '@theme/index';
-import { useProducts } from '../application/product.queries';
+// Hooks
 import { useDebounce } from '../application/useDebounce';
-import type { ProductEntity } from '../domain/product.model';
+// Routes
+import { ProductsRoutes } from '@navigation/routes/products.routes';
+import { useNavigationProducts } from '@navigation/hooks/useNavigation';
+// Theme
+import { spacing } from '@theme/index';
+import { RootLayout } from '@components/layout';
 
-interface ProductsListViewProps {
-  onProductPress: (product: ProductEntity) => void;
-  onAddProduct: () => void;
-}
-
-export function ProductsListView({
-  onProductPress,
-  onAddProduct,
-}: ProductsListViewProps) {
+export function ProductsListView() {
   const [searchText, setSearchText] = useState('');
   const debouncedSearch = useDebounce(searchText, 500);
 
-  const filter = useMemo(
-    () => (debouncedSearch ? { searchText: debouncedSearch } : undefined),
-    [debouncedSearch],
-  );
-
-  const { data: products, isLoading, isError, error } = useProducts(filter);
+  const { navigate } = useNavigationProducts();
+  const onAddProduct = () => navigate(ProductsRoutes.ProductForm);
 
   return (
-    <View style={styles.container}>
+    <RootLayout>
       <View style={styles.header}>
         <Text variant="h1">Productos</Text>
         <Button onPress={onAddProduct}>Agregar</Button>
@@ -40,25 +33,15 @@ export function ProductsListView({
           value={searchText}
           onChangeText={setSearchText}
           placeholder="Buscar productos..."
-          containerStyle={styles.searchInput}
         />
       </View>
 
-      <ProductList
-        products={products || []}
-        isLoading={isLoading}
-        isError={isError}
-        error={error}
-        onProductPress={onProductPress}
-      />
-    </View>
+      <ProductList searchText={debouncedSearch} />
+    </RootLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -69,8 +52,5 @@ const styles = StyleSheet.create({
   searchContainer: {
     paddingHorizontal: spacing.md,
     marginBottom: spacing.sm,
-  },
-  searchInput: {
-    marginBottom: 0,
   },
 });

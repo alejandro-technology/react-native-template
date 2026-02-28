@@ -9,7 +9,7 @@ export const productSchema = z.object({
     .string()
     .max(500, 'La descripción debe tener máximo 500 caracteres')
     .optional(),
-  price: z.number().min(0, { message: 'El precio no puede ser negativo' }),
+  price: z.string().min(0, { message: 'El precio no puede ser negativo' }),
 });
 
 export type ProductFormData = z.infer<typeof productSchema>;
