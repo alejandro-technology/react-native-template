@@ -1,5 +1,6 @@
 import { ProductsRoutes } from '@navigation/routes';
 import { ExamplesRoutes } from '@navigation/routes/examples.routes';
+import { UsersRoutes } from '@navigation/routes/users.routes';
 
 export interface ComponentConfig {
   title: string;
@@ -9,7 +10,10 @@ export interface ComponentConfig {
   screen: Screens;
 }
 
-type Screens = Exclude<ExamplesRoutes, ExamplesRoutes.Landing> | ProductsRoutes;
+type Screens =
+  | Exclude<ExamplesRoutes, ExamplesRoutes.Landing>
+  | ProductsRoutes
+  | UsersRoutes;
 export const COMPONENTS_CONFIG: ComponentConfig[] = [
   {
     title: 'Text',
@@ -66,5 +70,12 @@ export const COMPONENTS_CONFIG: ComponentConfig[] = [
     icon: '\uD83D\uDCE6',
     color: '#007AFF',
     screen: ProductsRoutes.ProductList,
+  },
+  {
+    title: 'Users',
+    description: 'User management with CRUD operations',
+    icon: '\uD83D\uDC65',
+    color: '#16A34A',
+    screen: UsersRoutes.UserList,
   },
 ];

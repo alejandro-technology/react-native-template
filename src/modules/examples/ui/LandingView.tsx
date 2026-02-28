@@ -15,7 +15,7 @@ import {
   ExamplesRoutes,
   type ExamplesStackParamList,
 } from '@navigation/routes/examples.routes';
-import { ProductsRoutes, RootRoutes } from '@navigation/routes';
+import { ProductsRoutes, UsersRoutes, RootRoutes } from '@navigation/routes';
 import { useNavigationRoot } from '@navigation/hooks';
 
 function LandingView() {
@@ -126,6 +126,10 @@ function LandingView() {
               } else if (component.screen in ProductsRoutes) {
                 navigate(RootRoutes.Products, {
                   screen: ProductsRoutes.ProductList,
+                });
+              } else if (component.screen in UsersRoutes) {
+                navigate(RootRoutes.Users, {
+                  screen: UsersRoutes.UserList,
                 });
               }
             }}
