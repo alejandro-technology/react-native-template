@@ -21,9 +21,11 @@ export default function ProductsNavigator() {
         contentStyle: { backgroundColor: colors.background },
       }}
     >
-      <Stack.Screen name="ProductList" options={{ headerShown: false }}>
-        {() => <ProductsListWrapper />}
-      </Stack.Screen>
+      <Stack.Screen
+        name="ProductList"
+        component={ProductsListWrapper}
+        options={{ headerShown: false }}
+      />
     </Stack.Navigator>
   );
 }

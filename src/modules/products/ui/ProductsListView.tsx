@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { Text } from '@components/core';
 import { TextInput } from '@components/core';
 import { Button } from '@components/core';
@@ -30,7 +29,7 @@ export function ProductsListView({
   const { data: products, isLoading, isError, error } = useProducts(filter);
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.container}>
       <View style={styles.header}>
         <Text variant="h1">Productos</Text>
         <Button onPress={onAddProduct}>Agregar</Button>
@@ -52,7 +51,7 @@ export function ProductsListView({
         error={error}
         onProductPress={onProductPress}
       />
-    </SafeAreaView>
+    </View>
   );
 }
 
