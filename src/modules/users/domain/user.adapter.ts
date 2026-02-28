@@ -23,12 +23,3 @@ export function userEntityAdapter(data: UserEntity): UserEntity {
     updatedAt: data.updatedAt,
   };
 }
-
-export function userFormDefaultsAdapter(): UserFormData {
-  return {
-    name: '',
-    email: '',
-    phone: '',
-    role: '',
-  };
-}

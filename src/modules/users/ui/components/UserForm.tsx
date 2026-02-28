@@ -8,7 +8,6 @@ import { Button } from '@components/core';
 import { TextInput } from '@components/form';
 // Domain
 import type { UserEntity } from '../../domain/user.model';
-import { userFormDefaultsAdapter } from '../../domain/user.adapter';
 import { userSchema, UserFormData } from '../../domain/user.scheme';
 
 interface UserFormProps {
@@ -28,14 +27,12 @@ export function UserForm({
     formState: { errors },
   } = useForm<UserFormData>({
     resolver: zodResolver(userSchema) as any,
-    defaultValues: initialData
-      ? {
-          name: initialData.name,
-          email: initialData.email,
-          phone: initialData.phone,
-          role: initialData.role,
-        }
-      : userFormDefaultsAdapter(),
+    defaultValues: {
+      name: initialData?.name || '',
+      email: initialData?.email || '',
+      phone: initialData?.phone || '',
+      role: initialData?.role || '',
+    }
   });
 
   return (

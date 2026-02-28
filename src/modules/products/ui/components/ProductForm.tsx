@@ -8,7 +8,6 @@ import { Button } from '@components/core';
 import { TextInput } from '@components/form';
 // Domain
 import type { ProductEntity } from '../../domain/product.model';
-import { productFormDefaultsAdapter } from '../../domain/product.adapter';
 import { productSchema, ProductFormData } from '../../domain/product.scheme';
 
 interface ProductFormProps {
@@ -28,13 +27,11 @@ export function ProductForm({
     formState: { errors },
   } = useForm<ProductFormData>({
     resolver: zodResolver(productSchema) as any,
-    defaultValues: initialData
-      ? {
-          name: initialData.name,
-          description: initialData.description || '',
-          price: initialData.price,
-        }
-      : productFormDefaultsAdapter(),
+    defaultValues: {
+      name: initialData?.name || '',
+      description: initialData?.description || '',
+      price: initialData?.price || 0,
+    }
   });
 
   return (

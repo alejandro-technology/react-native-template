@@ -21,11 +21,3 @@ export function productEntityAdapter(data: ProductEntity): ProductEntity {
     updatedAt: data.updatedAt,
   };
 }
-
-export function productFormDefaultsAdapter(): ProductFormData {
-  return {
-    name: '',
-    description: '',
-    price: 0,
-  };
-}
