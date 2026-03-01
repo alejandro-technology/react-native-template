@@ -2,6 +2,7 @@ import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export enum ExamplesRoutes {
   Landing = 'Landing',
+  AnimationExample = 'AnimationExample',
   Texts = 'Texts',
   Buttons = 'Buttons',
   TextInputs = 'TextInputs',
@@ -13,6 +14,7 @@ export enum ExamplesRoutes {
 
 export type ExamplesStackParamList = {
   [ExamplesRoutes.Landing]: undefined;
+  [ExamplesRoutes.AnimationExample]: undefined;
   [ExamplesRoutes.Texts]: undefined;
   [ExamplesRoutes.Buttons]: undefined;
   [ExamplesRoutes.TextInputs]: undefined;

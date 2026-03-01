@@ -1,18 +1,17 @@
 import React from 'react';
-import { StyleSheet, View, ScrollView } from 'react-native';
-import { Animated } from 'react-native';
+import { StyleSheet, View, ScrollView, Animated } from 'react-native';
 
 import { Text } from '@components/core';
-import { spacing, ANIMATION_DURATION } from '@theme/index';
+import { spacing } from '@theme/index';
 import { borderRadius } from '@theme/borders';
 import { useTheme } from '@theme/index';
-import { useFadeSlide } from '@theme/hooks';
 
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 import ComponentCard from './ComponentCard';
 import { COMPONENTS_CONFIG } from './componentsConfig';
+import { useHeroAnimation } from '../hooks/useHeroAnimation';
 import {
   ExamplesRoutes,
   type ExamplesStackParamList,
@@ -26,11 +25,12 @@ function LandingView() {
   const { navigate } = useNavigationRoot();
   const { mode } = useTheme();
 
-  const { opacity, translateY } = useFadeSlide({
-    offset: 30,
-    duration: ANIMATION_DURATION.slow,
-    direction: 'up',
-  });
+  const { opacityAnim, translateYAnim } = useHeroAnimation();
+
+  const heroStyle = {
+    opacity: opacityAnim,
+    transform: [{ translateY: translateYAnim }],
+  };
 
   return (
     <ScrollView
@@ -38,15 +38,7 @@ function LandingView() {
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
     >
-      <Animated.View
-        style={[
-          styles.heroSection,
-          {
-            opacity,
-            transform: [{ translateY }],
-          },
-        ]}
-      >
+      <Animated.View style={[styles.heroSection, heroStyle]}>
         <View style={styles.badge}>
           <Text variant="caption" color="primary" transform="uppercase">
             React Native
@@ -103,14 +95,13 @@ function LandingView() {
       </View>
 
       <View style={styles.cardsContainer}>
-        {COMPONENTS_CONFIG.map((component, index) => (
+        {COMPONENTS_CONFIG.map(component => (
           <ComponentCard
             key={component.title}
             title={component.title}
             description={component.description}
             icon={component.icon}
             color={component.color}
-            delay={200 + index * 100}
             onPress={() => {
               if (component.screen in ExamplesRoutes) {
                 navigation.navigate(component.screen as ExamplesRoutes);

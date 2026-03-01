@@ -2,6 +2,7 @@ import React from 'react';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // Screens
 import LandingView from '@modules/examples/ui/LandingView';
+import AnimationExampleView from '@modules/examples/ui/AnimationExampleView';
 import TextsView from '@modules/examples/ui/TextsView';
 import ButtonsView from '@modules/examples/ui/ButtonsView';
 import TextInputsView from '@modules/examples/ui/TextInputsView';
@@ -22,6 +23,8 @@ export default function ExamplesNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
+        animationDuration: 2000,
+        animation: 'slide_from_right',
       }}
     >
       <Stack.Screen name={ExamplesRoutes.Landing} component={LandingView} />
@@ -38,6 +41,10 @@ export default function ExamplesNavigator() {
       />
       <Stack.Screen name={ExamplesRoutes.Modals} component={ModalsView} />
       <Stack.Screen name={ExamplesRoutes.SignIn} component={SignInView} />
+      <Stack.Screen
+        name={ExamplesRoutes.AnimationExample}
+        component={AnimationExampleView}
+      />
     </Stack.Navigator>
   );
 }

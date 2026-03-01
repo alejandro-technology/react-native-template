@@ -1,10 +1,9 @@
 import React, { useMemo } from 'react';
-import { Animated, StyleSheet, View } from 'react-native';
-
+import { StyleSheet, View, Animated } from 'react-native';
+import { useCardAnimation } from '../hooks/useCardAnimation';
 import { Text, Card } from '@components/core';
 import { spacing } from '@theme/index';
 import { borderRadius } from '@theme/borders';
-import { useFadeSlide } from '@theme/hooks';
 
 export interface ComponentCardProps {
   title: string;
@@ -12,7 +11,6 @@ export interface ComponentCardProps {
   icon: string;
   color: string;
   onPress: () => void;
-  delay?: number;
 }
 
 function ComponentCard({
@@ -21,13 +19,13 @@ function ComponentCard({
   icon,
   color,
   onPress,
-  delay = 0,
 }: ComponentCardProps) {
-  const { opacity, translateY } = useFadeSlide({
-    offset: 20,
-    duration: 400,
-    delay,
-  });
+  const { opacityAnim, translateYAnim } = useCardAnimation();
+
+  const animatedStyle = {
+    opacity: opacityAnim,
+    transform: [{ translateY: translateYAnim }],
+  };
 
   const { cardStyle, iconContainerStyle, textStyle, arrowStyle } = useMemo(
     () => ({
@@ -43,14 +41,7 @@ function ComponentCard({
   );
 
   return (
-    <Animated.View
-      style={[
-        {
-          opacity,
-          transform: [{ translateY }],
-        },
-      ]}
-    >
+    <Animated.View style={animatedStyle}>
       <Card onPress={onPress} style={cardStyle}>
         <View style={iconContainerStyle}>
           <Text style={textStyle}>{icon}</Text>
