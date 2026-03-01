@@ -1,74 +1,30 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
-// Components
-import { Text, Button, Modal } from '@components/core';
-// Theme
-import { spacing } from '@theme/index';
+import { DeleteConfirmationSheet } from '@components/layout';
+import { useUserDelete } from '@modules/users/application/user.mutations';
+import { useAppStorage } from '@modules/core/infrastructure/app.storage';
 
-interface DeleteConfirmationSheetProps {
-  visible: boolean;
-  onClose: () => void;
-  onConfirm: () => void;
-  isLoading?: boolean;
-  userName?: string;
-}
+export default function DeleteConfirmationSheetUser() {
+  const { mutate: deleteUser, isPending } = useUserDelete();
+  const { visible, entityName, entityType, entityId, close } = useAppStorage(
+    state => state.modal,
+  );
 
-export function DeleteConfirmationSheet({
-  visible,
-  onClose,
-  onConfirm,
-  isLoading = false,
-  userName,
-}: DeleteConfirmationSheetProps) {
+  const handleConfirmDelete = () => {
+    deleteUser(entityId, {
+      onSuccess: () => {
+        close();
+      },
+    });
+  };
+
   return (
-    <Modal
+    <DeleteConfirmationSheet
       visible={visible}
-      onRequestClose={onClose}
-      title="Eliminar Usuario"
-      closeOnBackdropPress
-    >
-      <View style={styles.container}>
-        <Text variant="body" style={styles.message}>
-          ¿Estás seguro de que deseas eliminar el usuario{' '}
-          <Text variant="body" style={styles.userName}>
-            "{userName}"
-          </Text>
-          ? Esta acción no se puede deshacer.
-        </Text>
-
-        <View style={styles.actions}>
-          <Button variant="outlined" onPress={onClose} style={styles.button}>
-            Cancelar
-          </Button>
-          <Button
-            variant="primary"
-            onPress={onConfirm}
-            loading={isLoading}
-            style={styles.button}
-          >
-            Eliminar
-          </Button>
-        </View>
-      </View>
-    </Modal>
+      onClose={() => close()}
+      onConfirm={handleConfirmDelete}
+      isLoading={isPending}
+      entityName={entityName}
+      entityType={entityType}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    gap: spacing.lg,
-  },
-  message: {
-    textAlign: 'center',
-  },
-  userName: {
-    fontWeight: 'bold',
-  },
-  actions: {
-    flexDirection: 'row',
-    gap: spacing.md,
-  },
-  button: {
-    flex: 1,
-  },
-});

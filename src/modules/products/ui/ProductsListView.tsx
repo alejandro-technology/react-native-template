@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 // Componentes
 import { ProductList } from './components/ProductList';
 // Hooks
-import { useDebounce } from '@hooks/useDebounce';
+import { useDebounce } from '@modules/core/application/core.hooks';
 // Routes
 import { ProductsRoutes } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';

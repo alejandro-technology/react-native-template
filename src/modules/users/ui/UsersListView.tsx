@@ -1,8 +1,9 @@
 import { useState } from 'react';
 // Componentes
 import { UserList } from './components/UserList';
+import DeleteConfirmationSheetUser from './components/DeleteConfirmationSheet';
 // Hooks
-import { useDebounce } from '@hooks/useDebounce';
+import { useDebounce } from '@modules/core/application/core.hooks';
 // Routes
 import { UsersRoutes } from '@navigation/routes';
 import { useNavigationUsers } from '@navigation/hooks';
@@ -26,6 +27,8 @@ export function UsersListView() {
       />
 
       <UserList searchText={debouncedSearch} />
+
+      <DeleteConfirmationSheetUser />
     </RootLayout>
   );
 }

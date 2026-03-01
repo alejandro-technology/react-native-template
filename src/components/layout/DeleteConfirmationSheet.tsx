@@ -10,7 +10,12 @@ interface DeleteConfirmationSheetProps {
   onClose: () => void;
   onConfirm: () => void;
   isLoading?: boolean;
-  productName?: string;
+  entityName: string;
+  entityType: string;
+}
+
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 export function DeleteConfirmationSheet({
@@ -18,34 +23,30 @@ export function DeleteConfirmationSheet({
   onClose,
   onConfirm,
   isLoading = false,
-  productName,
+  entityName,
+  entityType,
 }: DeleteConfirmationSheetProps) {
   return (
     <Modal
       visible={visible}
       onRequestClose={onClose}
-      title="Eliminar Producto"
+      title={`Eliminar ${capitalize(entityType)}`}
       closeOnBackdropPress
     >
       <View style={styles.container}>
-        <Text variant="body" style={styles.message}>
-          ¿Estás seguro de que deseas eliminar el producto{' '}
-          <Text variant="body" style={styles.productName}>
-            "{productName}"
+        <Text variant="body" align="center">
+          ¿Estás seguro de que deseas eliminar {entityType}{' '}
+          <Text variant="body" style={styles.entityName}>
+            "{entityName}"
           </Text>
           ? Esta acción no se puede deshacer.
         </Text>
 
         <View style={styles.actions}>
-          <Button variant="outlined" onPress={onClose} style={styles.button}>
+          <Button variant="outlined" onPress={onClose}>
             Cancelar
           </Button>
-          <Button
-            variant="primary"
-            onPress={onConfirm}
-            loading={isLoading}
-            style={styles.button}
-          >
+          <Button variant="primary" onPress={onConfirm} loading={isLoading}>
             Eliminar
           </Button>
         </View>
@@ -58,17 +59,12 @@ const styles = StyleSheet.create({
   container: {
     gap: spacing.lg,
   },
-  message: {
-    textAlign: 'center',
-  },
-  productName: {
+  entityName: {
     fontWeight: 'bold',
   },
   actions: {
     flexDirection: 'row',
+    justifyContent: 'center',
     gap: spacing.md,
-  },
-  button: {
-    flex: 1,
   },
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 // Components
 import { Text, Card, Button } from '@components/core';
@@ -7,8 +7,8 @@ import {
   ErrorState,
   EmptyState,
   RootLayout,
+  DeleteConfirmationSheet,
 } from '@components/layout';
-import { DeleteConfirmationSheet } from './components/DeleteConfirmationSheet';
 // Application
 import { useProduct } from '../application/product.queries';
 import { useProductDelete } from '../application/product.mutations';
@@ -17,6 +17,8 @@ import { ProductsRoutes, ProductsScreenProps } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';
 // Theme
 import { spacing } from '@theme/index';
+// Store
+import { useAppStorage } from '@modules/core/infrastructure/app.storage';
 
 export function ProductDetailView({
   route: {
@@ -24,15 +26,17 @@ export function ProductDetailView({
   },
 }: ProductsScreenProps<ProductsRoutes.ProductDetail>) {
   const { goBack, navigate } = useNavigationProducts();
-  const [showDeleteSheet, setShowDeleteSheet] = useState(false);
 
   const { data: product, isLoading, isError, error } = useProduct(productId);
   const { mutate: deleteProduct, isPending: isDeleting } = useProductDelete();
+  const { visible, entityName, entityType, open, close } = useAppStorage(
+    state => state.modal,
+  );
 
   const handleDelete = () => {
     deleteProduct(productId, {
       onSuccess: () => {
-        setShowDeleteSheet(false);
+        close();
         goBack();
       },
     });
@@ -94,17 +98,27 @@ export function ProductDetailView({
         <Button variant="secondary" onPress={handleEdit}>
           Editar Producto
         </Button>
-        <Button variant="primary" onPress={() => setShowDeleteSheet(true)}>
+        <Button
+          variant="primary"
+          onPress={() =>
+            open({
+              entityId: productId,
+              entityName: product.name,
+              entityType: 'producto',
+            })
+          }
+        >
           Eliminar Producto
         </Button>
       </View>
 
       <DeleteConfirmationSheet
-        visible={showDeleteSheet}
-        onClose={() => setShowDeleteSheet(false)}
+        visible={visible}
+        onClose={close}
         onConfirm={handleDelete}
         isLoading={isDeleting}
-        productName={product.name}
+        entityName={entityName}
+        entityType={entityType}
       />
     </RootLayout>
   );

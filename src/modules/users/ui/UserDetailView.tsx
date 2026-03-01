@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 // Components
 import { Text, Card, Button } from '@components/core';
@@ -7,8 +7,8 @@ import {
   ErrorState,
   EmptyState,
   RootLayout,
+  DeleteConfirmationSheet,
 } from '@components/layout';
-import { DeleteConfirmationSheet } from './components/DeleteConfirmationSheet';
 // Application
 import { useUser } from '../application/user.queries';
 import { useUserDelete } from '../application/user.mutations';
@@ -17,6 +17,8 @@ import { UsersRoutes, UsersScreenProps } from '@navigation/routes';
 import { useNavigationUsers } from '@navigation/hooks';
 // Theme
 import { spacing } from '@theme/index';
+// Store
+import { useAppStorage } from '@modules/core/infrastructure/app.storage';
 
 export function UserDetailView({
   route: {
@@ -24,15 +26,17 @@ export function UserDetailView({
   },
 }: UsersScreenProps<UsersRoutes.UserDetail>) {
   const { goBack, navigate } = useNavigationUsers();
-  const [showDeleteSheet, setShowDeleteSheet] = useState(false);
 
   const { data: user, isLoading, isError, error } = useUser(userId);
   const { mutate: deleteUser, isPending: isDeleting } = useUserDelete();
+  const { visible, entityName, entityType, open, close } = useAppStorage(
+    state => state.modal,
+  );
 
   const handleDelete = () => {
     deleteUser(userId, {
       onSuccess: () => {
-        setShowDeleteSheet(false);
+        close();
         goBack();
       },
     });
@@ -104,17 +108,27 @@ export function UserDetailView({
         <Button variant="secondary" onPress={handleEdit}>
           Editar Usuario
         </Button>
-        <Button variant="primary" onPress={() => setShowDeleteSheet(true)}>
+        <Button
+          variant="primary"
+          onPress={() =>
+            open({
+              entityId: userId,
+              entityName: user.name,
+              entityType: 'usuario',
+            })
+          }
+        >
           Eliminar Usuario
         </Button>
       </View>
 
       <DeleteConfirmationSheet
-        visible={showDeleteSheet}
-        onClose={() => setShowDeleteSheet(false)}
+        visible={visible}
+        onClose={close}
         onConfirm={handleDelete}
         isLoading={isDeleting}
-        userName={user.name}
+        entityName={entityName}
+        entityType={entityType}
       />
     </RootLayout>
   );
