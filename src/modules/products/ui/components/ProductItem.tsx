@@ -14,7 +14,9 @@ interface ProductItemProps {
   product: ProductEntity;
 }
 
-export function ProductItem({ product }: ProductItemProps) {
+export const ProductItem = React.memo(function ProductItem({
+  product,
+}: ProductItemProps) {
   const { navigate } = useNavigationProducts();
   const onPress = () =>
     navigate(ProductsRoutes.ProductDetail, { productId: product.id });
@@ -32,7 +34,7 @@ export function ProductItem({ product }: ProductItemProps) {
       </View>
     </Card>
   );
-}
+});
 
 const styles = StyleSheet.create({
   info: {

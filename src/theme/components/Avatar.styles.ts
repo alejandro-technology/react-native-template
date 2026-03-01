@@ -1,7 +1,8 @@
-import { ViewStyle, TextStyle } from 'react-native';
+import { TextStyle } from 'react-native';
 import { ThemeMode, colors } from '../colors';
 import { borderRadius } from '../borders';
 import { hScale } from '../responsive';
+import { ImageStyle } from 'react-native-fast-image';
 
 export type AvatarSize = 'sm' | 'md' | 'lg';
 
@@ -53,7 +54,7 @@ export function getAvatarStyle({
   size = 'md',
   mode = 'light',
   userId,
-}: AvatarStyleProps): { container: ViewStyle; text: TextStyle } {
+}: AvatarStyleProps): { container: ImageStyle; text: TextStyle } {
   const themeColors = colors[mode];
   const sizeConfig = getSizeStyles(size);
 

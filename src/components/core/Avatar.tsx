@@ -1,5 +1,6 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import FastImage from 'react-native-fast-image';
 // Components
 import { Text } from './Text';
 // Theme
@@ -10,6 +11,7 @@ interface AvatarProps {
   name: string;
   userId: string;
   size?: AvatarSize;
+  imageUrl?: string;
 }
 
 function getInitials(name: string): string {
@@ -20,10 +22,23 @@ function getInitials(name: string): string {
   return name.substring(0, 2).toUpperCase();
 }
 
-export function Avatar({ name, userId, size = 'md' }: AvatarProps) {
+export function Avatar({ name, userId, size = 'md', imageUrl }: AvatarProps) {
   const theme = useTheme();
   const initials = getInitials(name);
   const styles = getAvatarStyle({ size, mode: theme.mode, userId });
+
+  if (imageUrl) {
+    return (
+      <FastImage
+        style={[styles.container, imageStyles.image]}
+        source={{
+          uri: imageUrl,
+          priority: FastImage.priority.normal,
+        }}
+        resizeMode={FastImage.resizeMode.cover}
+      />
+    );
+  }
 
   return (
     <View style={styles.container}>
@@ -31,3 +46,9 @@ export function Avatar({ name, userId, size = 'md' }: AvatarProps) {
     </View>
   );
 }
+
+const imageStyles = StyleSheet.create({
+  image: {
+    overflow: 'hidden',
+  },
+});

@@ -1,5 +1,6 @@
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 // Components
 import { UserItem } from './UserItem';
 import {
@@ -10,8 +11,14 @@ import {
 } from '@components/layout';
 // Hooks
 import { useUsers } from '@modules/users/application/user.queries';
+// Types
+import type { UserEntity } from '../../domain/user.model';
 // Theme
 import { spacing } from '@theme/index';
+
+const renderUserItem: ListRenderItem<UserEntity> = ({ item }) => (
+  <UserItem user={item} />
+);
 
 interface UserListProps {
   searchText: string;
@@ -44,19 +51,15 @@ export function UserList({ searchText }: UserListProps) {
   }
 
   return (
-    <FlatList
+    <FlashList
       data={users}
       keyExtractor={item => item.id}
-      renderItem={({ item }) => <UserItem user={item} />}
+      renderItem={renderUserItem}
       ItemSeparatorComponent={ItemSeparatorComponent}
       contentContainerStyle={styles.list}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
-      initialNumToRender={10}
-      windowSize={5}
-      maxToRenderPerBatch={5}
-      removeClippedSubviews={true}
     />
   );
 }

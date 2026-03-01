@@ -1,5 +1,6 @@
 import React from 'react';
-import { FlatList, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { FlashList, ListRenderItem } from '@shopify/flash-list';
 // Components
 import { ProductItem } from './ProductItem';
 import {
@@ -10,8 +11,14 @@ import {
 } from '@components/layout';
 // Hooks
 import { useProducts } from '@modules/products/application/product.queries';
+// Types
+import type { ProductEntity } from '../../domain/product.model';
 // Theme
 import { spacing } from '@theme/index';
+
+const renderProductItem: ListRenderItem<ProductEntity> = ({ item }) => (
+  <ProductItem product={item} />
+);
 
 interface ProductListProps {
   searchText: string;
@@ -48,19 +55,15 @@ export function ProductList({ searchText }: ProductListProps) {
   }
 
   return (
-    <FlatList
+    <FlashList
       data={products}
       keyExtractor={item => item.id}
-      renderItem={({ item }) => <ProductItem product={item} />}
+      renderItem={renderProductItem}
       ItemSeparatorComponent={ItemSeparatorComponent}
       contentContainerStyle={styles.list}
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
-      initialNumToRender={10}
-      windowSize={5}
-      maxToRenderPerBatch={5}
-      removeClippedSubviews={true}
     />
   );
 }

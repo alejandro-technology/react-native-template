@@ -17,7 +17,7 @@ interface UserItemProps {
   user: UserEntity;
 }
 
-export function UserItem({ user }: UserItemProps) {
+export const UserItem = React.memo(function UserItem({ user }: UserItemProps) {
   const { navigate } = useNavigationUsers();
 
   const handleCardPress = () => {
@@ -44,7 +44,7 @@ export function UserItem({ user }: UserItemProps) {
       </View>
     </Card>
   );
-}
+});
 
 const styles = StyleSheet.create({
   card: {
