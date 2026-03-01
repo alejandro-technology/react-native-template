@@ -57,6 +57,10 @@ export function ProductList({ searchText }: ProductListProps) {
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
+      initialNumToRender={10}
+      windowSize={5}
+      maxToRenderPerBatch={5}
+      removeClippedSubviews={true}
     />
   );
 }

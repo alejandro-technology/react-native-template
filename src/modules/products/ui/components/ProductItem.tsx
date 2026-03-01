@@ -5,7 +5,7 @@ import { Text, Card } from '@components/core';
 // Types
 import type { ProductEntity } from '../../domain/product.model';
 // Theme
-import { useTheme, spacing } from '@theme/index';
+import { spacing } from '@theme/index';
 // Navigation
 import { ProductsRoutes } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';
@@ -15,7 +15,6 @@ interface ProductItemProps {
 }
 
 export function ProductItem({ product }: ProductItemProps) {
-  const theme = useTheme();
   const { navigate } = useNavigationProducts();
   const onPress = () =>
     navigate(ProductsRoutes.ProductDetail, { productId: product.id });
@@ -27,7 +26,7 @@ export function ProductItem({ product }: ProductItemProps) {
         {product.description ? (
           <Text variant="body">{product.description}</Text>
         ) : null}
-        <Text variant="caption" style={{ color: theme.colors.primary }}>
+        <Text variant="caption" color="primary">
           ${product.price.toFixed(2)}
         </Text>
       </View>
