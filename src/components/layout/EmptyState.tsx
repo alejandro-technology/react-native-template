@@ -1,10 +1,13 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
+import React from 'react';
+import { StyleSheet, Animated } from 'react-native';
 // Components
 import { Text, Button } from '@components/core';
 // Theme
 import { spacing } from '@theme/index';
 import { useTheme } from '@theme/index';
+import { useFadeScale } from '@theme/hooks';
+import { useAnimatedLoop } from '@theme/hooks';
+import { SPRING_CONFIGS, ANIMATION_DURATION } from '@theme/animations';
 
 interface EmptyStateProps {
   title?: string;
@@ -22,53 +25,25 @@ export function EmptyState({
   actionLabel = 'Volver',
 }: EmptyStateProps) {
   const theme = useTheme();
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.5)).current;
-  const bounceAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    // Fade in + Scale animation
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 6,
-        tension: 40,
-        useNativeDriver: true,
-      }),
-    ]).start();
+  const { opacity, scale } = useFadeScale({
+    initialScale: 0.5,
+    duration: ANIMATION_DURATION.slow,
+    springConfig: SPRING_CONFIGS.bouncy,
+  });
 
-    // Bounce animation for icon
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(bounceAnim, {
-          toValue: -10,
-          duration: 1000,
-          useNativeDriver: true,
-          easing: Easing.inOut(Easing.ease),
-        }),
-        Animated.timing(bounceAnim, {
-          toValue: 0,
-          duration: 1000,
-          useNativeDriver: true,
-          easing: Easing.inOut(Easing.ease),
-        }),
-      ]),
-    ).start();
-  }, [fadeAnim, scaleAnim, bounceAnim]);
+  const { value: bounceAnim } = useAnimatedLoop({
+    type: 'bounce',
+    duration: 1000,
+  });
 
   return (
     <Animated.View
       style={[
         styles.container,
         {
-          opacity: fadeAnim,
-          transform: [{ scale: scaleAnim }],
+          opacity,
+          transform: [{ scale }],
         },
       ]}
     >

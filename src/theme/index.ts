@@ -112,9 +112,11 @@ export function getTheme(mode: ThemeMode): Theme {
 // ==========================================
 // Export default
 // ==========================================
+export * from './animations';
 export * from './borders';
 export * from './colors';
 export * from './common';
+export * from './hooks';
 export * from './responsive';
 export * from './shadows';
 export * from './spacing';

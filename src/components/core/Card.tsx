@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Pressable, PressableProps, ViewStyle } from 'react-native';
+import { View, PressableProps, ViewStyle } from 'react-native';
 import { BorderRadiusToken } from '@theme/borders';
 import { useTheme } from '@theme/index';
 import {
@@ -7,6 +7,7 @@ import {
   CardSize,
   getCardStyle,
 } from '@theme/components/Card.styles';
+import { AnimatedPressable } from './AnimatedPressable';
 
 interface CardBaseProps {
   children: React.ReactNode;
@@ -66,16 +67,13 @@ export function Card(props: CardProps) {
     };
 
     return (
-      <Pressable
+      <AnimatedPressable
         onPress={handlePress}
-        disabled={isDisabled}
-        style={({ pressed }) => [
-          cardStyle,
-          pressed && !isDisabled && { opacity: 0.8 },
-        ]}
+        disabled={Boolean(isDisabled)}
+        style={cardStyle}
       >
         {children}
-      </Pressable>
+      </AnimatedPressable>
     );
   }
 

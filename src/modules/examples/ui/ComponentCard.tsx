@@ -1,9 +1,10 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import { Animated, StyleSheet, View } from 'react-native';
 
 import { Text, Card } from '@components/core';
 import { spacing } from '@theme/index';
 import { borderRadius } from '@theme/borders';
+import { useFadeSlide } from '@theme/hooks';
 
 export interface ComponentCardProps {
   title: string;
@@ -22,31 +23,17 @@ function ComponentCard({
   onPress,
   delay = 0,
 }: ComponentCardProps) {
-  const fadeAnim = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(20)).current;
-
-  React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 400,
-        delay,
-        useNativeDriver: true,
-      }),
-      Animated.timing(translateY, {
-        toValue: 0,
-        duration: 400,
-        delay,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [delay, fadeAnim, translateY]);
+  const { opacity, translateY } = useFadeSlide({
+    offset: 20,
+    duration: 400,
+    delay,
+  });
 
   return (
     <Animated.View
       style={[
         {
-          opacity: fadeAnim,
+          opacity,
           transform: [{ translateY }],
         },
       ]}

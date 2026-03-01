@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-  Pressable,
-  PressableProps,
-  ViewStyle,
-  TextStyle,
-  View,
-} from 'react-native';
+import { PressableProps, ViewStyle, TextStyle, View } from 'react-native';
 // Types
 import {
   CheckboxVariant,
@@ -16,6 +10,7 @@ import { BorderRadiusToken } from '@theme/borders';
 import { useTheme } from '@theme/index';
 // Components
 import { Text } from './Text';
+import { AnimatedPressable } from './AnimatedPressable';
 
 interface CheckboxProps extends Omit<PressableProps, 'style'> {
   checked?: boolean;
@@ -67,14 +62,10 @@ export function Checkbox(props: CheckboxProps) {
   };
 
   return (
-    <Pressable
+    <AnimatedPressable
       onPress={handlePress}
       disabled={disabled}
-      style={({ pressed }) => [
-        styles.container,
-        customStyle,
-        pressed && !disabled && { opacity: 0.8 },
-      ]}
+      style={[styles.container, customStyle]}
       {...pressableProps}
     >
       <View style={styles.box}>
@@ -86,6 +77,6 @@ export function Checkbox(props: CheckboxProps) {
           {label}
         </Text>
       )}
-    </Pressable>
+    </AnimatedPressable>
   );
 }

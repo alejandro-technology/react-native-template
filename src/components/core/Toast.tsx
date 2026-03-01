@@ -3,6 +3,7 @@ import { Animated, Text as RNText, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme, spacing } from '@theme/index';
 import { getToastStyle } from '@theme/components/Toast.styles';
+import { useFadeSlide } from '@theme/hooks';
 
 import type {
   ToastType,
@@ -18,8 +19,6 @@ interface ToastProps {
   position: ToastPosition;
 }
 
-const SLIDE_OFFSET = 20;
-
 export function Toast({
   message,
   type,
@@ -30,51 +29,29 @@ export function Toast({
 }: ToastProps) {
   const { top, bottom } = useSafeAreaInsets();
   const { mode } = useTheme();
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(0)).current;
   const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   const styles = getToastStyle({ type, mode });
   const isTop = position === 'top';
-  const slideStart = isTop ? -SLIDE_OFFSET : SLIDE_OFFSET;
+
+  const { opacity, translateY, start, fadeOut } = useFadeSlide({
+    direction: isTop ? 'up' : 'down',
+    autoStart: false,
+  });
 
   useEffect(() => {
     if (visible) {
-      translateY.setValue(slideStart);
-
-      Animated.parallel([
-        Animated.timing(opacity, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.timing(translateY, {
-          toValue: 0,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-      ]).start();
+      start();
 
       timerRef.current = setTimeout(() => {
-        Animated.parallel([
-          Animated.timing(opacity, {
-            toValue: 0,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-          Animated.timing(translateY, {
-            toValue: slideStart,
-            duration: 300,
-            useNativeDriver: true,
-          }),
-        ]).start(() => onHide());
+        fadeOut(() => onHide());
       }, duration);
     }
 
     return () => {
       if (timerRef.current) clearTimeout(timerRef.current);
     };
-  }, [visible, duration, onHide, opacity, translateY, slideStart]);
+  }, [visible, duration, onHide, start, fadeOut]);
 
   if (!visible) return null;
 

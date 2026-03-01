@@ -1,7 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import {
-  StyleSheet,
-  Pressable,
+  StyleSheet, 
   View,
   ScrollView,
   ViewStyle,
@@ -9,6 +8,7 @@ import {
 import { Text } from './Text';
 import { Modal } from './Modal';
 import { TextInput } from './TextInput';
+import { AnimatedPressable } from './AnimatedPressable';
 import { useTheme } from '@theme/index';
 import { spacing } from '@theme/spacing';
 import { BorderRadiusToken } from '@theme/borders';
@@ -92,7 +92,7 @@ export function Select(props: SelectProps) {
 
   return (
     <View style={[fullWidth && baseStyles.fullWidth, containerStyle]}>
-      <Pressable onPress={handlePress} disabled={isDisabled}>
+      <AnimatedPressable onPress={handlePress} disabled={isDisabled}>
         <TextInput
           label={label}
           helperText={helperText}
@@ -103,7 +103,7 @@ export function Select(props: SelectProps) {
           onPressIn={handlePress}
           pointerEvents="none"
         />
-      </Pressable>
+      </AnimatedPressable>
       <Modal
         visible={isOpen}
         onRequestClose={handleClose}
@@ -115,13 +115,12 @@ export function Select(props: SelectProps) {
           keyboardShouldPersistTaps="always"
         >
           {options.map((option, index) => (
-            <Pressable
+            <AnimatedPressable
               key={`option-${index}`}
               onPress={() => handleSelect(option)}
-              style={({ pressed }) => [
+              style={[
                 baseStyles.option,
                 getSelectOptionStyle(theme.mode, value?.value === option.value),
-                pressed && baseStyles.optionPressed,
               ]}
             >
               <Text
@@ -130,7 +129,7 @@ export function Select(props: SelectProps) {
               >
                 {option.label}
               </Text>
-            </Pressable>
+            </AnimatedPressable>
           ))}
         </ScrollView>
       </Modal>
@@ -149,8 +148,5 @@ const baseStyles = StyleSheet.create({
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.sm,
     borderRadius: 4,
-  },
-  optionPressed: {
-    opacity: 0.7,
   },
 });

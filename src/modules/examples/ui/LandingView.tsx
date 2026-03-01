@@ -1,10 +1,12 @@
-import React, { useRef } from 'react';
-import { Animated, StyleSheet, View, ScrollView } from 'react-native';
+import React from 'react';
+import { StyleSheet, View, ScrollView } from 'react-native';
+import { Animated } from 'react-native';
 
 import { Text } from '@components/core';
-import { spacing } from '@theme/index';
+import { spacing, ANIMATION_DURATION } from '@theme/index';
 import { borderRadius } from '@theme/borders';
 import { useTheme } from '@theme/index';
+import { useFadeSlide } from '@theme/hooks';
 
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -23,23 +25,12 @@ function LandingView() {
     useNavigation<NativeStackNavigationProp<ExamplesStackParamList>>();
   const { navigate } = useNavigationRoot();
   const { mode } = useTheme();
-  const headerFadeAnim = useRef(new Animated.Value(0)).current;
-  const headerTranslateY = useRef(new Animated.Value(-30)).current;
 
-  React.useEffect(() => {
-    Animated.parallel([
-      Animated.timing(headerFadeAnim, {
-        toValue: 1,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-      Animated.timing(headerTranslateY, {
-        toValue: 0,
-        duration: 500,
-        useNativeDriver: true,
-      }),
-    ]).start();
-  }, [headerFadeAnim, headerTranslateY]);
+  const { opacity, translateY } = useFadeSlide({
+    offset: 30,
+    duration: ANIMATION_DURATION.slow,
+    direction: 'up',
+  });
 
   return (
     <ScrollView
@@ -51,8 +42,8 @@ function LandingView() {
         style={[
           styles.heroSection,
           {
-            opacity: headerFadeAnim,
-            transform: [{ translateY: headerTranslateY }],
+            opacity,
+            transform: [{ translateY }],
           },
         ]}
       >

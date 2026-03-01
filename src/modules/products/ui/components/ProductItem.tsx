@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Pressable, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 // Components
 import { Text, Card } from '@components/core';
 // Types
@@ -21,19 +21,17 @@ export function ProductItem({ product }: ProductItemProps) {
     navigate(ProductsRoutes.ProductDetail, { productId: product.id });
 
   return (
-    <Pressable onPress={onPress}>
-      <Card>
-        <View style={styles.info}>
-          <Text variant="h3">{product.name}</Text>
-          {product.description ? (
-            <Text variant="body">{product.description}</Text>
-          ) : null}
-          <Text variant="caption" style={{ color: theme.colors.primary }}>
-            ${product.price.toFixed(2)}
-          </Text>
-        </View>
-      </Card>
-    </Pressable>
+    <Card onPress={onPress}>
+      <View style={styles.info}>
+        <Text variant="h3">{product.name}</Text>
+        {product.description ? (
+          <Text variant="body">{product.description}</Text>
+        ) : null}
+        <Text variant="caption" style={{ color: theme.colors.primary }}>
+          ${product.price.toFixed(2)}
+        </Text>
+      </View>
+    </Card>
   );
 }
 

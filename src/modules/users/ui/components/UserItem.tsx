@@ -55,60 +55,58 @@ export function UserItem({ user }: UserItemProps) {
   };
 
   return (
-    <Pressable onPress={handleCardPress}>
-      <Card style={styles.card}>
-        <View style={styles.row}>
-          <View style={styles.header}>
-            <Avatar name={user.name} userId={user.id} size="md" />
-            <View>
-              <Text variant="h3">{user.name}</Text>
-              <Text variant="bodySmall" color="textSecondary">
-                {user.email}
-              </Text>
-            </View>
-          </View>
-          <Badge label={user.role} variant={getRoleVariant(user.role)} />
-        </View>
-        <View style={styles.row}>
-          <View style={{ gap: spacing.xs }}>
-            <Text variant="caption">📞 {user.phone}</Text>
-            <Text variant="caption">📅 {formatJoinDate(user.createdAt)}</Text>
-          </View>
-          {/* Action Buttons */}
-          <View style={[styles.row, { gap: spacing.xs }]}>
-            <Pressable
-              onPress={handleViewPress}
-              style={({ pressed }) => [
-                styles.actionButton,
-                pressed && styles.actionButtonPressed,
-              ]}
-            >
-              <Text>👁️</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={handleEditPress}
-              style={({ pressed }) => [
-                styles.actionButton,
-                pressed && styles.actionButtonPressed,
-              ]}
-            >
-              <Text>✏️</Text>
-            </Pressable>
-
-            <Pressable
-              onPress={handleDeletePress}
-              style={({ pressed }) => [
-                styles.actionButton,
-                pressed && styles.actionButtonPressed,
-              ]}
-            >
-              <Text>🗑️</Text>
-            </Pressable>
+    <Card style={styles.card} onPress={handleCardPress}>
+      <View style={styles.row}>
+        <View style={styles.header}>
+          <Avatar name={user.name} userId={user.id} size="md" />
+          <View>
+            <Text variant="h3">{user.name}</Text>
+            <Text variant="bodySmall" color="textSecondary">
+              {user.email}
+            </Text>
           </View>
         </View>
-      </Card>
-    </Pressable>
+        <Badge label={user.role} variant={getRoleVariant(user.role)} />
+      </View>
+      <View style={styles.row}>
+        <View style={{ gap: spacing.xs }}>
+          <Text variant="caption">📞 {user.phone}</Text>
+          <Text variant="caption">📅 {formatJoinDate(user.createdAt)}</Text>
+        </View>
+        {/* Action Buttons */}
+        <View style={[styles.row, { gap: spacing.xs }]}>
+          <Pressable
+            onPress={handleViewPress}
+            style={({ pressed }) => [
+              styles.actionButton,
+              pressed && styles.actionButtonPressed,
+            ]}
+          >
+            <Text>👁️</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={handleEditPress}
+            style={({ pressed }) => [
+              styles.actionButton,
+              pressed && styles.actionButtonPressed,
+            ]}
+          >
+            <Text>✏️</Text>
+          </Pressable>
+
+          <Pressable
+            onPress={handleDeletePress}
+            style={({ pressed }) => [
+              styles.actionButton,
+              pressed && styles.actionButtonPressed,
+            ]}
+          >
+            <Text>🗑️</Text>
+          </Pressable>
+        </View>
+      </View>
+    </Card>
   );
 }
 

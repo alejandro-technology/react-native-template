@@ -20,6 +20,7 @@ import {
 } from '@theme/components/DatePicker.styles';
 import { Text } from './Text';
 import { BorderRadiusToken } from '@theme/borders';
+import { AnimatedPressable } from './AnimatedPressable';
 
 export interface DatePickerProps {
   value: Date | null;
@@ -120,7 +121,7 @@ export const DatePicker = forwardRef<RNTextInput, DatePickerProps>(
 
     return (
       <View>
-        <Pressable onPress={handlePress} style={styles.iconButton}>
+        <AnimatedPressable onPress={handlePress} style={styles.iconButton}>
           <TextInput
             ref={ref}
             label={label}
@@ -135,7 +136,7 @@ export const DatePicker = forwardRef<RNTextInput, DatePickerProps>(
             {...textInputProps}
             onPressIn={handlePress}
           />
-        </Pressable>
+        </AnimatedPressable>
 
         {showPicker && (
           <View style={styles.pickerContainer}>

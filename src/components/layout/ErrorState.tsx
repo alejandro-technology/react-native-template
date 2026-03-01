@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
+import { View, StyleSheet, Animated } from 'react-native';
 // Components
 import { Text, Button } from '@components/core';
 // Theme
 import { spacing } from '@theme/index';
 import { useTheme } from '@theme/index';
+import { useFadeScale } from '@theme/hooks';
+import { SPRING_CONFIGS } from '@theme/animations';
 
 interface ErrorStateProps {
   title?: string;
@@ -20,28 +22,16 @@ export function ErrorState({
   retryLabel = 'Reintentar',
 }: ErrorStateProps) {
   const theme = useTheme();
-  const fadeAnim = useRef(new Animated.Value(0)).current;
   const shakeAnim = useRef(new Animated.Value(0)).current;
-  const scaleAnim = useRef(new Animated.Value(0.8)).current;
+
+  const { opacity, scale } = useFadeScale({
+    initialScale: 0.8,
+    duration: 400,
+    springConfig: SPRING_CONFIGS.gentle,
+  });
 
   useEffect(() => {
-    // Fade in + Scale animation
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 400,
-        useNativeDriver: true,
-        easing: Easing.out(Easing.ease),
-      }),
-      Animated.spring(scaleAnim, {
-        toValue: 1,
-        friction: 8,
-        tension: 40,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    // Shake animation
+    // Shake animation (unique to ErrorState)
     Animated.sequence([
       Animated.timing(shakeAnim, {
         toValue: 10,
@@ -64,15 +54,15 @@ export function ErrorState({
         useNativeDriver: true,
       }),
     ]).start();
-  }, [fadeAnim, shakeAnim, scaleAnim]);
+  }, [shakeAnim]);
 
   return (
     <Animated.View
       style={[
         styles.container,
         {
-          opacity: fadeAnim,
-          transform: [{ translateX: shakeAnim }, { scale: scaleAnim }],
+          opacity,
+          transform: [{ translateX: shakeAnim }, { scale }],
         },
       ]}
     >

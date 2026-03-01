@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Pressable,
   PressableProps,
   ViewStyle,
   TextStyle,
@@ -18,6 +17,7 @@ import { BorderRadiusToken } from '@theme/borders';
 import { useTheme, spacing } from '@theme/index';
 // Theme
 import { Text } from './Text';
+import { AnimatedPressable } from './AnimatedPressable';
 
 interface ButtonProps extends Omit<PressableProps, 'style'> {
   children: React.ReactNode;
@@ -52,8 +52,6 @@ export function Button(props: ButtonProps) {
 
   const theme = useTheme();
   const isDisabled = disabled || loading;
-  //   const isStringChildren = typeof children === 'string';
-  //   console.log('isStringChildren', isStringChildren, children);
 
   const styles = getButtonStyle({
     mode: theme.mode,
@@ -71,14 +69,10 @@ export function Button(props: ButtonProps) {
   };
 
   return (
-    <Pressable
+    <AnimatedPressable
       onPress={handlePress}
       disabled={isDisabled}
-      style={({ pressed }) => [
-        styles.container,
-        customStyle,
-        pressed && !isDisabled && { opacity: 0.8 },
-      ]}
+      style={[styles.container, customStyle]}
       {...pressableProps}
     >
       {loading && (
@@ -96,7 +90,7 @@ export function Button(props: ButtonProps) {
       </Text>
 
       {rightIcon && <View style={baseStyle.rightIcon}>{rightIcon}</View>}
-    </Pressable>
+    </AnimatedPressable>
   );
 }
 

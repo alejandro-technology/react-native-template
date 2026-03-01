@@ -1,10 +1,11 @@
 import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, Easing } from 'react-native';
+import { View, StyleSheet, Animated } from 'react-native';
 // Components
 import { Text } from '@components/core';
 // Theme
-import { spacing } from '@theme/index';
+import { spacing, ANIMATION_EASING } from '@theme/index';
 import { useTheme } from '@theme/index';
+import { useAnimatedLoop } from '@theme/hooks';
 
 interface LoadingStateProps {
   message?: string;
@@ -13,51 +14,24 @@ interface LoadingStateProps {
 export function LoadingState({ message = 'Cargando...' }: LoadingStateProps) {
   const theme = useTheme();
   const fadeAnim = useRef(new Animated.Value(0)).current;
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const rotateAnim = useRef(new Animated.Value(0)).current;
+
+  const { value: pulseAnim } = useAnimatedLoop({
+    type: 'pulse',
+    duration: 800,
+  });
+  const { interpolated: spin } = useAnimatedLoop({
+    type: 'rotate',
+    duration: 1200,
+  });
 
   useEffect(() => {
-    // Fade in animation
     Animated.timing(fadeAnim, {
       toValue: 1,
       duration: 400,
       useNativeDriver: true,
-      easing: Easing.out(Easing.ease),
+      easing: ANIMATION_EASING.entrance,
     }).start();
-
-    // Pulse animation
-    Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseAnim, {
-          toValue: 1.1,
-          duration: 800,
-          useNativeDriver: true,
-          easing: Easing.inOut(Easing.ease),
-        }),
-        Animated.timing(pulseAnim, {
-          toValue: 1,
-          duration: 800,
-          useNativeDriver: true,
-          easing: Easing.inOut(Easing.ease),
-        }),
-      ]),
-    ).start();
-
-    // Rotation animation
-    Animated.loop(
-      Animated.timing(rotateAnim, {
-        toValue: 1,
-        duration: 1200,
-        useNativeDriver: true,
-        easing: Easing.linear,
-      }),
-    ).start();
-  }, [fadeAnim, pulseAnim, rotateAnim]);
-
-  const spin = rotateAnim.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0deg', '360deg'],
-  });
+  }, [fadeAnim]);
 
   return (
     <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
@@ -65,7 +39,7 @@ export function LoadingState({ message = 'Cargando...' }: LoadingStateProps) {
         style={[
           styles.spinnerContainer,
           {
-            transform: [{ scale: pulseAnim }, { rotate: spin }],
+            transform: [{ scale: pulseAnim }, { rotate: spin! }],
           },
         ]}
       >
