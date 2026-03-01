@@ -2,13 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 // Components
 import { Text, Card, Button } from '@components/core';
-import {
-  LoadingState,
-  ErrorState,
-  EmptyState,
-  RootLayout,
-  DeleteConfirmationSheet,
-} from '@components/layout';
+import { LoadingState, ErrorState, EmptyState, RootLayout } from '@components/layout';
 // Application
 import { useUser } from '../application/user.queries';
 import { useUserDelete } from '../application/user.mutations';
@@ -28,19 +22,8 @@ export function UserDetailView({
   const { goBack, navigate } = useNavigationUsers();
 
   const { data: user, isLoading, isError, error } = useUser(userId);
-  const { mutate: deleteUser, isPending: isDeleting } = useUserDelete();
-  const { visible, entityName, entityType, open, close } = useAppStorage(
-    state => state.modal,
-  );
-
-  const handleDelete = () => {
-    deleteUser(userId, {
-      onSuccess: () => {
-        close();
-        goBack();
-      },
-    });
-  };
+  const { mutateAsync: deleteUserAsync } = useUserDelete();
+  const { open, close } = useAppStorage(state => state.modal);
 
   function handleEdit() {
     user && navigate(UsersRoutes.UserForm, { user });
@@ -112,24 +95,19 @@ export function UserDetailView({
           variant="primary"
           onPress={() =>
             open({
-              entityId: userId,
               entityName: user.name,
               entityType: 'usuario',
+              onConfirm: async () => {
+                await deleteUserAsync(userId);
+                close();
+                goBack();
+              },
             })
           }
         >
           Eliminar Usuario
         </Button>
       </View>
-
-      <DeleteConfirmationSheet
-        visible={visible}
-        onClose={close}
-        onConfirm={handleDelete}
-        isLoading={isDeleting}
-        entityName={entityName}
-        entityType={entityType}
-      />
     </RootLayout>
   );
 }

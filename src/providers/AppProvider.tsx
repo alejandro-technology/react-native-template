@@ -5,6 +5,8 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SecureProvider from './SecureProvider';
 import NavigationProvider from './NavigationProvider';
 import ThemeProvider from '@theme/providers/ThemeProvider';
+// Components
+import { GlobalDeleteConfirmation } from '@components/layout';
 // Styles
 import { useTheme, commonStyles } from '@theme/index';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -17,7 +19,10 @@ export default function AppProvider({ children }: PropsWithChildren) {
         <ThemeProvider>
           <SafeAreaProvider>
             <GestureHandlerProvider>
-              <NavigationProvider>{children}</NavigationProvider>
+              <NavigationProvider>
+                {children}
+                <GlobalDeleteConfirmation />
+              </NavigationProvider>
             </GestureHandlerProvider>
           </SafeAreaProvider>
         </ThemeProvider>

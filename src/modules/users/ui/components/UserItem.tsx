@@ -11,6 +11,8 @@ import { UsersRoutes } from '@navigation/routes';
 import { useNavigationUsers } from '@navigation/hooks';
 // Store
 import { useAppStorage } from '@modules/core/infrastructure/app.storage';
+// Application
+import { useUserDelete } from '@modules/users/application/user.mutations';
 // Helpers
 import {
   getRoleVariant,
@@ -23,7 +25,8 @@ interface UserItemProps {
 
 export function UserItem({ user }: UserItemProps) {
   const { navigate } = useNavigationUsers();
-  const { open: openDeleteConfirmation } = useAppStorage(s => s.modal);
+  const { mutateAsync: deleteUserAsync } = useUserDelete();
+  const { open, close } = useAppStorage(s => s.modal);
 
   const handleCardPress = () => {
     navigate(UsersRoutes.UserDetail, { userId: user.id });
@@ -41,12 +44,13 @@ export function UserItem({ user }: UserItemProps) {
 
   const handleDeletePress = (e: any) => {
     e.stopPropagation();
-    console.log('Handle delete: ', user.id, openDeleteConfirmation);
-
-    openDeleteConfirmation({
-      entityId: user.id,
+    open({
       entityName: user.name,
       entityType: 'usuario',
+      onConfirm: async () => {
+        await deleteUserAsync(user.id);
+        close();
+      },
     });
   };
 

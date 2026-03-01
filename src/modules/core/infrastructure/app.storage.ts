@@ -1,25 +1,28 @@
 import { create } from 'zustand';
 
+type ModalOpenParams = {
+  entityName: string;
+  entityType: string;
+  onConfirm: () => Promise<void>;
+};
+
 interface State {
-  modal: ModalState & {
+  modal: {
     visible: boolean;
-    open: (params: ModalState) => void;
+    entityName: string;
+    entityType: string;
+    onConfirm: (() => Promise<void>) | null;
+    open: (params: ModalOpenParams) => void;
     close: () => void;
   };
 }
 
-type ModalState = {
-  entityId: string;
-  entityName: string;
-  entityType: string;
-};
-
 const initialState: State = {
   modal: {
     visible: false,
-    entityId: '',
     entityName: '',
     entityType: '',
+    onConfirm: null,
     open: () => {},
     close: () => {},
   },
@@ -34,19 +37,19 @@ export const useAppStorage = create<State>()(set => ({
         modal: {
           ...state.modal,
           visible: false,
-          entityId: '',
           entityName: '',
           entityType: '',
+          onConfirm: null,
         },
       })),
-    open: ({ entityId, entityName, entityType }: ModalState) =>
+    open: ({ entityName, entityType, onConfirm }: ModalOpenParams) =>
       set(state => ({
         modal: {
           ...state.modal,
           visible: true,
-          entityId,
           entityName,
           entityType,
+          onConfirm,
         },
       })),
   },

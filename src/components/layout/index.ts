@@ -6,3 +6,4 @@ export * from './Header';
 export * from './Toolbar';
 export * from './ItemSeparatorComponent';
 export * from './DeleteConfirmationSheet';
+export * from '../../modules/core/ui/GlobalDeleteConfirmation';

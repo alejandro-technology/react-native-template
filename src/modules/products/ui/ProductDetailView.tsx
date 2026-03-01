@@ -2,13 +2,7 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 // Components
 import { Text, Card, Button } from '@components/core';
-import {
-  LoadingState,
-  ErrorState,
-  EmptyState,
-  RootLayout,
-  DeleteConfirmationSheet,
-} from '@components/layout';
+import { LoadingState, ErrorState, EmptyState, RootLayout } from '@components/layout';
 // Application
 import { useProduct } from '../application/product.queries';
 import { useProductDelete } from '../application/product.mutations';
@@ -28,19 +22,8 @@ export function ProductDetailView({
   const { goBack, navigate } = useNavigationProducts();
 
   const { data: product, isLoading, isError, error } = useProduct(productId);
-  const { mutate: deleteProduct, isPending: isDeleting } = useProductDelete();
-  const { visible, entityName, entityType, open, close } = useAppStorage(
-    state => state.modal,
-  );
-
-  const handleDelete = () => {
-    deleteProduct(productId, {
-      onSuccess: () => {
-        close();
-        goBack();
-      },
-    });
-  };
+  const { mutateAsync: deleteProductAsync } = useProductDelete();
+  const { open, close } = useAppStorage(state => state.modal);
 
   function handleEdit() {
     product && navigate(ProductsRoutes.ProductForm, { product });
@@ -102,24 +85,19 @@ export function ProductDetailView({
           variant="primary"
           onPress={() =>
             open({
-              entityId: productId,
               entityName: product.name,
               entityType: 'producto',
+              onConfirm: async () => {
+                await deleteProductAsync(productId);
+                close();
+                goBack();
+              },
             })
           }
         >
           Eliminar Producto
         </Button>
       </View>
-
-      <DeleteConfirmationSheet
-        visible={visible}
-        onClose={close}
-        onConfirm={handleDelete}
-        isLoading={isDeleting}
-        entityName={entityName}
-        entityType={entityType}
-      />
     </RootLayout>
   );
 }
