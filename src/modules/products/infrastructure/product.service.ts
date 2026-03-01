@@ -7,10 +7,10 @@ import { CONFIG } from '@config/config';
  * Product Service Factory
  *
  * This factory returns the appropriate ProductRepository implementation
- * based on the PRODUCT_SERVICE_PROVIDER configuration.
+ * based on the SERVICE_PROVIDER configuration.
  *
- * To switch between implementations, update the PRODUCT_SERVICE_PROVIDER
- * constant in product.config.ts
+ * To switch between implementations, update the SERVICE_PROVIDER
+ * constant in config/config.ts
  */
 function createProductService(): ProductRepository {
   switch (CONFIG.SERVICE_PROVIDER) {
