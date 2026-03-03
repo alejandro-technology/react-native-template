@@ -8,7 +8,7 @@ description: React Native Clean Architecture Template guidance for agents. Invok
 ## Project Overview
 
 - React Native v0.84.0 with TypeScript and Jest tests.
-- Core flow: App.tsx -> AppProvider -> RootNavigator.
+- Core flow: `App.tsx` -> `AppProvider` -> `RootNavigator`.
 - Architecture: 4-layer feature modules (Domain, Application, Infrastructure, UI).
 - Node.js: >= 22.11.0
 
@@ -18,7 +18,7 @@ Additional patterns in `CLAUDE.md` (services, Zod, theme, navigation, providers)
 
 ## OpenCode Integration
 
-El agente tiene acceso directo a `.ai/rules/`, `.ai/agents/`, y `.ai/skills/`. Usa el skill tool o lee el archivo correspondiente.
+El agente tiene acceso directo a `.ai/rules/`, `.ai/agents/`, y `.ai/skills/`.
 
 ### Skills
 
@@ -56,16 +56,30 @@ El agente tiene acceso directo a `.ai/rules/`, `.ai/agents/`, y `.ai/skills/`. U
 
 ### Rules
 
-- Reference: `@.ai/rules/reference.md`
+- Reference: `@.ai/rules/reference.md` (path aliases, naming conventions)
 
 ---
 
 ## Agents Available
 
-- **scaffolder**: Create new modules (Users, Transactions, etc.) - `@.ai/agents/scaffolder.md`
+- **scaffolder**: Create new modules - `@.ai/agents/scaffolder.md`
 - **test-writer**: Generate Jest tests - `@.ai/agents/test-writer.md`
 - **theme-auditor**: Fix hardcoded colors/spacing - `@.ai/agents/theme-auditor.md`
-- **ci-cd-architect**: GitHub Actions and deployment pipelines - `@.ai/agents/ci-cd-architect.md`
+- **ci-cd-architect**: GitHub Actions pipelines - `@.ai/agents/ci-cd-architect.md`
+
+---
+
+## Architecture
+
+```
+src/modules/{feature}/
+├── domain/         # Pure TypeScript (models, schemas, adapters)
+├── infrastructure/ # Services (HTTP, Firebase)
+├── application/    # React Query hooks
+└── ui/             # React Native views + components
+```
+
+Layer rules: UI → application → infrastructure → domain. Never: UI imports from infrastructure.
 
 ---
 

@@ -6,45 +6,17 @@ priority: high
 tags:
   - reference
   - quick-lookup
-  - architecture
-  - commands
+  - aliases
+  - naming
 triggers:
-  - 'General reference queries'
-  - 'Quick lookup'
-description: Quick reference for architecture, commands, aliases, and naming. Complements CLAUDE.md (which covers behavioral patterns). For detailed enforcement, see .ai/skills/
+  - 'Quick lookup for aliases'
+  - 'Quick lookup for naming conventions'
+description: Quick reference for path aliases and naming conventions. For commands and architecture overview, see AGENTS.md. For detailed enforcement, see .ai/skills/
 ---
 
 # Quick Reference
 
-Structural lookups and conventions. For behavioral patterns (factory, T|Error, Zod, adapters), see `CLAUDE.md`. For detailed enforcement, see `.claude/skills/`.
-
-## Architecture
-
-Clean Architecture with 4 layers per module:
-
-```
-src/modules/{feature}/
-├── domain/         # Pure TypeScript (models, schemas, adapters)
-├── infrastructure/ # Services (HTTP, Firebase)
-├── application/    # React Query hooks
-└── ui/             # React Native views + components
-```
-
-**Layer rules**: UI → application → infrastructure → domain
-**Never**: UI imports from infrastructure
-**Details**: See `.claude/skills/enforcement/architecture/`
-
-## Commands
-
-```bash
-npm start              # Metro bundler
-npm run ios            # iOS simulator
-npm run android        # Android emulator
-npm run lint           # ESLint
-npm run prettier       # Format code
-npm test               # Run tests
-npm test -- --coverage # Run with coverage
-```
+Quick lookup for path aliases and naming conventions. For commands and architecture, see `AGENTS.md`.
 
 ## Path Aliases
 
@@ -66,8 +38,6 @@ npm test -- --coverage # Run with coverage
 | Hooks      | `use` + camelCase | `useProducts`           |
 | Constants  | SCREAMING_SNAKE   | `API_ROUTES`            |
 
-Full guide: `.claude/skills/enforcement/code-quality/`
-
 ---
 
-**For detailed patterns, enforcement rules, and code generation**, see skills in `.claude/skills/`.
+For detailed patterns, enforcement rules, and code generation, see skills in `.ai/skills/`.

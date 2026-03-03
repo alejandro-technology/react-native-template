@@ -2,11 +2,12 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Commands, architecture structure, naming conventions, and testing rules are in `.claude/rules/` (auto-injected). This file covers cross-cutting patterns not documented there.
+Commands, architecture structure, naming conventions, and testing rules are in `.ai/` (skills, agents, rules). This file covers cross-cutting patterns not documented there.
 
 ## Key Patterns
 
 **Services use factory pattern** — class implements a repository interface, factory function returns the interface type, default export is the singleton:
+
 ```typescript
 class AuthService implements AuthRepository { ... }
 function createAuthService(): AuthRepository { return new AuthService(); }
@@ -14,6 +15,7 @@ export default createAuthService();
 ```
 
 **Services return `T | Error`** instead of throwing. Mutations convert these to throws for React Query:
+
 ```typescript
 const result = await authService.signup(payload);
 if (result instanceof Error) throw result;
@@ -22,6 +24,7 @@ if (result instanceof Error) throw result;
 **Adapters** transform data between layers (form data → API payload, API response → domain entity). Located in `domain/*.adapter.ts`.
 
 **Zod schemas** define form validation and infer TypeScript types via `z.infer<typeof schema>`. Located in `domain/*.scheme.ts`. Validation rules:
+
 - Error messages in Spanish
 - Use string format: `.min(1, 'message')` NOT object format: `.min(1, { message: 'message' })`
 - Optional fields: use `.optional()` suffix
