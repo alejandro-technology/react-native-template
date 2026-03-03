@@ -1,5 +1,18 @@
 ---
 name: theme-styling
+category: enforcement
+layer: ui
+priority: high
+tags:
+  - theme-system
+  - design-tokens
+  - style-factories
+  - animations
+  - dark-mode
+triggers:
+  - 'Styling components'
+  - 'Creating theme-aware UI'
+  - 'Adding animations'
 description: Guide the 5-mode theme system, design tokens, component style factories, and animation hooks. Use when styling components, creating theme-aware UI, or adding animations.
 ---
 
@@ -19,13 +32,13 @@ Enforces the design token system, theme-aware component styling, and animation p
 
 5 theme modes, all accessible via `useTheme()`:
 
-| Mode | Background | Primary | Use Case |
-|---|---|---|---|
-| `light` | #f6f6f8 | #3B82F6 | Default light |
-| `dark` | #0F172A | #60A5FA | Dark mode |
-| `primary` | #EFF6FF | #2563EB | Corporate blue |
-| `secondary` | #F0FDF4 | #16A34A | Nature green |
-| `premium` | #FAF5FF | #7C3AED | Elegant purple |
+| Mode        | Background | Primary | Use Case       |
+| ----------- | ---------- | ------- | -------------- |
+| `light`     | #f6f6f8    | #3B82F6 | Default light  |
+| `dark`      | #0F172A    | #60A5FA | Dark mode      |
+| `primary`   | #EFF6FF    | #2563EB | Corporate blue |
+| `secondary` | #F0FDF4    | #16A34A | Nature green   |
+| `premium`   | #FAF5FF    | #7C3AED | Elegant purple |
 
 ## Design Tokens
 
@@ -34,14 +47,14 @@ Enforces the design token system, theme-aware component styling, and animation p
 ```typescript
 import { spacing } from '@theme/index';
 
-spacing.xs   // 4px  - Tight gaps
-spacing.sm   // 8px  - Small padding
-spacing.md   // 12px - Default gaps
-spacing.base // 16px - Standard padding
-spacing.lg   // 24px - Section padding
-spacing.xl   // 32px - Large sections
-spacing['2xl'] // 48px
-spacing['3xl'] // 64px
+spacing.xs; // 4px  - Tight gaps
+spacing.sm; // 8px  - Small padding
+spacing.md; // 12px - Default gaps
+spacing.base; // 16px - Standard padding
+spacing.lg; // 24px - Section padding
+spacing.xl; // 32px - Large sections
+spacing['2xl']; // 48px
+spacing['3xl']; // 64px
 ```
 
 ### Typography Variants
@@ -73,12 +86,12 @@ import { Text } from '@components/core';
 ```typescript
 import { borderRadius } from '@theme/index';
 
-borderRadius.none // 0
-borderRadius.sm   // 4px
-borderRadius.md   // 8px
-borderRadius.lg   // 12px
-borderRadius.xl   // 16px
-borderRadius.full // 9999px (circles)
+borderRadius.none; // 0
+borderRadius.sm; // 4px
+borderRadius.md; // 8px
+borderRadius.lg; // 12px
+borderRadius.xl; // 16px
+borderRadius.full; // 9999px (circles)
 ```
 
 ## Component Style Factories
@@ -127,10 +140,10 @@ const styles = StyleSheet.create({
 ```typescript
 import { ANIMATION_DURATION } from '@theme/index';
 
-ANIMATION_DURATION.fast    // 200ms - Quick feedback
-ANIMATION_DURATION.normal  // 400ms - Standard transitions
-ANIMATION_DURATION.slow    // 600ms - Emphasis animations
-ANIMATION_DURATION.slowest // 1000ms - Dramatic entrances
+ANIMATION_DURATION.fast; // 200ms - Quick feedback
+ANIMATION_DURATION.normal; // 400ms - Standard transitions
+ANIMATION_DURATION.slow; // 600ms - Emphasis animations
+ANIMATION_DURATION.slowest; // 1000ms - Dramatic entrances
 ```
 
 ### Focus-Based Animation Hooks
@@ -155,27 +168,27 @@ const { animatedStyle } = useFocusSlideIn({
 
 ### Animation Usage Convention
 
-| Screen Type | Animation | Duration |
-|---|---|---|
-| Detail content | `useFocusFadeIn` | `slow` |
-| Detail buttons | `useFocusFadeIn` + delay 300 | `slow` |
-| Form content | `useFocusSlideIn('right')` | `slow` |
-| List items | `useFocusFadeIn` + index * 100 delay | `normal` |
+| Screen Type    | Animation                             | Duration |
+| -------------- | ------------------------------------- | -------- |
+| Detail content | `useFocusFadeIn`                      | `slow`   |
+| Detail buttons | `useFocusFadeIn` + delay 300          | `slow`   |
+| Form content   | `useFocusSlideIn('right')`            | `slow`   |
+| List items     | `useFocusFadeIn` + index \* 100 delay | `normal` |
 
 ## Validation Rules
 
-| Rule | Description |
-|---|---|
-| R1 | Use `spacing` tokens, never raw pixel values |
-| R2 | Use `Text` component with `variant` prop, never raw `<RNText>` |
-| R3 | Use `useTheme()` for dynamic colors, not hardcoded hex |
-| R4 | Style factories in `theme/components/`, not in component files |
-| R5 | `StyleSheet.create()` at bottom of file, not inline |
-| R6 | Animation durations from `ANIMATION_DURATION` constants |
-| R7 | Screen entrance animations use focus-based hooks |
-| R8 | List item animations stagger by `index * 100` delay |
-| R9 | Buttons use `variant` prop (`primary`, `secondary`, `outlined`, `ghost`) |
-| R10 | Cards use `variant` prop (`elevated`, `outlined`) |
+| Rule | Description                                                              |
+| ---- | ------------------------------------------------------------------------ |
+| R1   | Use `spacing` tokens, never raw pixel values                             |
+| R2   | Use `Text` component with `variant` prop, never raw `<RNText>`           |
+| R3   | Use `useTheme()` for dynamic colors, not hardcoded hex                   |
+| R4   | Style factories in `theme/components/`, not in component files           |
+| R5   | `StyleSheet.create()` at bottom of file, not inline                      |
+| R6   | Animation durations from `ANIMATION_DURATION` constants                  |
+| R7   | Screen entrance animations use focus-based hooks                         |
+| R8   | List item animations stagger by `index * 100` delay                      |
+| R9   | Buttons use `variant` prop (`primary`, `secondary`, `outlined`, `ghost`) |
+| R10  | Cards use `variant` prop (`elevated`, `outlined`)                        |
 
 ## Anti-Patterns
 

@@ -1,5 +1,16 @@
 ---
 name: create-module
+category: generation
+layer: cross-cutting
+priority: high
+tags:
+  - clean-architecture
+  - module-scaffold
+  - feature-module
+  - cruds
+triggers:
+  - 'Creating new feature'
+  - 'Adding new entity'
 description: Create new feature modules following Clean Architecture. Use when creating a new feature with domain, infrastructure, application, and UI layers.
 ---
 
@@ -260,6 +271,7 @@ const styles = StyleSheet.create({
 ## Validation Messages
 
 Use Spanish for validation messages:
+
 - `'El campo es requerido'`
 - `'Email inválido'`
 - `'Mínimo {min} caracteres'`

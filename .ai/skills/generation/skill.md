@@ -9,12 +9,14 @@ These skills are designed to accelerate development by scaffolding new code stru
 
 ## Available Skills
 
-- **[Create Component](create-component/SKILL.md)**: Scaffolds UI, Form, or Layout components.
-- **[Create Firebase Service](create-firebase-service/SKILL.md)**: Scaffolds Firebase implementations for services.
-- **[Create Form](create-form/SKILL.md)**: Scaffolds Zod schemas and react-hook-form implementations.
-- **[Create Hook](create-hook/SKILL.md)**: Scaffolds custom React hooks.
-- **[Create Module](create-module/SKILL.md)**: Scaffolds complete 4-layer feature modules.
-- **[Create Navigation](create-navigation/SKILL.md)**: Scaffolds navigation stacks and route definitions.
-- **[Create Provider](create-provider/SKILL.md)**: Scaffolds React Context providers.
-- **[Create Service](create-service/SKILL.md)**: Scaffolds infrastructure services with the factory pattern.
-- **[Create Store](create-store/SKILL.md)**: Scaffolds Zustand stores.
+| Skill                                                       | Layer          | Priority | Description                                                 |
+| ----------------------------------------------------------- | -------------- | -------- | ----------------------------------------------------------- |
+| [Create Component](create-component/SKILL.md)               | ui             | high     | Scaffolds UI, Form, or Layout components.                   |
+| [Create Firebase Service](create-firebase-service/SKILL.md) | infrastructure | medium   | Scaffolds Firebase implementations for services.            |
+| [Create Form](create-form/SKILL.md)                         | ui             | high     | Scaffolds Zod schemas and react-hook-form implementations.  |
+| [Create Hook](create-hook/SKILL.md)                         | application    | medium   | Scaffolds custom React hooks.                               |
+| [Create Module](create-module/SKILL.md)                     | cross-cutting  | high     | Scaffolds complete 4-layer feature modules.                 |
+| [Create Navigation](create-navigation/SKILL.md)             | ui             | high     | Scaffolds navigation stacks and route definitions.          |
+| [Create Provider](create-provider/SKILL.md)                 | ui             | medium   | Scaffolds React Context providers.                          |
+| [Create Service](create-service/SKILL.md)                   | infrastructure | high     | Scaffolds infrastructure services with the factory pattern. |
+| [Create Store](create-store/SKILL.md)                       | application    | medium   | Scaffolds Zustand stores.                                   |

@@ -1,5 +1,15 @@
 ---
 name: create-provider
+category: generation
+layer: ui
+priority: medium
+tags:
+  - react-context
+  - providers
+  - dependency-injection
+triggers:
+  - 'Creating context providers'
+  - 'Adding feature providers'
 description: Create React context providers following project conventions. Use when creating context providers for dependency injection or feature-specific providers.
 ---
 
@@ -159,6 +169,7 @@ All providers in: `src/providers/`
 ## Provider Order
 
 In AppProvider, wrap in this order (innermost first):
+
 1. NavigationContainer
 2. ThemeProvider
 3. QueryClientProvider

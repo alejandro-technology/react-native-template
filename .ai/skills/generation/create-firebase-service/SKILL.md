@@ -1,5 +1,16 @@
 ---
 name: create-firebase-service
+category: generation
+layer: infrastructure
+priority: medium
+tags:
+  - firebase
+  - firestore
+  - nosql
+  - real-time
+triggers:
+  - 'Implementing Firestore access'
+  - 'Creating Firebase services'
 description: Create new Firebase services/repositories following the project's architecture. Use when implementing data access layers with Firestore.
 ---
 
@@ -18,20 +29,22 @@ Create services that interact with Firebase Firestore following the project's ar
 Services should follow this pattern:
 
 1.  **Imports**:
-    -   `firestore` from `@react-native-firebase/firestore`.
-    -   `COLLECTIONS` from `@config/api.collections`.
-    -   `manageAppError` from `@modules/shared/app/error`.
-    -   `collectionResponseAdapter` from `@modules/shared/domain/adapter` (for lists).
-    -   Models from `../domain/model`.
+
+    - `firestore` from `@react-native-firebase/firestore`.
+    - `COLLECTIONS` from `@config/api.collections`.
+    - `manageAppError` from `@modules/shared/app/error`.
+    - `collectionResponseAdapter` from `@modules/shared/domain/adapter` (for lists).
+    - Models from `../domain/model`.
 
 2.  **Class Structure**:
-    -   Methods for CRUD operations (`find`, `create`, `update`, `delete`).
-    -   Use `firestore().collection(COLLECTIONS.name)` or `this.db`.
+
+    - Methods for CRUD operations (`find`, `create`, `update`, `delete`).
+    - Use `firestore().collection(COLLECTIONS.name)` or `this.db`.
 
 3.  **Error Handling**:
-    -   Wrap operations in `try-catch`.
-    -   Return `manageAppError(error, 'error_code')` in catch block.
-    -   Do not throw errors; return them.
+    - Wrap operations in `try-catch`.
+    - Return `manageAppError(error, 'error_code')` in catch block.
+    - Do not throw errors; return them.
 
 ## Example
 
@@ -81,13 +94,10 @@ class SomeFirebaseService {
       return manageAppError(error, 'some_update');
     }
   }
-  
+
   async delete(id: string) {
     try {
-      await firestore()
-        .collection(COLLECTIONS.someCollection)
-        .doc(id)
-        .delete();
+      await firestore().collection(COLLECTIONS.someCollection).doc(id).delete();
       return true;
     } catch (error: any) {
       return manageAppError(error, 'some_delete');

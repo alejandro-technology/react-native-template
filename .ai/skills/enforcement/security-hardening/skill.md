@@ -1,5 +1,17 @@
 ---
 name: security-hardening
+category: enforcement
+layer: cross-cutting
+priority: high
+tags:
+  - secure-storage
+  - authentication
+  - data-protection
+  - device-security
+triggers:
+  - 'Implementing auth flows'
+  - 'Storing sensitive data'
+  - 'Security code review'
 description: Enforce device security, secure storage, authentication patterns, and data protection. Use when implementing auth flows, storing sensitive data, or reviewing security-sensitive code.
 ---
 
@@ -43,7 +55,10 @@ export default function SecureProvider({ children }: PropsWithChildren) {
   if (JailMonkey.isJailBroken()) {
     return (
       <View style={commonStyles.center}>
-        <Text>Dispositivo no compatible. Esta aplicacion no funciona en dispositivos rooteados.</Text>
+        <Text>
+          Dispositivo no compatible. Esta aplicacion no funciona en dispositivos
+          rooteados.
+        </Text>
       </View>
     );
   }
@@ -80,7 +95,10 @@ export const mmkvStorage: StateStorage = {
 
 // Custom Date reviver for ISO timestamps
 export const mmkvReviver = (_key: string, value: unknown) => {
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(value)) {
+  if (
+    typeof value === 'string' &&
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/.test(value)
+  ) {
     return new Date(value);
   }
   return value;
@@ -110,12 +128,12 @@ export const useThemeStorage = create<State>()(
 
 ### Storage Rules
 
-| Rule | Description |
-|---|---|
-| Use MMKV over AsyncStorage | Faster, encrypted, synchronous |
-| Unique storage IDs | Each store uses a distinct `id`/`name` |
-| Date reviver for timestamps | Prevents date strings from losing type info |
-| Zustand middleware integration | `createJSONStorage(() => mmkvStorage)` |
+| Rule                           | Description                                 |
+| ------------------------------ | ------------------------------------------- |
+| Use MMKV over AsyncStorage     | Faster, encrypted, synchronous              |
+| Unique storage IDs             | Each store uses a distinct `id`/`name`      |
+| Date reviver for timestamps    | Prevents date strings from losing type info |
+| Zustand middleware integration | `createJSONStorage(() => mmkvStorage)`      |
 
 ## Authentication Patterns
 
@@ -227,19 +245,19 @@ coverage/
 
 ## Validation Rules
 
-| Rule | Description |
-|---|---|
-| R1 | SecureProvider is the outermost provider in AppProvider |
-| R2 | MMKV used for all persistent storage, never AsyncStorage |
-| R3 | Each MMKV store has a unique `id` or `name` |
-| R4 | Firebase auth errors use `manageFirebaseError()` |
-| R5 | HTTP auth errors use `manageAxiosError()` |
-| R6 | Error messages never expose technical details |
-| R7 | All user-facing error messages are in Spanish |
-| R8 | Auth tokens stored via MMKV, never in plain state |
-| R9 | `.gitignore` excludes `.env`, `*.keystore`, credentials |
-| R10 | Services return `T \| Error`, never throw |
-| R11 | Axios timeout set to 10000ms |
+| Rule | Description                                              |
+| ---- | -------------------------------------------------------- |
+| R1   | SecureProvider is the outermost provider in AppProvider  |
+| R2   | MMKV used for all persistent storage, never AsyncStorage |
+| R3   | Each MMKV store has a unique `id` or `name`              |
+| R4   | Firebase auth errors use `manageFirebaseError()`         |
+| R5   | HTTP auth errors use `manageAxiosError()`                |
+| R6   | Error messages never expose technical details            |
+| R7   | All user-facing error messages are in Spanish            |
+| R8   | Auth tokens stored via MMKV, never in plain state        |
+| R9   | `.gitignore` excludes `.env`, `*.keystore`, credentials  |
+| R10  | Services return `T \| Error`, never throw                |
+| R11  | Axios timeout set to 10000ms                             |
 
 ## Anti-Patterns
 

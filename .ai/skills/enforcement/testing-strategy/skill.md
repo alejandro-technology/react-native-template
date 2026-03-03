@@ -1,5 +1,18 @@
 ---
 name: testing-strategy
+category: enforcement
+layer: cross-cutting
+priority: high
+tags:
+  - jest
+  - testing-library
+  - mocking
+  - coverage
+  - unit-tests
+triggers:
+  - 'Writing tests'
+  - 'Creating test utilities'
+  - 'Test code review'
 description: Enforce testing patterns, test utilities, mocking strategies, and coverage requirements. Use when writing tests, creating test utilities, or reviewing test code.
 ---
 
@@ -68,9 +81,7 @@ function AllProviders({ children }: PropsWithChildren) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <SafeAreaProvider>
-          <NavigationContainer>
-            {children}
-          </NavigationContainer>
+          <NavigationContainer>{children}</NavigationContainer>
         </SafeAreaProvider>
       </ThemeProvider>
     </QueryClientProvider>
@@ -118,7 +129,11 @@ describe('Button', () => {
   });
 
   it('shows loading indicator when loading', () => {
-    render(<Button onPress={jest.fn()} loading>Guardar</Button>);
+    render(
+      <Button onPress={jest.fn()} loading>
+        Guardar
+      </Button>,
+    );
     expect(screen.getByTestId('loading-indicator')).toBeOnTheScreen();
   });
 });
@@ -172,19 +187,16 @@ describe('ProductItem', () => {
 
 ```typescript
 // Mock at the top of the file
-jest.mock(
-  '@modules/products/infrastructure/product.service',
-  () => ({
-    __esModule: true,
-    default: {
-      getAll: jest.fn(),
-      getById: jest.fn(),
-      create: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
-    },
-  }),
-);
+jest.mock('@modules/products/infrastructure/product.service', () => ({
+  __esModule: true,
+  default: {
+    getAll: jest.fn(),
+    getById: jest.fn(),
+    create: jest.fn(),
+    update: jest.fn(),
+    delete: jest.fn(),
+  },
+}));
 
 import productService from '@modules/products/infrastructure/product.service';
 
@@ -313,41 +325,41 @@ describe('productSchema', () => {
 
 ## What NOT to Test
 
-| Exclude | Reason |
-|---|---|
-| `index.ts` barrel files | Only re-exports, no logic |
-| `*.model.ts` | TypeScript interfaces only, no runtime behavior |
-| `*.repository.ts` | Interface definitions, no implementation |
-| External library internals | Trust React Query, Zustand, Zod |
-| Style factory outputs | Visual testing handled separately |
+| Exclude                    | Reason                                          |
+| -------------------------- | ----------------------------------------------- |
+| `index.ts` barrel files    | Only re-exports, no logic                       |
+| `*.model.ts`               | TypeScript interfaces only, no runtime behavior |
+| `*.repository.ts`          | Interface definitions, no implementation        |
+| External library internals | Trust React Query, Zustand, Zod                 |
+| Style factory outputs      | Visual testing handled separately               |
 
 ## What to Test
 
-| Priority | Target | Pattern |
-|---|---|---|
-| P0 | Domain adapters | Pure function input/output |
-| P0 | Zod schemas | Valid/invalid data, error messages |
-| P1 | List item components | Rendering, navigation on press |
-| P1 | Form components | Field rendering, validation, submit |
-| P2 | React Query hooks | Success/error states, cache keys |
-| P2 | View components | Loading/error/empty/success states |
-| P3 | Utility functions | Edge cases, formatting |
+| Priority | Target               | Pattern                             |
+| -------- | -------------------- | ----------------------------------- |
+| P0       | Domain adapters      | Pure function input/output          |
+| P0       | Zod schemas          | Valid/invalid data, error messages  |
+| P1       | List item components | Rendering, navigation on press      |
+| P1       | Form components      | Field rendering, validation, submit |
+| P2       | React Query hooks    | Success/error states, cache keys    |
+| P2       | View components      | Loading/error/empty/success states  |
+| P3       | Utility functions    | Edge cases, formatting              |
 
 ## Validation Rules
 
-| Rule | Description |
-|---|---|
-| R1 | Tests live in `__tests__/` mirroring `src/` structure |
-| R2 | Use `@test-utils` render, never raw `@testing-library/react-native` |
-| R3 | Mock services at file top: `jest.mock('@modules/.../infrastructure/service')` |
-| R4 | Clear mocks: `beforeEach(() => jest.clearAllMocks())` |
-| R5 | Service mocks return `T \| Error` matching the real contract |
-| R6 | Never test `index.ts`, `*.model.ts`, or `*.repository.ts` |
-| R7 | Test file names: `{Component}.test.tsx` or `{module}.test.ts` |
-| R8 | Each `describe` block covers one component or function |
-| R9 | Query hook tests verify `queryKey` structure |
-| R10 | Mutation hook tests verify cache invalidation keys |
-| R11 | Schema tests check Spanish error messages |
+| Rule | Description                                                                   |
+| ---- | ----------------------------------------------------------------------------- |
+| R1   | Tests live in `__tests__/` mirroring `src/` structure                         |
+| R2   | Use `@test-utils` render, never raw `@testing-library/react-native`           |
+| R3   | Mock services at file top: `jest.mock('@modules/.../infrastructure/service')` |
+| R4   | Clear mocks: `beforeEach(() => jest.clearAllMocks())`                         |
+| R5   | Service mocks return `T \| Error` matching the real contract                  |
+| R6   | Never test `index.ts`, `*.model.ts`, or `*.repository.ts`                     |
+| R7   | Test file names: `{Component}.test.tsx` or `{module}.test.ts`                 |
+| R8   | Each `describe` block covers one component or function                        |
+| R9   | Query hook tests verify `queryKey` structure                                  |
+| R10  | Mutation hook tests verify cache invalidation keys                            |
+| R11  | Schema tests check Spanish error messages                                     |
 
 ## Anti-Patterns
 
@@ -360,15 +372,23 @@ import { render } from '@test-utils';
 
 // WRONG: Not clearing mocks
 describe('ProductItem', () => {
-  it('test 1', () => { /* uses mocks */ });
-  it('test 2', () => { /* stale mocks from test 1 */ });
+  it('test 1', () => {
+    /* uses mocks */
+  });
+  it('test 2', () => {
+    /* stale mocks from test 1 */
+  });
 });
 
 // CORRECT: Clear before each
 describe('ProductItem', () => {
   beforeEach(() => jest.clearAllMocks());
-  it('test 1', () => { /* fresh mocks */ });
-  it('test 2', () => { /* fresh mocks */ });
+  it('test 1', () => {
+    /* fresh mocks */
+  });
+  it('test 2', () => {
+    /* fresh mocks */
+  });
 });
 
 // WRONG: Mocking service that throws

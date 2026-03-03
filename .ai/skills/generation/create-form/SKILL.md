@@ -1,5 +1,16 @@
 ---
 name: create-form
+category: generation
+layer: ui
+priority: high
+tags:
+  - react-hook-form
+  - zod
+  - form-validation
+  - form-components
+triggers:
+  - 'Creating forms'
+  - 'Adding validation'
 description: Create form components with react-hook-form and Zod validation. Use when creating complex forms with multiple fields and validation.
 ---
 
@@ -207,6 +218,7 @@ Always use Spanish for validation messages:
 ## Validation Messages
 
 Use Spanish for validation messages:
+
 - `'El campo es requerido'`
 - `'Email inválido'`
 - `'Mínimo {min} caracteres'`

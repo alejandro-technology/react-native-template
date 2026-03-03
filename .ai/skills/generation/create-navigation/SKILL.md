@@ -1,5 +1,16 @@
 ---
 name: create-navigation
+category: generation
+layer: ui
+priority: high
+tags:
+  - react-navigation
+  - stack-navigator
+  - typed-routes
+  - navigation-flows
+triggers:
+  - 'Setting up navigation'
+  - 'Creating new screens'
 description: Create navigation structure with React Navigation. Use when setting up app navigation, stacks, or routes.
 ---
 

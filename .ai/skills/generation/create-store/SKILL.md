@@ -1,5 +1,16 @@
 ---
 name: create-store
+category: generation
+layer: application
+priority: medium
+tags:
+  - zustand
+  - global-state
+  - mmkv
+  - persistence
+triggers:
+  - 'Creating global state'
+  - 'Adding state persistence'
 description: Create Zustand stores with optional MMKV persistence. Use when creating global state that needs to persist across app restarts.
 ---
 
@@ -162,5 +173,6 @@ src/modules/{feature}/
 ## NOT for Server State
 
 For server state (API data), use React Query in `application/` layer:
+
 - Queries: `{feature}.queries.ts`
 - Mutations: `{feature}.mutations.ts`

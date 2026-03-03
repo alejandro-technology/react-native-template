@@ -1,5 +1,17 @@
 ---
 name: architecture
+category: enforcement
+layer: cross-cutting
+priority: high
+tags:
+  - clean-architecture
+  - layer-boundaries
+  - module-structure
+  - dependency-rules
+triggers:
+  - 'Creating a new feature module'
+  - 'Pull request with module changes'
+  - 'Module audit'
 description: Enforce Clean Architecture patterns, layer boundaries, and module structure. Use when creating, reviewing, or auditing feature modules to ensure architectural consistency.
 ---
 
@@ -43,12 +55,12 @@ UI → Application → Infrastructure → Domain
        Domain          Domain
 ```
 
-| Layer | CAN import from | MUST NOT import from |
-|---|---|---|
-| **domain** | Nothing (pure TypeScript) | infrastructure, application, ui, React |
-| **infrastructure** | domain | application, ui |
-| **application** | domain, infrastructure | ui |
-| **ui** | application, domain (types only) | infrastructure |
+| Layer              | CAN import from                  | MUST NOT import from                   |
+| ------------------ | -------------------------------- | -------------------------------------- |
+| **domain**         | Nothing (pure TypeScript)        | infrastructure, application, ui, React |
+| **infrastructure** | domain                           | application, ui                        |
+| **application**    | domain, infrastructure           | ui                                     |
+| **ui**             | application, domain (types only) | infrastructure                         |
 
 ### Rule Violations to Detect
 
@@ -65,7 +77,10 @@ import { useProducts } from '../application/product.queries';
 import { useState } from 'react'; // In a domain file
 
 // CORRECT: Domain is pure TypeScript
-export interface ProductEntity { id: string; name: string; }
+export interface ProductEntity {
+  id: string;
+  name: string;
+}
 ```
 
 ## Module File Structure (CRUD)
@@ -100,40 +115,46 @@ modules/{entities}/
 ## Validation Rules
 
 ### R1: Every module has exactly 4 layers
+
 - `domain/`, `infrastructure/`, `application/`, `ui/` must exist
 - No extra top-level directories inside a module
 
 ### R2: Domain layer has no framework imports
+
 - No `react`, `react-native`, `@tanstack`, `axios` imports
 - Only `zod` is allowed (for schema validation)
 
 ### R3: Repository interface defines the contract
+
 - Uses `T | Error` return type (not throws)
 - CRUD modules have exactly 5 methods: `getAll`, `getById`, `create`, `update`, `delete`
 
 ### R4: Service factory implements provider switching
+
 - Reads `CONFIG.SERVICE_PROVIDER`
 - Returns singleton via `export default create{Entity}Service()`
 - Supports `'http'` and `'firebase'` cases
 
 ### R5: Application hooks follow naming convention
+
 - Queries: `use{Entities}(filter?, enabled)` and `use{Entity}(id, enabled)`
 - Mutations: `use{Entity}Create()`, `use{Entity}Update()`, `use{Entity}Delete()`
 
 ### R6: UI views follow naming convention
+
 - `{Entities}ListView.tsx` - plural for list
 - `{Entity}DetailView.tsx` - singular for detail
 - `{Entity}FormView.tsx` - singular for form
 
 ## Anti-Patterns
 
-| Anti-Pattern | Why It's Wrong | Correct Approach |
-|---|---|---|
-| Service call in UI component | Violates layer boundary | Use application hook |
-| Business logic in UI | Untestable, duplicated | Move to domain adapter |
-| Direct Axios call in component | Bypasses error handling | Use service via query hook |
-| Shared state in domain | Domain must be pure | Use Zustand store in core module |
-| Circular module imports | Creates tight coupling | Extract shared types to core module |
+| Anti-Pattern                   | Why It's Wrong          | Correct Approach                    |
+| ------------------------------ | ----------------------- | ----------------------------------- |
+| Service call in UI component   | Violates layer boundary | Use application hook                |
+| Business logic in UI           | Untestable, duplicated  | Move to domain adapter              |
+| Direct Axios call in component | Bypasses error handling | Use service via query hook          |
+| Shared state in domain         | Domain must be pure     | Use Zustand store in core module    |
+| Circular module imports        | Creates tight coupling  | Extract shared types to core module |
 
 ## Audit Checklist
 

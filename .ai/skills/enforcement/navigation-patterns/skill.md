@@ -1,5 +1,17 @@
 ---
 name: navigation-patterns
+category: enforcement
+layer: ui
+priority: medium
+tags:
+  - react-navigation
+  - typed-routes
+  - stack-navigator
+  - navigation-hooks
+triggers:
+  - 'Adding screens'
+  - 'Creating navigation flows'
+  - 'Navigation code review'
 description: Enforce React Navigation patterns, typed route definitions, stack navigator structure, and navigation hooks. Use when adding screens, creating navigation flows, or reviewing navigation code.
 ---
 
@@ -155,16 +167,16 @@ export function ProductFormView({
 
 ## Validation Rules
 
-| Rule | Description |
-|---|---|
-| R1 | Every feature stack has routes enum + ParamList + ScreenProps |
-| R2 | ParamList uses route enum keys, not string literals |
-| R3 | Detail screens receive entity ID as param (not full entity) |
-| R4 | Form screens receive optional full entity for edit mode |
-| R5 | All stacks use `headerShown: false` (custom toolbar via RootLayout) |
-| R6 | Animation: `slide_from_right` with `animationDuration: 2500` |
-| R7 | Navigation hooks are typed: `useNavigation<NativeStackNavigationProp<ParamList>>` |
-| R8 | All route files re-exported from `routes/index.ts` |
+| Rule | Description                                                                       |
+| ---- | --------------------------------------------------------------------------------- |
+| R1   | Every feature stack has routes enum + ParamList + ScreenProps                     |
+| R2   | ParamList uses route enum keys, not string literals                               |
+| R3   | Detail screens receive entity ID as param (not full entity)                       |
+| R4   | Form screens receive optional full entity for edit mode                           |
+| R5   | All stacks use `headerShown: false` (custom toolbar via RootLayout)               |
+| R6   | Animation: `slide_from_right` with `animationDuration: 2500`                      |
+| R7   | Navigation hooks are typed: `useNavigation<NativeStackNavigationProp<ParamList>>` |
+| R8   | All route files re-exported from `routes/index.ts`                                |
 
 ## Anti-Patterns
 

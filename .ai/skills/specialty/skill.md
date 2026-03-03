@@ -9,4 +9,6 @@ These skills provide deep domain knowledge and patterns for specific technologie
 
 ## Available Skills
 
-- **[React Native Firebase](react-native-firebase/SKILL.md)**: Patterns and best practices for Firebase integration in React Native.
+| Skill                                                   | Layer          | Priority | Description                                                           |
+| ------------------------------------------------------- | -------------- | -------- | --------------------------------------------------------------------- |
+| [React Native Firebase](react-native-firebase/SKILL.md) | infrastructure | medium   | Patterns and best practices for Firebase integration in React Native. |

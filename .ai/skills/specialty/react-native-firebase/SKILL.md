@@ -1,5 +1,18 @@
 ---
 name: react-native-firebase
+category: specialty
+layer: infrastructure
+priority: medium
+tags:
+  - firebase
+  - firestore
+  - auth
+  - analytics
+  - crashlytics
+triggers:
+  - 'Using Firebase services'
+  - 'Implementing authentication'
+  - 'Setting up analytics'
 description: Firebase services configuration and usage patterns for React Native
 ---
 
@@ -65,7 +78,7 @@ const getAppointments = async (userId: string) => {
     .where('userId', '==', userId)
     .get();
 
-  return snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 };
 
 const createAppointment = async (data: AppointmentData) => {
@@ -102,8 +115,8 @@ const subscribeToAppointments = (
   return firestore()
     .collection('appointments')
     .where('userId', '==', userId)
-    .onSnapshot((snapshot) => {
-      const appointments = snapshot.docs.map((doc) => ({
+    .onSnapshot(snapshot => {
+      const appointments = snapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data(),
       }));
@@ -115,7 +128,7 @@ const subscribeToAppointments = (
 const batchWrite = async (operations: WriteOperation[]) => {
   const batch = firestore().batch();
 
-  operations.forEach((op) => {
+  operations.forEach(op => {
     const docRef = firestore().collection(op.collection).doc(op.id);
     if (op.type === 'set') {
       batch.set(docRef, op.data);

@@ -1,5 +1,15 @@
 ---
 name: create-hook
+category: generation
+layer: application
+priority: medium
+tags:
+  - custom-hooks
+  - react-hooks
+  - reusable-logic
+triggers:
+  - 'Creating reusable logic'
+  - 'Extracting hook logic'
 description: Create custom React hooks following project conventions. Use when creating reusable logic hooks, not React Query or Zustand.
 ---
 
@@ -108,11 +118,13 @@ import { useTheme } from '@theme/index';
 ## NOT for Server State
 
 For server state, use React Query hooks in `application/` layer:
+
 - Queries: `{feature}.queries.ts`
 - Mutations: `{feature}.mutations.ts`
 
 ## NOT for Global State
 
 For global state, use Zustand stores:
+
 - Location: `src/modules/{feature}/application/{feature}.store.ts`
 - See: `create-store` skill

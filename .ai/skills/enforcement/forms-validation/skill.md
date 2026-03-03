@@ -1,5 +1,18 @@
 ---
 name: forms-validation
+category: enforcement
+layer: ui
+priority: high
+tags:
+  - react-hook-form
+  - zod
+  - form-schema
+  - validation
+  - adapters
+triggers:
+  - 'Creating forms'
+  - 'Defining schemas'
+  - 'Form data flow review'
 description: Enforce form patterns using react-hook-form, Zod validation, and adapter functions. Use when creating forms, defining schemas, or reviewing form data flow.
 ---
 
@@ -51,15 +64,15 @@ export type {Entity}FormData = z.infer<typeof {entity}Schema>;
 
 ### Zod Rules
 
-| Rule | Pattern | Example |
-|---|---|---|
-| Required string | `.min(1, 'message')` | `.min(1, 'El nombre es requerido')` |
-| Max length | `.max(N, 'message')` | `.max(100, 'Maximo 100 caracteres')` |
-| Optional field | `.optional()` | `.string().max(500).optional()` |
-| Type coercion | `z.coerce.TYPE()` | `z.coerce.number().min(1)` |
-| Email validation | `.email('message')` | `.email('Debe ser un email valido')` |
-| Error format | String format ONLY | `.min(1, 'message')` NOT `.min(1, { message })` |
-| Language | Spanish | All error messages in Spanish |
+| Rule             | Pattern              | Example                                         |
+| ---------------- | -------------------- | ----------------------------------------------- |
+| Required string  | `.min(1, 'message')` | `.min(1, 'El nombre es requerido')`             |
+| Max length       | `.max(N, 'message')` | `.max(100, 'Maximo 100 caracteres')`            |
+| Optional field   | `.optional()`        | `.string().max(500).optional()`                 |
+| Type coercion    | `z.coerce.TYPE()`    | `z.coerce.number().min(1)`                      |
+| Email validation | `.email('message')`  | `.email('Debe ser un email valido')`            |
+| Error format     | String format ONLY   | `.min(1, 'message')` NOT `.min(1, { message })` |
+| Language         | Spanish              | All error messages in Spanish                   |
 
 ## Form Component Pattern (`ui/components/{Entity}Form.tsx`)
 
@@ -197,19 +210,19 @@ export function {entity}EntityAdapter(data: {Entity}Entity): {Entity}Entity {
 
 ## Validation Rules
 
-| Rule | Description |
-|---|---|
-| R1 | Schemas live in `domain/{entity}.scheme.ts` |
-| R2 | FormData type inferred via `z.infer<typeof schema>` |
-| R3 | Error messages in Spanish, string format only |
-| R4 | All string fields must have `.max()` defined |
-| R5 | Optional fields use `.optional()` suffix |
-| R6 | Numeric fields from inputs use `z.coerce.number()` |
-| R7 | Form uses `zodResolver` with `as any` cast (Zod v4 compat) |
-| R8 | Form component receives `onSubmit`, `isLoading`, `initialData` |
-| R9 | FormView handles create/edit mode via `params?.{entity}` |
-| R10 | FormView calls adapter before passing to mutation |
-| R11 | Submit button text: `'Actualizar'` (edit) or `'Crear'` (new) |
+| Rule | Description                                                    |
+| ---- | -------------------------------------------------------------- |
+| R1   | Schemas live in `domain/{entity}.scheme.ts`                    |
+| R2   | FormData type inferred via `z.infer<typeof schema>`            |
+| R3   | Error messages in Spanish, string format only                  |
+| R4   | All string fields must have `.max()` defined                   |
+| R5   | Optional fields use `.optional()` suffix                       |
+| R6   | Numeric fields from inputs use `z.coerce.number()`             |
+| R7   | Form uses `zodResolver` with `as any` cast (Zod v4 compat)     |
+| R8   | Form component receives `onSubmit`, `isLoading`, `initialData` |
+| R9   | FormView handles create/edit mode via `params?.{entity}`       |
+| R10  | FormView calls adapter before passing to mutation              |
+| R11  | Submit button text: `'Actualizar'` (edit) or `'Crear'` (new)   |
 
 ## Anti-Patterns
 

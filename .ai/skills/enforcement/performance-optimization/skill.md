@@ -1,5 +1,18 @@
 ---
 name: performance-optimization
+category: enforcement
+layer: cross-cutting
+priority: medium
+tags:
+  - flashlist
+  - memoization
+  - re-renders
+  - animations
+  - optimization
+triggers:
+  - 'Building lists'
+  - 'Optimizing re-renders'
+  - 'Performance-sensitive code'
 description: Enforce performance best practices for lists, memoization, animations, and render optimization. Use when building lists, optimizing re-renders, or reviewing performance-sensitive code.
 ---
 
@@ -49,13 +62,13 @@ export function ProductList({ searchText }: ProductListProps) {
 
 ### List Optimization Rules
 
-| Rule | Why |
-|---|---|
-| `renderItem` defined outside component | Prevents function re-creation on each render |
-| `keyExtractor` uses stable `item.id` | Prevents unnecessary re-mounts |
-| `ItemSeparatorComponent` is a shared component | Reused across all lists |
-| `keyboardShouldPersistTaps="handled"` | Taps work while keyboard is visible |
-| `keyboardDismissMode="on-drag"` | Keyboard dismisses on scroll |
+| Rule                                           | Why                                          |
+| ---------------------------------------------- | -------------------------------------------- |
+| `renderItem` defined outside component         | Prevents function re-creation on each render |
+| `keyExtractor` uses stable `item.id`           | Prevents unnecessary re-mounts               |
+| `ItemSeparatorComponent` is a shared component | Reused across all lists                      |
+| `keyboardShouldPersistTaps="handled"`          | Taps work while keyboard is visible          |
+| `keyboardDismissMode="on-drag"`                | Keyboard dismisses on scroll                 |
 
 ## Component Memoization
 
@@ -72,11 +85,11 @@ export const ProductItem = React.memo(function ProductItem({
 
 ### When to Use `React.memo`
 
-| Use `React.memo` | Don't Use `React.memo` |
-|---|---|
-| List item components | Top-level view components |
+| Use `React.memo`                  | Don't Use `React.memo`                    |
+| --------------------------------- | ----------------------------------------- |
+| List item components              | Top-level view components                 |
 | Components receiving stable props | Components with frequently changing props |
-| Components with expensive renders | Simple wrapper components |
+| Components with expensive renders | Simple wrapper components                 |
 
 ### When to Use `useMemo` / `useCallback`
 
@@ -150,12 +163,12 @@ export const ProductItem = React.memo(function ProductItem({
 
 ### Animation Best Practices
 
-| Practice | Why |
-|---|---|
-| Use `useNativeDriver: true` | Runs on UI thread, not JS thread |
-| Use Reanimated for complex animations | Better performance than Animated API |
-| Stagger delays by `index * 100` | Natural cascade effect without overload |
-| Use focus hooks over mount effects | Replays correctly on navigation |
+| Practice                              | Why                                     |
+| ------------------------------------- | --------------------------------------- |
+| Use `useNativeDriver: true`           | Runs on UI thread, not JS thread        |
+| Use Reanimated for complex animations | Better performance than Animated API    |
+| Stagger delays by `index * 100`       | Natural cascade effect without overload |
+| Use focus hooks over mount effects    | Replays correctly on navigation         |
 
 ## React Query Performance
 
@@ -176,7 +189,9 @@ const { data } = useProducts({ searchText }); // Component B (uses cache)
 export function useProduct(id: string, enabled = true) {
   return useQuery({
     queryKey: ['products', 'detail', id],
-    queryFn: async () => { /* ... */ },
+    queryFn: async () => {
+      /* ... */
+    },
     enabled: enabled && Boolean(id), // Prevents unnecessary fetches
   });
 }
@@ -184,16 +199,16 @@ export function useProduct(id: string, enabled = true) {
 
 ## Validation Rules
 
-| Rule | Description |
-|---|---|
-| R1 | Use FlashList, never FlatList |
-| R2 | `renderItem` defined outside component body |
-| R3 | List item components wrapped in `React.memo` |
-| R4 | Search inputs use `useDebounce(value, 500)` |
-| R5 | Animations use focus-based hooks, not `useEffect` |
-| R6 | List animations stagger with `delay: index * 100` |
-| R7 | `keyExtractor` uses stable entity `id` |
-| R8 | React Query `enabled` guards prevent unnecessary fetches |
+| Rule | Description                                              |
+| ---- | -------------------------------------------------------- |
+| R1   | Use FlashList, never FlatList                            |
+| R2   | `renderItem` defined outside component body              |
+| R3   | List item components wrapped in `React.memo`             |
+| R4   | Search inputs use `useDebounce(value, 500)`              |
+| R5   | Animations use focus-based hooks, not `useEffect`        |
+| R6   | List animations stagger with `delay: index * 100`        |
+| R7   | `keyExtractor` uses stable entity `id`                   |
+| R8   | React Query `enabled` guards prevent unnecessary fetches |
 
 ## Anti-Patterns
 

@@ -1,5 +1,18 @@
 ---
 name: api-layer
+category: enforcement
+layer: infrastructure
+priority: high
+tags:
+  - service-factory
+  - dual-provider
+  - axios
+  - firebase
+  - http-client
+triggers:
+  - 'Creating a new service'
+  - 'Adding API endpoints'
+  - 'Switching data providers'
 description: Guide and enforce the dual-provider service architecture (HTTP + Firebase), factory pattern, and error contract. Use when creating services, implementing API calls, or switching data providers.
 ---
 
@@ -270,6 +283,7 @@ queryFn: async () => {
 When adding a new entity, register endpoints in:
 
 **`src/config/api.routes.ts`:**
+
 ```typescript
 export const API_ROUTES = {
   // ...existing
@@ -278,6 +292,7 @@ export const API_ROUTES = {
 ```
 
 **`src/config/collections.routes.ts`:**
+
 ```typescript
 export const COLLECTIONS = {
   // ...existing
@@ -299,18 +314,18 @@ No other code changes needed. UI and application layers remain untouched.
 
 ## Validation Rules
 
-| Rule | Description |
-|---|---|
-| R1 | Every entity has 3 infrastructure files (factory + http + firebase) |
-| R2 | Factory reads `CONFIG.SERVICE_PROVIDER`, nothing else |
-| R3 | HTTP service uses `axiosService` from network module |
-| R4 | Firebase service uses `firestore()` from `@react-native-firebase/firestore` |
-| R5 | All service methods return `Promise<T \| Error>` |
-| R6 | Error handling uses `manageAxiosError` (HTTP) or `manageFirebaseError` (Firebase) |
-| R7 | Factory exports singleton via `export default create{Entity}Service()` |
-| R8 | HTTP search uses server-side `{ params: { search } }` |
-| R9 | Firebase search uses client-side `.filter()` after fetch |
-| R10 | Firebase `create` sets both `createdAt` and `updatedAt` as ISO strings |
+| Rule | Description                                                                       |
+| ---- | --------------------------------------------------------------------------------- |
+| R1   | Every entity has 3 infrastructure files (factory + http + firebase)               |
+| R2   | Factory reads `CONFIG.SERVICE_PROVIDER`, nothing else                             |
+| R3   | HTTP service uses `axiosService` from network module                              |
+| R4   | Firebase service uses `firestore()` from `@react-native-firebase/firestore`       |
+| R5   | All service methods return `Promise<T \| Error>`                                  |
+| R6   | Error handling uses `manageAxiosError` (HTTP) or `manageFirebaseError` (Firebase) |
+| R7   | Factory exports singleton via `export default create{Entity}Service()`            |
+| R8   | HTTP search uses server-side `{ params: { search } }`                             |
+| R9   | Firebase search uses client-side `.filter()` after fetch                          |
+| R10  | Firebase `create` sets both `createdAt` and `updatedAt` as ISO strings            |
 
 ## Anti-Patterns
 

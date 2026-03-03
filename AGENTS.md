@@ -12,27 +12,53 @@ description: React Native Clean Architecture Template guidance for agents. Invok
 - Architecture: 4-layer feature modules (Domain, Application, Infrastructure, UI).
 - Node.js: >= 22.11.0
 
+Additional patterns in `CLAUDE.md` (services, Zod, theme, navigation, providers).
+
+---
+
 ## OpenCode Integration
 
-All rules, agents, and skills live in `.ai/`. Use the skill tool or read the corresponding file.
+El agente tiene acceso directo a `.ai/rules/`, `.ai/agents/`, y `.ai/skills/`. Usa el skill tool o lee el archivo correspondiente.
 
 ### Skills
 
-- **Enforcement:**
-  - Architecture: `@.ai/skills/enforcement/architecture/skill.md`
-  - Code Quality: `@.ai/skills/enforcement/code-quality/skill.md`
-  - Testing Strategy: `@.ai/skills/enforcement/testing-strategy/skill.md`
-  - And others in `.ai/skills/enforcement/`
+**Enforcement:**
 
-- **Generation:**
-  - Components: `@.ai/skills/generation/create-component/SKILL.md`
-  - Modules: `@.ai/skills/generation/create-module/SKILL.md`
-  - Forms: `@.ai/skills/generation/create-form/SKILL.md`
-  - Services: `@.ai/skills/generation/create-service/SKILL.md`
-  - Navigation: `@.ai/skills/generation/create-navigation/SKILL.md`
+- Architecture: `@.ai/skills/enforcement/architecture/skill.md`
+- Code Quality: `@.ai/skills/enforcement/code-quality/skill.md`
+- Testing Strategy: `@.ai/skills/enforcement/testing-strategy/skill.md`
+- UI Components: `@.ai/skills/enforcement/ui-components/skill.md`
+- Scalability Patterns: `@.ai/skills/enforcement/scalability-patterns/skill.md`
+- Security Hardening: `@.ai/skills/enforcement/security-hardening/skill.md`
+- Performance Optimization: `@.ai/skills/enforcement/performance-optimization/skill.md`
+- Error Handling: `@.ai/skills/enforcement/error-handling/skill.md`
+- Theme Styling: `@.ai/skills/enforcement/theme-styling/skill.md`
+- Forms Validation: `@.ai/skills/enforcement/forms-validation/skill.md`
+- Navigation Patterns: `@.ai/skills/enforcement/navigation-patterns/skill.md`
+- State Management: `@.ai/skills/enforcement/state-management/skill.md`
+- API Layer: `@.ai/skills/enforcement/api-layer/skill.md`
 
-- **Specialty:**
-  - Firebase: `@.ai/skills/specialty/react-native-firebase/SKILL.md`
+**Generation:**
+
+- Components: `@.ai/skills/generation/create-component/SKILL.md`
+- Modules: `@.ai/skills/generation/create-module/SKILL.md`
+- Forms: `@.ai/skills/generation/create-form/SKILL.md`
+- Services: `@.ai/skills/generation/create-service/SKILL.md`
+- Navigation: `@.ai/skills/generation/create-navigation/SKILL.md`
+- Hooks: `@.ai/skills/generation/create-hook/SKILL.md`
+- Providers: `@.ai/skills/generation/create-provider/SKILL.md`
+- Stores: `@.ai/skills/generation/create-store/SKILL.md`
+- Firebase Service: `@.ai/skills/generation/create-firebase-service/SKILL.md`
+
+**Specialty:**
+
+- Firebase: `@.ai/skills/specialty/react-native-firebase/SKILL.md`
+
+### Rules
+
+- Reference: `@.ai/rules/reference.md`
+
+---
 
 ## Agents Available
 
@@ -82,116 +108,6 @@ All rules, agents, and skills live in `.ai/`. Use the skill tool or read the cor
 | `npm run pod-cocoa`     | Bundle install           |
 
 ---
-
-## Code Style
-
-### General
-
-- TypeScript only - no plain JavaScript
-- React functional components with hooks
-- Single quotes, trailing commas (Prettier)
-- No comments unless requested
-
-### Path Aliases
-
-Use aliases instead of relative imports:
-
-```typescript
-// Good
-import { Button } from '@components/core';
-import { useAuth } from '@modules/auth/application';
-import { useTheme } from '@theme/index';
-
-// Bad
-import { Button } from '../../../components/core';
-```
-
-Aliases: `@assets/*`, `@components/*`, `@config/*`, `@containers/*`, `@hooks/*`, `@modules/*`, `@theme/*`, `@navigation/*`
-
-### Naming Conventions
-
-| Type       | Convention      | Example                    |
-| ---------- | --------------- | -------------------------- |
-| Components | PascalCase      | `UserProfile`, `LoginForm` |
-| Hooks      | use prefix      | `useAuth`, `useUserData`   |
-| Services   | .service suffix | `auth.service.ts`          |
-| Types      | PascalCase      | `User`, `ApiResponse`      |
-| Constants  | SCREAMING_SNAKE | `API_ROUTES`               |
-
-### TypeScript Rules
-
-- Define return types when not obvious
-- Use interfaces for objects, types for unions
-- Avoid `any` - use `unknown` if needed
-
-### Import Order
-
-1. React/React Native
-2. External libraries (react-hook-form, tanstack query)
-3. Path aliases (grouped)
-4. Relative imports
-
----
-
-## Architecture & Layers
-
-### Module Structure
-
-```
-src/modules/{feature}/
-├── domain/        # Models, repositories, adapters, schemas
-├── infrastructure/ # API calls, Firebase, storage
-├── application/   # React Query hooks (queries, mutations)
-└── ui/            # Components and screens
-```
-
-### Layer Dependencies (MUST FOLLOW)
-
-1. **ui** → consumes hooks from application. MUST NOT import from infrastructure.
-2. **application** → depends on domain and infrastructure.
-3. **infrastructure** → implements repositories, HTTP calls.
-4. **domain** → pure TypeScript, no dependencies.
-
-### Theming
-
-- NEVER hardcode colors - use `useTheme()`
-- NEVER use `colors.light.*` or `colors.dark.*` directly
-- Access via: `const { colors, spacing, typography } = useTheme()`
-
----
-
-## Error Handling
-
-- Use centralized error types from domain layer
-- Wrap async operations in try/catch
-- Return typed error responses from services
-
-```typescript
-try {
-  const response = await api.get('/endpoint');
-  return { data: response.data, error: null };
-} catch (err) {
-  return { data: null, error: err as ApiError };
-}
-```
-
----
-
-## Testing
-
-- Tests in `__tests__/` at root, mirroring `src/` structure
-- Use: `import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';`
-- Required providers: QueryClientProvider, ThemeProvider, SafeAreaProvider, NavigationContainer
-- Mock: `jest.mock('@modules/.../infrastructure/service');`
-- Clear mocks: `beforeEach(() => { jest.clearAllMocks(); });`
-- Exclude: index.ts, _.model.ts, _.repository.ts
-
----
-
-## Linting
-
-- ESLint extends: `@react-native`
-- Run `npm run lint` before committing
 
 ## Exclude from TypeScript
 

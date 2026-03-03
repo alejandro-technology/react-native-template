@@ -1,5 +1,17 @@
 ---
 name: error-handling
+category: enforcement
+layer: cross-cutting
+priority: high
+tags:
+  - error-types
+  - error-boundaries
+  - user-feedback
+  - try-catch
+triggers:
+  - 'Implementing error flows'
+  - 'Creating error messages'
+  - 'Code review'
 description: Enforce the centralized error handling strategy, error types, and user-facing error patterns. Use when implementing error flows, creating error messages, or reviewing error handling code.
 ---
 
@@ -54,23 +66,25 @@ export function manageAxiosError(error: unknown): Error {
 
 ### Error Types
 
-| Error Name | `error.name` | When |
-|---|---|---|
-| Generic | `'Error'` | Default fallback |
-| Form validation | `'FormError'` | 400 with `errors` array |
-| Duplicate | `'DuplicateIdentifierError'` | 400 with duplicate message |
-| Network | `'Error'` | `ERR_NETWORK` code |
-| Connection | `'Error'` | `ECONNREFUSED` code |
+| Error Name      | `error.name`                 | When                       |
+| --------------- | ---------------------------- | -------------------------- |
+| Generic         | `'Error'`                    | Default fallback           |
+| Form validation | `'FormError'`                | 400 with `errors` array    |
+| Duplicate       | `'DuplicateIdentifierError'` | 400 with duplicate message |
+| Network         | `'Error'`                    | `ERR_NETWORK` code         |
+| Connection      | `'Error'`                    | `ECONNREFUSED` code        |
 
 ### Error Messages (Spanish)
 
 ```typescript
 // src/modules/network/domain/network.messages.ts
 export const AXIOS_MESSAGES = {
-  NETWORK_ERROR: 'No pudimos conectar con el servidor. Revisa tu conexion a internet.',
+  NETWORK_ERROR:
+    'No pudimos conectar con el servidor. Revisa tu conexion a internet.',
   CONNECTION_REFUSED: 'El servicio no esta disponible en este momento.',
   UNKNOWN_ERROR: 'Ocurrio un error inesperado. Por favor, intentalo de nuevo.',
-  BAD_REQUEST: 'Solicitud incorrecta. Por favor, verifica los datos ingresados.',
+  BAD_REQUEST:
+    'Solicitud incorrecta. Por favor, verifica los datos ingresados.',
 };
 ```
 
@@ -162,19 +176,19 @@ return <DataView data={data} />;
 
 ## Validation Rules
 
-| Rule | Description |
-|---|---|
-| R1 | Services return `T \| Error`, never throw |
-| R2 | HTTP errors use `manageAxiosError()` |
-| R3 | Firebase errors use `manageFirebaseError()` |
-| R4 | Application hooks check `instanceof Error` then `throw` |
-| R5 | UI uses `isLoading` -> `isError` -> empty -> success order |
-| R6 | Error messages are in Spanish |
-| R7 | List error messages use plural ("los productos") |
-| R8 | Detail error messages use singular ("el producto") |
-| R9 | `ErrorState` on detail screens includes `onRetry={goBack}` |
-| R10 | `EmptyState` on detail screens includes `onAction={goBack}` |
-| R11 | Mutation success shows toast via `useAppStorage(s => s.toast).show()` |
+| Rule | Description                                                           |
+| ---- | --------------------------------------------------------------------- |
+| R1   | Services return `T \| Error`, never throw                             |
+| R2   | HTTP errors use `manageAxiosError()`                                  |
+| R3   | Firebase errors use `manageFirebaseError()`                           |
+| R4   | Application hooks check `instanceof Error` then `throw`               |
+| R5   | UI uses `isLoading` -> `isError` -> empty -> success order            |
+| R6   | Error messages are in Spanish                                         |
+| R7   | List error messages use plural ("los productos")                      |
+| R8   | Detail error messages use singular ("el producto")                    |
+| R9   | `ErrorState` on detail screens includes `onRetry={goBack}`            |
+| R10  | `EmptyState` on detail screens includes `onAction={goBack}`           |
+| R11  | Mutation success shows toast via `useAppStorage(s => s.toast).show()` |
 
 ## Anti-Patterns
 

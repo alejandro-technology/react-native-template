@@ -1,5 +1,17 @@
 ---
 name: scalability-patterns
+category: enforcement
+layer: cross-cutting
+priority: medium
+tags:
+  - provider-composition
+  - module-isolation
+  - configuration
+  - bootstrapping
+triggers:
+  - 'Adding modules'
+  - 'Scaling architecture'
+  - 'Project structure review'
 description: Enforce scalability patterns including provider composition, module isolation, configuration centralization, and new feature bootstrapping. Use when adding modules, scaling architecture, or reviewing project structure.
 ---
 
@@ -23,12 +35,24 @@ Enforces patterns that allow the template to scale from a starter project to a p
 // src/providers/AppProvider.tsx
 export default function AppProvider({ children }: PropsWithChildren) {
   return (
-    <SecureProvider>                    {/* 1. Device security gate */}
-      <QueryClientProvider client={queryClient}>  {/* 2. Server state */}
-        <ThemeProvider>                 {/* 3. Theme context */}
-          <SafeAreaProvider>            {/* 4. Safe area insets */}
-            <GestureHandlerRootView>   {/* 5. Gesture support */}
-              <NavigationProvider>     {/* 6. Navigation container */}
+    <SecureProvider>
+      {' '}
+      {/* 1. Device security gate */}
+      <QueryClientProvider client={queryClient}>
+        {' '}
+        {/* 2. Server state */}
+        <ThemeProvider>
+          {' '}
+          {/* 3. Theme context */}
+          <SafeAreaProvider>
+            {' '}
+            {/* 4. Safe area insets */}
+            <GestureHandlerRootView>
+              {' '}
+              {/* 5. Gesture support */}
+              <NavigationProvider>
+                {' '}
+                {/* 6. Navigation container */}
                 {children}
                 <GlobalDeleteConfirmation />
                 <GlobalToast />
@@ -58,24 +82,24 @@ export default function AnalyticsProvider({ children }: PropsWithChildren) {
 // Rule: UI-dependent providers go INSIDE NavigationProvider
 <SecureProvider>
   <QueryClientProvider client={queryClient}>
-    <AnalyticsProvider>              {/* New: SDK provider */}
-      <ThemeProvider>
-        {/* ... */}
-      </ThemeProvider>
+    <AnalyticsProvider>
+      {' '}
+      {/* New: SDK provider */}
+      <ThemeProvider>{/* ... */}</ThemeProvider>
     </AnalyticsProvider>
   </QueryClientProvider>
-</SecureProvider>
+</SecureProvider>;
 ```
 
 ### Provider Position Rules
 
-| Provider Type | Position | Reason |
-|---|---|---|
-| Security gates | Outermost | Block app before anything loads |
-| SDK/infra providers | Outside ThemeProvider | Don't need UI context |
-| State providers | Outside NavigationProvider | State available everywhere |
-| UI providers | Inside ThemeProvider | Need theme context |
-| Global UI components | Inside NavigationProvider | Need navigation context |
+| Provider Type        | Position                   | Reason                          |
+| -------------------- | -------------------------- | ------------------------------- |
+| Security gates       | Outermost                  | Block app before anything loads |
+| SDK/infra providers  | Outside ThemeProvider      | Don't need UI context           |
+| State providers      | Outside NavigationProvider | State available everywhere      |
+| UI providers         | Inside ThemeProvider       | Need theme context              |
+| Global UI components | Inside NavigationProvider  | Need navigation context         |
 
 ## Module Isolation
 
@@ -113,6 +137,7 @@ modules/{entities}/
 When adding module `{Entities}`:
 
 1. **Config** — Add API route and collection name:
+
    ```typescript
    // src/config/api.routes.ts
    export const API_ROUTES = {
@@ -128,6 +153,7 @@ When adding module `{Entities}`:
    ```
 
 2. **Navigation** — Create routes, stack, and hook:
+
    ```typescript
    // src/navigation/routes/{entities}.routes.ts
    // src/navigation/stacks/{Entities}StackNavigator.tsx
@@ -136,6 +162,7 @@ When adding module `{Entities}`:
    ```
 
 3. **Root Navigator** — Register the stack:
+
    ```typescript
    // src/navigation/RootNavigator.tsx
    <Stack.Screen name={RootRoutes.{Entities}} component={{Entities}Navigator} />
@@ -190,11 +217,13 @@ export default create{Entity}Service();
 ### Adding a New Provider Type
 
 1. Add type to config:
+
    ```typescript
    export type ServiceProvider = 'http' | 'firebase' | 'supabase';
    ```
 
 2. Create implementation for each module:
+
    ```typescript
    // modules/{entities}/infrastructure/{entity}.supabase.service.ts
    class {Entity}SupabaseService implements {Entity}Repository {
@@ -203,6 +232,7 @@ export default create{Entity}Service();
    ```
 
 3. Add case to each factory:
+
    ```typescript
    case 'supabase':
      return {entity}SupabaseService;
@@ -245,11 +275,11 @@ export const COLLECTIONS = {
 
 ### Cache Invalidation Matrix
 
-| Mutation | Invalidates | Why |
-|---|---|---|
-| Create | `['{entities}']` | Refreshes all lists |
-| Update | `['{entities}']` + `['{entities}', 'detail', id]` | Refreshes lists and specific detail |
-| Delete | `['{entities}']` | Refreshes all lists |
+| Mutation | Invalidates                                       | Why                                 |
+| -------- | ------------------------------------------------- | ----------------------------------- |
+| Create   | `['{entities}']`                                  | Refreshes all lists                 |
+| Update   | `['{entities}']` + `['{entities}', 'detail', id]` | Refreshes lists and specific detail |
+| Delete   | `['{entities}']`                                  | Refreshes all lists                 |
 
 ### Scaling Query Keys
 
@@ -257,10 +287,10 @@ For modules with nested resources:
 
 ```typescript
 // Orders with line items
-queryKey: ['orders', 'list', filter]
-queryKey: ['orders', 'detail', orderId]
-queryKey: ['orders', orderId, 'items', 'list']
-queryKey: ['orders', orderId, 'items', 'detail', itemId]
+queryKey: ['orders', 'list', filter];
+queryKey: ['orders', 'detail', orderId];
+queryKey: ['orders', orderId, 'items', 'list'];
+queryKey: ['orders', orderId, 'items', 'detail', itemId];
 ```
 
 ## Global UI Components
@@ -291,7 +321,7 @@ interface AppState {
      {children}
      <GlobalDeleteConfirmation />
      <GlobalToast />
-     <GlobalNewComponent />          {/* New */}
+     <GlobalNewComponent /> {/* New */}
    </NavigationProvider>
    ```
 
@@ -313,29 +343,29 @@ export function useDebounce<T>(value: T, delay: number): T {
 
 ### When to Use Shared vs Module Hooks
 
-| Shared (`@hooks/*`) | Module (`application/`) |
-|---|---|
-| `useDebounce` | `useProducts` |
-| `useKeyboard` | `useProductCreate` |
-| `useNetworkStatus` | `useAuthSignIn` |
-| Generic utilities | Feature-specific queries/mutations |
+| Shared (`@hooks/*`) | Module (`application/`)            |
+| ------------------- | ---------------------------------- |
+| `useDebounce`       | `useProducts`                      |
+| `useKeyboard`       | `useProductCreate`                 |
+| `useNetworkStatus`  | `useAuthSignIn`                    |
+| Generic utilities   | Feature-specific queries/mutations |
 
 ## Validation Rules
 
-| Rule | Description |
-|---|---|
-| R1 | Every module has exactly 4 layers: domain, infrastructure, application, UI |
-| R2 | Service factory reads from `CONFIG.SERVICE_PROVIDER` |
-| R3 | API routes centralized in `src/config/api.routes.ts` |
-| R4 | Firebase collections centralized in `src/config/collections.routes.ts` |
-| R5 | Provider order: Security → State → Theme → SafeArea → Gesture → Navigation |
-| R6 | New modules register in: config, navigation routes, root navigator |
-| R7 | Query keys follow `['{entities}', 'list'\|'detail', param]` pattern |
-| R8 | Create/Delete invalidate list; Update invalidates list + detail |
-| R9 | Global UI components placed inside NavigationProvider in AppProvider |
-| R10 | Cross-cutting hooks in `src/hooks/`, feature hooks in `application/` |
-| R11 | Adding a new provider type requires zero changes to domain/application/UI |
-| R12 | Each module is independently removable (no cross-module domain imports) |
+| Rule | Description                                                                |
+| ---- | -------------------------------------------------------------------------- |
+| R1   | Every module has exactly 4 layers: domain, infrastructure, application, UI |
+| R2   | Service factory reads from `CONFIG.SERVICE_PROVIDER`                       |
+| R3   | API routes centralized in `src/config/api.routes.ts`                       |
+| R4   | Firebase collections centralized in `src/config/collections.routes.ts`     |
+| R5   | Provider order: Security → State → Theme → SafeArea → Gesture → Navigation |
+| R6   | New modules register in: config, navigation routes, root navigator         |
+| R7   | Query keys follow `['{entities}', 'list'\|'detail', param]` pattern        |
+| R8   | Create/Delete invalidate list; Update invalidates list + detail            |
+| R9   | Global UI components placed inside NavigationProvider in AppProvider       |
+| R10  | Cross-cutting hooks in `src/hooks/`, feature hooks in `application/`       |
+| R11  | Adding a new provider type requires zero changes to domain/application/UI  |
+| R12  | Each module is independently removable (no cross-module domain imports)    |
 
 ## Anti-Patterns
 

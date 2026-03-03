@@ -1,5 +1,16 @@
 ---
 name: create-service
+category: generation
+layer: infrastructure
+priority: high
+tags:
+  - factory-pattern
+  - service-layer
+  - axios
+  - firebase
+triggers:
+  - 'Creating API service'
+  - 'Creating storage service'
 description: Create new services following the factory pattern. Use when creating API services, storage services, or any infrastructure layer service.
 ---
 
