@@ -1,7 +1,7 @@
 # Skills Manifest
 
 > **Opinionated React Native Framework** — Agent Skills Registry
-> Version 2.0 — Generated from codebase analysis
+> Version 2.1 — Unified with .ai/skills structure
 
 ---
 
@@ -48,38 +48,40 @@ The skills cover the complete lifecycle: from creating a new feature module to d
 
 ## Skill Registry
 
+All enforcement skills are located in `.ai/skills/enforcement/`.
+
 ### Architecture & Structure (3 skills)
 
 | Skill | File | Purpose |
 |---|---|---|
-| **[Architecture](#architecture)** | `skills/architecture.skill.md` | Clean Architecture 4-layer enforcement per module |
-| **[Scalability](#scalability)** | `skills/scalability.skill.md` | Module isolation, provider composition, bootstrapping |
-| **[Code Quality](#code-quality)** | `skills/code-quality.skill.md` | Naming, imports, formatting, TypeScript standards |
+| **[Architecture](#architecture)** | `.ai/skills/enforcement/architecture/skill.md` | Clean Architecture 4-layer enforcement per module |
+| **[Scalability](#scalability)** | `.ai/skills/enforcement/scalability-patterns/skill.md` | Module isolation, provider composition, bootstrapping |
+| **[Code Quality](#code-quality)** | `.ai/skills/enforcement/code-quality/skill.md` | Naming, imports, formatting, TypeScript standards |
 
 ### Data & Services (3 skills)
 
 | Skill | File | Purpose |
 |---|---|---|
-| **[API Layer](#api-layer)** | `skills/api-layer.skill.md` | Dual-provider services, factory pattern, `T\|Error` contract |
-| **[State Management](#state-management)** | `skills/state-management.skill.md` | React Query vs Zustand vs useState decision matrix |
-| **[Error Handling](#error-handling)** | `skills/error-handling.skill.md` | Centralized errors, typed names, UI guard order |
+| **[API Layer](#api-layer)** | `.ai/skills/enforcement/api-layer/skill.md` | Dual-provider services, factory pattern, `T\|Error` contract |
+| **[State Management](#state-management)** | `.ai/skills/enforcement/state-management/skill.md` | React Query vs Zustand vs useState decision matrix |
+| **[Error Handling](#error-handling)** | `.ai/skills/enforcement/error-handling/skill.md` | Centralized errors, typed names, UI guard order |
 
 ### UI & Presentation (4 skills)
 
 | Skill | File | Purpose |
 |---|---|---|
-| **[Components](#components)** | `skills/components.skill.md` | 3-tier component system, style factories |
-| **[Theme & Styling](#theme-styling)** | `skills/theme-styling.skill.md` | 5-mode themes, design tokens, responsive utilities |
-| **[Navigation](#navigation)** | `skills/navigation.skill.md` | Typed routes, stack navigators, navigation hooks |
-| **[Forms & Validation](#forms-validation)** | `skills/forms-validation.skill.md` | Zod schemas, react-hook-form, Spanish messages |
+| **[Components](#components)** | `.ai/skills/enforcement/ui-components/skill.md` | 3-tier component system, style factories |
+| **[Theme & Styling](#theme-styling)** | `.ai/skills/enforcement/theme-styling/skill.md` | 5-mode themes, design tokens, responsive utilities |
+| **[Navigation](#navigation)** | `.ai/skills/enforcement/navigation-patterns/skill.md` | Typed routes, stack navigators, navigation hooks |
+| **[Forms & Validation](#forms-validation)** | `.ai/skills/enforcement/forms-validation/skill.md` | Zod schemas, react-hook-form, Spanish messages |
 
 ### Quality & Operations (3 skills)
 
 | Skill | File | Purpose |
 |---|---|---|
-| **[Performance](#performance)** | `skills/performance.skill.md` | FlashList, React.memo, debouncing, animations |
-| **[Testing](#testing)** | `skills/testing.skill.md` | Jest, RNTL, service mocking, layer testing |
-| **[Security](#security)** | `skills/security.skill.md` | JailMonkey, MMKV, error message security |
+| **[Performance](#performance)** | `.ai/skills/enforcement/performance-optimization/skill.md` | FlashList, React.memo, debouncing, animations |
+| **[Testing](#testing)** | `.ai/skills/enforcement/testing-strategy/skill.md` | Jest, RNTL, service mocking, layer testing |
+| **[Security](#security)** | `.ai/skills/enforcement/security-hardening/skill.md` | JailMonkey, MMKV, error message security |
 
 ---
 
@@ -127,146 +129,11 @@ The skills cover the complete lifecycle: from creating a new feature module to d
 
 ---
 
-## Skill Details
-
-### Architecture
-**Enforces**: Clean Architecture with 4 layers (domain, infrastructure, application, UI). Dependency direction: UI → application → infrastructure → domain. Domain is pure TypeScript. UI never imports from infrastructure.
-
-**Key patterns validated**:
-- Repository interfaces in `domain/`
-- Service factory in `infrastructure/` reads `CONFIG.SERVICE_PROVIDER`
-- React Query hooks in `application/`
-- Thin views in `ui/` with zero business logic
-
----
-
-### API Layer
-**Enforces**: Dual-provider service architecture (HTTP + Firebase), factory pattern for provider selection, `T | Error` return contract, centralized error handling via `manageAxiosError()` and `manageFirebaseError()`.
-
-**Key patterns validated**:
-- 3-file service system: `*.http.service.ts` + `*.firebase.service.ts` + `*.service.ts` (factory)
-- Services never throw — always return `T | Error`
-- API routes centralized in `src/config/api.routes.ts`
-- Application hooks bridge `T | Error` → throw for React Query
-
----
-
-### State Management
-**Enforces**: State decision matrix — React Query for server data, Zustand for global UI state, Zustand + MMKV for persistent state, react-hook-form for forms, `useState` for ephemeral local state.
-
-**Key patterns validated**:
-- `useQuery` with `['entities', params]` key pattern
-- `useMutation` with `onSuccess` toast + cache invalidation
-- Zustand selectors for granular subscriptions
-- MMKV storage with Date reviver in `src/config/storage.ts`
-
----
-
-### Error Handling
-**Enforces**: 3-layer error flow (infrastructure returns → application converts → UI renders). Typed error names (`FormError`, `DuplicateIdentifierError`). UI guard order: loading → error → empty → success. Spanish user-facing messages.
-
-**Key patterns validated**:
-- `manageAxiosError()` maps Axios errors to typed Error objects
-- Mutations check `result instanceof Error` before throwing
-- Views use `LoadingState`, `ErrorState`, `EmptyState` layout components
-- Error messages never expose technical details
-
----
-
-### Components
-**Enforces**: 3-tier component system (core/form/layout). Core components are theme-aware. Form components wrap core with react-hook-form. Layout components provide screen structure. Module components compose from all tiers.
-
-**Key patterns validated**:
-- 12 core components with variant/size props
-- Style factories in `src/theme/components/*.styles.ts`
-- Barrel exports in each tier's `index.ts`
-- `React.memo` for list items
-
----
-
-### Theme & Styling
-**Enforces**: 5-mode theme system, design tokens (spacing, typography, colors, borderRadius, shadows), responsive utilities (`wScale`, `fScale`), animation hooks, `StyleSheet.create()` at file bottom.
-
-**Key patterns validated**:
-- Spacing uses 8-step token scale (`xs` through `3xl`)
-- Typography uses 11 text variants (`h1` through `overline`)
-- Animation durations from `ANIMATION_DURATION` constants
-- Focus-based animation hooks (replay on screen focus)
-
----
-
-### Navigation
-**Enforces**: React Navigation with typed routes (enums), typed ParamList, ScreenProps types, typed navigation hooks per stack. `headerShown: false` with `slide_from_right` animation.
-
-**Key patterns validated**:
-- Route names in enums, never string literals
-- Detail screens receive ID, not full entity
-- Form screens receive optional entity for edit mode
-- Barrel export from `src/navigation/routes/index.ts`
-
----
-
-### Forms & Validation
-**Enforces**: Zod schemas for validation with `z.infer` type inference. react-hook-form with `zodResolver`. Adapter-based data transformation. Spanish error messages in string format.
-
-**Key patterns validated**:
-- Schemas in `domain/{feature}.scheme.ts`
-- `.min(1, 'message')` format (not object format)
-- `.max()` on all string fields
-- `z.coerce.number()` for numeric inputs
-- `zodResolver(schema) as any` (Zod v4 compatibility)
-
----
-
-### Performance
-**Enforces**: FlashList over FlatList, `React.memo` for list items, search debouncing (`useDebounce(value, 500)`), focus-based animations with stagger, stable `renderItem` references.
-
-**Key patterns validated**:
-- `renderItem` defined outside component body
-- `keyExtractor` uses entity ID, not index
-- Conditional rendering uses ternary + null (not falsy &&)
-- `useNativeDriver: true` for opacity/transform animations
-
----
-
-### Testing
-**Enforces**: Test structure mirrors source in `__tests__/`. Service mocks return `T | Error`. Mocks cleared in `beforeEach`. UI tests verify all 4 states (loading, error, empty, success).
-
-**Key patterns validated**:
-- Adapter tests (pure function input/output)
-- Schema tests (validate Spanish error messages)
-- UI tests (mock query hooks, test all render paths)
-- Never test: `index.ts`, `*.model.ts`, `*.repository.ts`
-
----
-
-### Security
-**Enforces**: `SecureProvider` as outermost provider (jailbreak detection). MMKV for all persistence (never AsyncStorage). Error messages hide technical details. Axios timeout configured.
-
-**Key patterns validated**:
-- Provider order: Security → Query → Theme → SafeArea → Gesture → Nav
-- MMKV storage adapter for Zustand `persist` middleware
-- Spanish error messages with no stack traces
-- `timeout: 10000` on Axios instance
-
----
-
-### Scalability
-**Enforces**: Module independence (cross-module domain imports prohibited). Configuration centralization in `src/config/`. Cross-cutting concern placement rules. Complete bootstrapping checklist for new features.
-
-**Key patterns validated**:
-- Path aliases for cross-module, relative for intra-module
-- `CONFIG.SERVICE_PROVIDER` as single provider switch
-- `src/modules/core/` for shared infrastructure
-- New feature checklist: 15 files across 6 integration points
-
----
-
 ## Contribution Rules
 
 ### Adding a New Skill
 
-1. Create `skills/{name}.skill.md` following the 6-section format:
+1. Create `.ai/skills/enforcement/{name}/skill.md` following the 6-section format:
    - Metadata, Trigger, Responsibilities, Rules, Expected Output, Practical Example
 2. Ground all rules in actual codebase patterns (reference real files)
 3. Include at least one Before/After example with real project code
@@ -280,15 +147,6 @@ The skills cover the complete lifecycle: from creating a new feature module to d
 3. Ensure no contradiction with other skills
 4. Update this manifest if severity levels or triggers change
 
-### Skill Format Requirements
-
-- **Metadata table**: Name, Description, Purpose, Category
-- **Trigger table**: When activated, Context, Observed paths
-- **Responsibilities**: Validates, Recommends, Prevents, Optimizes
-- **Rules**: Code patterns with actual project examples, anti-pattern table
-- **Expected Output**: Severity levels (error/warning/info) with descriptions
-- **Practical Example**: Before (wrong) and After (correct) with explanation
-
 ---
 
 ## Usage Guide
@@ -296,8 +154,8 @@ The skills cover the complete lifecycle: from creating a new feature module to d
 ### For New Projects
 
 ```bash
-# 1. Copy the skills directory into your React Native project
-cp -r skills/ /your-project/skills/
+# 1. Copy the .ai/skills directory into your React Native project
+cp -r .ai/skills/ /your-project/.ai/skills/
 
 # 2. Reference skills in your CLAUDE.md or agent configuration
 # 3. The agent will automatically enforce patterns when tasks match triggers
@@ -336,32 +194,3 @@ Read skills in this order for progressive understanding:
 7. **Performance** — understand optimization rules
 8. **Testing** — understand test strategy
 9. **Security** + **Scalability** — understand production concerns
-
----
-
-## Codebase Reference
-
-### Module Map
-
-| Module | Layers | Description |
-|---|---|---|
-| `authentication` | domain, infrastructure, application, ui | Sign-in/sign-up with HTTP + Firebase auth |
-| `products` | domain, infrastructure, application, ui | CRUD with HTTP + Firebase Firestore |
-| `users` | domain, infrastructure, application, ui | CRUD with HTTP + Firebase Firestore |
-| `core` | domain, infrastructure, application, ui | Shared state (toast, modal), date utils |
-| `network` | domain, infrastructure | Axios singleton, error handler, messages |
-| `firebase` | domain, infrastructure, application | Firestore/Storage services, error handler |
-| `examples` | ui, hooks | UI component showcase, animation demos |
-
-### File Count by Category
-
-| Category | Count | Location |
-|---|---|---|
-| Source files | 138 | `src/` |
-| Feature modules | 7 | `src/modules/` |
-| Shared components | 26 | `src/components/` |
-| Theme files | 22 | `src/theme/` |
-| Navigation files | 9 | `src/navigation/` |
-| Config files | 4 | `src/config/` |
-| Provider files | 3 | `src/providers/` |
-| Skills | 12 | `skills/` |

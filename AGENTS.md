@@ -14,21 +14,32 @@ description: React Native Clean Architecture Template guidance for agents. Invok
 
 ## OpenCode Integration
 
-All rules, agents, and skills live in .opencode/. Use the skill tool or read the corresponding file.
+All rules, agents, and skills live in `.ai/`. Use the skill tool or read the corresponding file.
 
-- **Architecture/Layers:** @.opencode/rules/core.md
-- **Testing:** @.opencode/rules/testing.md, @.opencode/skills/mobile-testing/SKILL.md
-- **UI & Theming:** @.opencode/skills/create-component/SKILL.md
-- **Module Scaffolding:** @.opencode/skills/create-module/SKILL.md
-- **Forms:** @.opencode/skills/create-form/SKILL.md
-- **Services:** @.opencode/skills/create-service/SKILL.md
+### Skills
+
+- **Enforcement:**
+  - Architecture: `@.ai/skills/enforcement/architecture/skill.md`
+  - Code Quality: `@.ai/skills/enforcement/code-quality/skill.md`
+  - Testing Strategy: `@.ai/skills/enforcement/testing-strategy/skill.md`
+  - And others in `.ai/skills/enforcement/`
+
+- **Generation:**
+  - Components: `@.ai/skills/generation/create-component/SKILL.md`
+  - Modules: `@.ai/skills/generation/create-module/SKILL.md`
+  - Forms: `@.ai/skills/generation/create-form/SKILL.md`
+  - Services: `@.ai/skills/generation/create-service/SKILL.md`
+  - Navigation: `@.ai/skills/generation/create-navigation/SKILL.md`
+
+- **Specialty:**
+  - Firebase: `@.ai/skills/specialty/react-native-firebase/SKILL.md`
 
 ## Agents Available
 
-- scaffolder: Create new modules (Users, Transactions, etc.)
-- test-writer: Generate Jest tests
-- theme-auditor: Fix hardcoded colors/spacing
-- ci-cd-architect: GitHub Actions and deployment pipelines
+- **scaffolder**: Create new modules (Users, Transactions, etc.) - `@.ai/agents/scaffolder.md`
+- **test-writer**: Generate Jest tests - `@.ai/agents/test-writer.md`
+- **theme-auditor**: Fix hardcoded colors/spacing - `@.ai/agents/theme-auditor.md`
+- **ci-cd-architect**: GitHub Actions and deployment pipelines - `@.ai/agents/ci-cd-architect.md`
 
 ---
 
@@ -66,7 +77,9 @@ All rules, agents, and skills live in .opencode/. Use the skill tool or read the
 | `npm run clean-node`    | Remove node_modules      |
 | `npm run clean-ios`     | Clean iOS (removes Pods) |
 | `npm run clean-android` | Clean Android build      |
+| `npm run clean-watch`   | Clean Watchman           |
 | `npm run pod-install`   | Reinstall CocoaPods      |
+| `npm run pod-cocoa`     | Bundle install           |
 
 ---
 
@@ -167,7 +180,7 @@ try {
 ## Testing
 
 - Tests in `__tests__/` at root, mirroring `src/` structure
-- Use: `import { render, screen, fireEvent, waitFor } from '@test-utils';`
+- Use: `import { render, screen, fireEvent, waitFor } from '@testing-library/react-native';`
 - Required providers: QueryClientProvider, ThemeProvider, SafeAreaProvider, NavigationContainer
 - Mock: `jest.mock('@modules/.../infrastructure/service');`
 - Clear mocks: `beforeEach(() => { jest.clearAllMocks(); });`
