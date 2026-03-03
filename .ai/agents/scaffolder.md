@@ -1,4 +1,13 @@
 ---
+category: agent
+priority: high
+tags:
+  - module-generator
+  - scaffold
+  - clean-architecture
+triggers:
+  - 'create new module'
+  - 'add feature'
 description: Generates the complete structure of a new feature module (domain, application, infrastructure, and ui).
 mode: subagent
 temperature: 0.2

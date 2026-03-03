@@ -1,4 +1,13 @@
 ---
+category: agent
+priority: medium
+tags:
+  - github-actions
+  - ci-cd
+  - deployment
+triggers:
+  - 'setup ci/cd'
+  - 'create workflow'
 description: Architect for CI/CD workflows (GitHub Actions) specific to React Native, iOS, and Android.
 mode: subagent
 temperature: 0.2

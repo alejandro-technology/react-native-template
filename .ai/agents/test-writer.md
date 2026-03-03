@@ -1,4 +1,13 @@
 ---
+category: agent
+priority: high
+tags:
+  - testing
+  - jest
+  - unit-tests
+triggers:
+  - 'write tests'
+  - 'add tests'
 description: Standard test generator with Jest and Testing Library for React Native.
 mode: subagent
 temperature: 0.2

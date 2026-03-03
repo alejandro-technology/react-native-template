@@ -1,6 +1,17 @@
 ---
 alwaysApply: true
-description: Quick reference for architecture, commands, aliases, and naming. Complements CLAUDE.md (which covers behavioral patterns). For detailed enforcement, see .claude/skills/
+category: rules
+layer: cross-cutting
+priority: high
+tags:
+  - reference
+  - quick-lookup
+  - architecture
+  - commands
+triggers:
+  - 'General reference queries'
+  - 'Quick lookup'
+description: Quick reference for architecture, commands, aliases, and naming. Complements CLAUDE.md (which covers behavioral patterns). For detailed enforcement, see .ai/skills/
 ---
 
 # Quick Reference
@@ -10,6 +21,7 @@ Structural lookups and conventions. For behavioral patterns (factory, T|Error, Z
 ## Architecture
 
 Clean Architecture with 4 layers per module:
+
 ```
 src/modules/{feature}/
 ├── domain/         # Pure TypeScript (models, schemas, adapters)
@@ -47,12 +59,12 @@ npm test -- --coverage # Run with coverage
 
 ## Naming Conventions
 
-| Element | Convention | Example |
-|---------|-----------|---------|
-| Components | PascalCase | `Button`, `ProductItem` |
-| Functions | camelCase | `handleSubmit` |
-| Hooks | `use` + camelCase | `useProducts` |
-| Constants | SCREAMING_SNAKE | `API_ROUTES` |
+| Element    | Convention        | Example                 |
+| ---------- | ----------------- | ----------------------- |
+| Components | PascalCase        | `Button`, `ProductItem` |
+| Functions  | camelCase         | `handleSubmit`          |
+| Hooks      | `use` + camelCase | `useProducts`           |
+| Constants  | SCREAMING_SNAKE   | `API_ROUTES`            |
 
 Full guide: `.claude/skills/enforcement/code-quality/`
 
