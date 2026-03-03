@@ -19,14 +19,14 @@ A robust, production-ready React Native template built with **Clean Architecture
 - **UI Kit:** Custom core components (Buttons, Inputs, Cards) and a centralized Theme system.
 - **Testing:** Jest & React Native Testing Library setup.
 
-## 🧠 AI-Powered Development (.opencode)
+## 🧠 AI-Powered Development
 
-This project includes a built-in "Second Brain" for AI agents located in the `.opencode/` directory. This serves as the Single Source of Truth for:
+This project includes a built-in "Second Brain" for AI agents located in the `.ai/` directory. This serves as the Single Source of Truth for:
 - **Architectural Rules:** Enforces consistency in layers and naming.
 - **Skills:** specialized instructions for creating components, modules, services, and tests.
 - **Agents:** Specialized personas like `scaffolder`, `test-writer`, and `theme-auditor`.
 
-When working with AI assistants (like Trae, Cursor, or others), point them to `.opencode/AGENTS.md` to unlock context-aware code generation.
+When working with AI assistants (like Trae, Cursor, or others), point them to `AGENTS.md` to unlock context-aware code generation.
 
 ## 📂 Project Structure
 
