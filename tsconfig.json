@@ -11,7 +11,8 @@
       "@hooks/*": ["src/hooks/*"],
       "@modules/*": ["src/modules/*"],
       "@theme/*": ["src/theme/*"],
-      "@navigation/*": ["src/navigation/*"]
+      "@navigation/*": ["src/navigation/*"],
+      "@utils/*": ["src/utils/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
