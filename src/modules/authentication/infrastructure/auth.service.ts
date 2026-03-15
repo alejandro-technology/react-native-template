@@ -1,6 +1,7 @@
 import { AuthRepository } from '../domain/auth.repository';
 import authHttpService from './auth.http.service';
 import authFirebaseService from './firebase-auth.service';
+import authMockService from './auth.mock.service';
 import { CONFIG } from '@config/config';
 
 /**
@@ -18,6 +19,8 @@ function createAuthService(): AuthRepository {
       return authHttpService;
     case 'firebase':
       return authFirebaseService;
+    case 'mock':
+      return authMockService;
     default:
       throw new Error(
         `Unknown auth service provider: ${CONFIG.SERVICE_PROVIDER}`,

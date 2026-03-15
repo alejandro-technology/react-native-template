@@ -2,6 +2,7 @@ import { ProductRepository } from '../domain/product.repository';
 import productHttpService from './product.http.service';
 import productFirebaseService from './product.firebase.service';
 import { CONFIG } from '@config/config';
+import productMockService from './product.mock.service';
 
 /**
  * Product Service Factory
@@ -18,6 +19,8 @@ function createProductService(): ProductRepository {
       return productHttpService;
     case 'firebase':
       return productFirebaseService;
+    case 'mock':
+      return productMockService;
     default:
       throw new Error(
         `Unknown product service provider: ${CONFIG.SERVICE_PROVIDER}`,
