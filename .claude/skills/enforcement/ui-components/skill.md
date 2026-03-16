@@ -220,47 +220,38 @@ export const ProductCard = ({ product, onPress }) => (
 
 ```typescript
 import React from 'react';
-import { View, StyleSheet, Animated } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { Text, Card } from '@components/core';
 import type { ProductEntity } from '../../domain/product.model';
-import { useFocusFadeIn } from '@theme/hooks';
-import { ANIMATION_DURATION, spacing } from '@theme/index';
+import { spacing } from '@theme/index';
 import { ProductsRoutes } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';
 
 interface ProductItemProps {
   product: ProductEntity;
-  index: number;
 }
 
 export const ProductItem = React.memo(function ProductItem({
   product,
-  index,
 }: ProductItemProps) {
   const { navigate } = useNavigationProducts();
-  const { animatedStyle } = useFocusFadeIn({
-    delay: index * 100,
-    duration: ANIMATION_DURATION.normal,
-  });
+
+  const handleCardPress = () => {
+    navigate(ProductsRoutes.ProductDetail, { productId: product.id });
+  };
 
   return (
-    <Animated.View style={animatedStyle}>
-      <Card
-        onPress={() =>
-          navigate(ProductsRoutes.ProductDetail, { productId: product.id })
-        }
-      >
-        <View style={styles.info}>
-          <Text variant="h3">{product.name}</Text>
-          {product.description ? (
-            <Text variant="body">{product.description}</Text>
-          ) : null}
-          <Text variant="caption" color="primary">
-            ${product.price.toFixed(2)}
-          </Text>
-        </View>
-      </Card>
-    </Animated.View>
+    <Card onPress={handleCardPress}>
+      <View style={styles.info}>
+        <Text variant="h3">{product.name}</Text>
+        {product.description ? (
+          <Text variant="body">{product.description}</Text>
+        ) : null}
+        <Text variant="caption" color="primary">
+          ${product.price.toFixed(2)}
+        </Text>
+      </View>
+    </Card>
   );
 });
 
@@ -269,4 +260,4 @@ const styles = StyleSheet.create({
 });
 ```
 
-**Explanation**: Uses `Card` and `Text` from core components (theme-aware). `React.memo` prevents unnecessary re-renders in lists. Spacing uses tokens. Animations use focus-based hooks with staggered delay. Styles use `StyleSheet.create` at file bottom. Props are typed with explicit interface.
+**Explanation**: Uses `Card` and `Text` from core components (theme-aware). `React.memo` prevents unnecessary re-renders in lists. Spacing uses tokens. Animations are handled at the layout level by `RootLayout` (not in individual items). Styles use `StyleSheet.create` at file bottom. Props are typed with explicit interface.

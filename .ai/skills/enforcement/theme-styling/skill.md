@@ -148,18 +148,20 @@ ANIMATION_DURATION.slowest; // 1000ms - Dramatic entrances
 
 ### Focus-Based Animation Hooks
 
+`useFocusFadeIn` se usa **solo a nivel de layout** (`RootLayout`). Las vistas individuales y los items de lista **no** deben usar `useFocusFadeIn` directamente — la animación se hereda automáticamente del layout.
+
 ```typescript
-import { useFocusFadeIn } from '@theme/hooks';
+// RootLayout aplica useFocusFadeIn internamente
+// Las vistas solo necesitan envolver su contenido con RootLayout:
+<RootLayout padding="md" onPress={goBack} title="Detalle">
+  <View>{/* contenido — se anima automáticamente */}</View>
+</RootLayout>
+```
+
+```typescript
 import { useFocusSlideIn } from '@theme/hooks';
 
-// Fade in when screen gains focus
-const { animatedStyle } = useFocusFadeIn({
-  duration: ANIMATION_DURATION.slow,
-  delay: 0,
-  offset: 20,
-});
-
-// Slide in from direction when screen gains focus
+// Slide in from direction when screen gains focus (uso directo permitido)
 const { animatedStyle } = useFocusSlideIn({
   direction: 'right',
   duration: ANIMATION_DURATION.slow,
@@ -168,12 +170,10 @@ const { animatedStyle } = useFocusSlideIn({
 
 ### Animation Usage Convention
 
-| Screen Type    | Animation                             | Duration |
-| -------------- | ------------------------------------- | -------- |
-| Detail content | `useFocusFadeIn`                      | `slow`   |
-| Detail buttons | `useFocusFadeIn` + delay 300          | `slow`   |
-| Form content   | `useFocusSlideIn('right')`            | `slow`   |
-| List items     | `useFocusFadeIn` + index \* 100 delay | `normal` |
+| Screen Type    | Animation                                          | Duration |
+| -------------- | -------------------------------------------------- | -------- |
+| All screens    | `useFocusFadeIn` (automático vía `RootLayout`)     | `slow`   |
+| Form content   | `useFocusSlideIn('right')` (opcional, uso directo) | `slow`   |
 
 ## Validation Rules
 
@@ -185,8 +185,8 @@ const { animatedStyle } = useFocusSlideIn({
 | R4   | Style factories in `theme/components/`, not in component files           |
 | R5   | `StyleSheet.create()` at bottom of file, not inline                      |
 | R6   | Animation durations from `ANIMATION_DURATION` constants                  |
-| R7   | Screen entrance animations use focus-based hooks                         |
-| R8   | List item animations stagger by `index * 100` delay                      |
+| R7   | Screen entrance animations handled by `RootLayout` (not individual views) |
+| R8   | List items do NOT use `useFocusFadeIn` — animation comes from layout     |
 | R9   | Buttons use `variant` prop (`primary`, `secondary`, `outlined`, `ghost`) |
 | R10  | Cards use `variant` prop (`elevated`, `outlined`)                        |
 
