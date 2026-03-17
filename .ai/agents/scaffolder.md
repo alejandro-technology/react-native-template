@@ -32,7 +32,7 @@ src/modules/<feature>/
 ├── domain/
 │   ├── <feature>.model.ts        # Interfaces: <Feature>, <Feature>Response
 │   ├── <feature>.repository.ts   # Interface <Feature>Repository
-│   ├── <feature>.scheme.ts       # Zod schema + inferred type
+│   ├── <feature>.scheme.ts       # Yup schema + inferred type
 │   ├── <feature>.adapter.ts      # Function adapt<Feature>() API -> Domain
 │   └── <feature>.utils.ts        # Pure domain utilities (optional)
 ├── application/
