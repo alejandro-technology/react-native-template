@@ -5,7 +5,7 @@ layer: ui
 priority: high
 tags:
   - react-hook-form
-  - zod
+  - yup
   - form-schema
   - validation
   - adapters
@@ -13,12 +13,12 @@ triggers:
   - 'Creating forms'
   - 'Defining schemas'
   - 'Form data flow review'
-description: Enforce form patterns using react-hook-form, Zod validation, and adapter functions. Use when creating forms, defining schemas, or reviewing form data flow.
+description: Enforce form patterns using react-hook-form, Yup validation, and adapter functions. Use when creating forms, defining schemas, or reviewing form data flow.
 ---
 
 # Forms & Validation Skill
 
-Enforces the form architecture: Zod schemas, react-hook-form integration, and adapter-based data transformation.
+Enforces the form architecture: Yup schemas, react-hook-form integration, and adapter-based data transformation.
 
 ## When to Use
 
@@ -30,7 +30,7 @@ Enforces the form architecture: Zod schemas, react-hook-form integration, and ad
 ## Form Data Flow
 
 ```
-Schema (Zod)          Form (react-hook-form)       Adapter           Service
+Schema (Yup)          Form (react-hook-form)       Adapter           Service
 ─────────────         ──────────────────────       ─────────         ───────
 productSchema    →    useForm<ProductFormData>  →   formToPayload  →  service.create()
   ├─ name                ├─ control                   └─ returns       └─ CreatePayload
@@ -41,37 +41,43 @@ productSchema    →    useForm<ProductFormData>  →   formToPayload  →  serv
 ## Schema Pattern (`domain/{entity}.scheme.ts`)
 
 ```typescript
-import z from 'zod';
+import * as yup from 'yup';
 
-export const {entity}Schema = z.object({
-  name: z
+export const {entity}Schema = yup.object({
+  name: yup
     .string()
-    .min(1, 'El nombre es requerido')
+    .required('El nombre es requerido')
     .max(100, 'El nombre debe tener maximo 100 caracteres'),
-  description: z
+  description: yup
     .string()
     .max(500, 'La descripcion debe tener maximo 500 caracteres')
     .optional(),
-  price: z.coerce.number().min(1, 'El precio debe ser mayor a 0'),
-  email: z
+  price: yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === '' ? undefined : Number(originalValue),
+    )
+    .required('El precio es requerido')
+    .min(1, 'El precio debe ser mayor a 0'),
+  email: yup
     .string()
-    .min(1, 'El email es requerido')
+    .required('El email es requerido')
     .email('Debe ser un email valido'),
 });
 
-export type {Entity}FormData = z.infer<typeof {entity}Schema>;
+export type {Entity}FormData = yup.InferType<typeof {entity}Schema>;
 ```
 
-### Zod Rules
+### Yup Rules
 
 | Rule             | Pattern              | Example                                         |
 | ---------------- | -------------------- | ----------------------------------------------- |
-| Required string  | `.min(1, 'message')` | `.min(1, 'El nombre es requerido')`             |
+| Required string  | `.required('message')` | `.required('El nombre es requerido')`             |
 | Max length       | `.max(N, 'message')` | `.max(100, 'Maximo 100 caracteres')`            |
 | Optional field   | `.optional()`        | `.string().max(500).optional()`                 |
-| Type coercion    | `z.coerce.TYPE()`    | `z.coerce.number().min(1)`                      |
+| Type coercion    | `.transform(...)`    | `.number().transform((v, raw) => Number(raw))` |
 | Email validation | `.email('message')`  | `.email('Debe ser un email valido')`            |
-| Error format     | String format ONLY   | `.min(1, 'message')` NOT `.min(1, { message })` |
+| Error format     | String format ONLY   | `.required('message')` NOT `.required({ message })` |
 | Language         | Spanish              | All error messages in Spanish                   |
 
 ## Form Component Pattern (`ui/components/{Entity}Form.tsx`)
@@ -80,7 +86,7 @@ export type {Entity}FormData = z.infer<typeof {entity}Schema>;
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { View, StyleSheet } from 'react-native';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { spacing } from '@theme/index';
 import { Button } from '@components/core';
 import { TextInput } from '@components/form';
@@ -103,7 +109,7 @@ export function {Entity}Form({
     handleSubmit,
     formState: { errors },
   } = useForm<{Entity}FormData>({
-    resolver: zodResolver({entity}Schema) as any,
+    resolver: yupResolver({entity}Schema),
     defaultValues: {
       name: initialData?.name || '',
       // ...other fields with defaults
@@ -213,12 +219,12 @@ export function {entity}EntityAdapter(data: {Entity}Entity): {Entity}Entity {
 | Rule | Description                                                    |
 | ---- | -------------------------------------------------------------- |
 | R1   | Schemas live in `domain/{entity}.scheme.ts`                    |
-| R2   | FormData type inferred via `z.infer<typeof schema>`            |
+| R2   | FormData type inferred via `yup.InferType<typeof schema>`      |
 | R3   | Error messages in Spanish, string format only                  |
 | R4   | All string fields must have `.max()` defined                   |
 | R5   | Optional fields use `.optional()` suffix                       |
-| R6   | Numeric fields from inputs use `z.coerce.number()`             |
-| R7   | Form uses `zodResolver` with `as any` cast (Zod v4 compat)     |
+| R6   | Numeric fields from inputs use `transform` for coercion        |
+| R7   | Form uses `yupResolver`                                         |
 | R8   | Form component receives `onSubmit`, `isLoading`, `initialData` |
 | R9   | FormView handles create/edit mode via `params?.{entity}`       |
 | R10  | FormView calls adapter before passing to mutation              |
@@ -230,8 +236,8 @@ export function {entity}EntityAdapter(data: {Entity}Entity): {Entity}Entity {
 // WRONG: Validation logic in component
 if (name.length < 1) setError('Required');
 
-// CORRECT: Zod schema handles all validation
-const schema = z.object({ name: z.string().min(1, 'El nombre es requerido') });
+// CORRECT: Yup schema handles all validation
+const schema = yup.object({ name: yup.string().required('El nombre es requerido') });
 
 // WRONG: Sending form data directly to service
 createProduct(formData);

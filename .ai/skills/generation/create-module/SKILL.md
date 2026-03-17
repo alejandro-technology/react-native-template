@@ -31,7 +31,7 @@ src/modules/{feature}/
 │   ├── {feature}.model.ts       # Data types and interfaces
 │   ├── {feature}.repository.ts  # Repository interface (contract)
 │   ├── {feature}.adapter.ts     # Data transformers between layers
-│   └── {feature}.scheme.ts      # Zod validation schemas
+│   └── {feature}.scheme.ts      # Yup validation schemas
 ├── infrastructure/
 │   └── {feature}.service.ts     # API/external service implementation
 ├── application/
@@ -107,14 +107,17 @@ export function createUserResponseAdapter(
 **Schema** (`{feature}.scheme.ts`):
 
 ```typescript
-import z from 'zod';
+import * as yup from 'yup';
 
-export const registerSchema = z.object({
-  email: z.string().min(1, 'El email es requerido').email('Email inválido'),
-  password: z.string().min(8, 'La contraseña debe tener al menos 8 caracteres'),
+export const registerSchema = yup.object({
+  email: yup.string().required('El email es requerido').email('Email inválido'),
+  password: yup
+    .string()
+    .required('La contraseña debe tener al menos 8 caracteres')
+    .min(8, 'La contraseña debe tener al menos 8 caracteres'),
 });
 
-export type RegisterFormData = z.infer<typeof registerSchema>;
+export type RegisterFormData = yup.InferType<typeof registerSchema>;
 ```
 
 ### Infrastructure Layer
@@ -244,7 +247,7 @@ const styles = StyleSheet.create({
 1. Create module directory structure
 2. Define models in `domain/{feature}.model.ts`
 3. Define repository interface in `domain/{feature}.repository.ts`
-4. Create Zod schemas in `domain/{feature}.scheme.ts`
+4. Create Yup schemas in `domain/{feature}.scheme.ts`
 5. Create adapters in `domain/{feature}.adapter.ts`
 6. Implement service in `infrastructure/{feature}.service.ts`
 7. Create React Query hooks in `application/`
@@ -256,7 +259,7 @@ const styles = StyleSheet.create({
 
 ## Stack
 
-- Validation: Zod
+- Validation: Yup
 - Data fetching: @tanstack/react-query
 - HTTP: Axios
 - Error pattern: `manageAxiosError` (returns Error, no throw)

@@ -81,7 +81,7 @@ export const COMPONENTS_CONFIG: ComponentConfig[] = [
   },
   {
     title: 'SignIn Form',
-    description: 'Registration form with react-hook-form & zod validation',
+    description: 'Registration form with react-hook-form & Yup validation',
     icon: '\uD83D\uDD10',
     color: '#EC4899',
     screen: ExamplesRoutes.SignIn,

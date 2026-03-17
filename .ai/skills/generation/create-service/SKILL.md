@@ -115,7 +115,7 @@ src/modules/{feature}/
 │   ├── {feature}.model.ts       # Data types/interfaces
 │   ├── {feature}.repository.ts  # Repository interface
 │   ├── {feature}.adapter.ts     # Data transformers
-│   └── {feature}.scheme.ts      # Zod schemas
+│   └── {feature}.scheme.ts      # Yup schemas
 └── infrastructure/
     └── {feature}.service.ts     # Service implementation
 ```

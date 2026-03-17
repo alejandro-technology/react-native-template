@@ -92,7 +92,7 @@ modules/{entities}/
 ├── domain/
 │   ├── {entity}.model.ts        # Entity, CreatePayload, UpdatePayload, Filter
 │   ├── {entity}.repository.ts   # Interface with 5 CRUD methods
-│   ├── {entity}.scheme.ts       # Zod schema + inferred FormData type
+│   ├── {entity}.scheme.ts       # Yup schema + inferred FormData type
 │   ├── {entity}.adapter.ts      # formToPayload + entityAdapter
 │   └── {entity}.utils.ts        # (optional) Domain-specific helpers
 ├── infrastructure/
@@ -107,7 +107,7 @@ modules/{entities}/
     ├── {Entity}DetailView.tsx    # Detail + Edit/Delete
     ├── {Entity}FormView.tsx      # Create/Edit orchestrator
     └── components/
-        ├── {Entity}Form.tsx      # react-hook-form + Zod
+        ├── {Entity}Form.tsx      # react-hook-form + Yup
         ├── {Entity}Item.tsx      # Card navigates to detail
         └── {Entity}List.tsx      # FlashList + query hook
 ```
@@ -122,7 +122,7 @@ modules/{entities}/
 ### R2: Domain layer has no framework imports
 
 - No `react`, `react-native`, `@tanstack`, `axios` imports
-- Only `zod` is allowed (for schema validation)
+- Validation libraries are allowed in domain schema files
 
 ### R3: Repository interface defines the contract
 

@@ -10,22 +10,25 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@utils/test-utils';
 import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import { TextInput } from '@components/core/TextInput';
 import { Button } from '@components/core/Button';
 import { View } from 'react-native';
 
 // Schema de validación
-const loginSchema = z.object({
-  email: z
+const loginSchema = yup.object({
+  email: yup
     .string()
-    .min(1, 'El email es requerido')
+    .required('El email es requerido')
     .email('El email es inválido'),
-  password: z.string().min(6, 'La contraseña debe tener al menos 6 caracteres'),
+  password: yup
+    .string()
+    .required('La contraseña debe tener al menos 6 caracteres')
+    .min(6, 'La contraseña debe tener al menos 6 caracteres'),
 });
 
-type LoginFormData = z.infer<typeof loginSchema>;
+type LoginFormData = yup.InferType<typeof loginSchema>;
 
 // Componente de formulario de ejemplo
 interface LoginFormProps {
@@ -38,7 +41,7 @@ function LoginForm({ onSubmit }: LoginFormProps) {
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+    resolver: yupResolver(loginSchema),
     defaultValues: {
       email: '',
       password: '',

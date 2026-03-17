@@ -166,7 +166,7 @@ interface Props {
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: [
-    '@babel/plugin-transform-export-namespace-from', // Required for Zod v4
+    '@babel/plugin-transform-export-namespace-from',
     [
       'module-resolver',
       {
@@ -188,7 +188,7 @@ module.exports = {
 };
 ```
 
-**Critical:** `@babel/plugin-transform-export-namespace-from` is required for Zod v4 compatibility. Never remove it.
+**Critical:** Keep Babel plugins aligned with current dependency requirements and verify compatibility before removing any plugin.
 
 ## Import Organization
 

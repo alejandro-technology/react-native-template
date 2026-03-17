@@ -330,7 +330,7 @@ describe('productSchema', () => {
 | `index.ts` barrel files    | Only re-exports, no logic                       |
 | `*.model.ts`               | TypeScript interfaces only, no runtime behavior |
 | `*.repository.ts`          | Interface definitions, no implementation        |
-| External library internals | Trust React Query, Zustand, Zod                 |
+| External library internals | Trust React Query, Zustand, Yup                 |
 | Style factory outputs      | Visual testing handled separately               |
 
 ## What to Test
@@ -338,7 +338,7 @@ describe('productSchema', () => {
 | Priority | Target               | Pattern                             |
 | -------- | -------------------- | ----------------------------------- |
 | P0       | Domain adapters      | Pure function input/output          |
-| P0       | Zod schemas          | Valid/invalid data, error messages  |
+| P0       | Yup schemas          | Valid/invalid data, error messages  |
 | P1       | List item components | Rendering, navigation on press      |
 | P1       | Form components      | Field rendering, validation, submit |
 | P2       | React Query hooks    | Success/error states, cache keys    |

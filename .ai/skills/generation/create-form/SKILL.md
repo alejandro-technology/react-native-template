@@ -5,13 +5,13 @@ layer: ui
 priority: high
 tags:
   - react-hook-form
-  - zod
+  - yup
   - form-validation
   - form-components
 triggers:
   - 'Creating forms'
   - 'Adding validation'
-description: Create form components with react-hook-form and Zod validation. Use when creating complex forms with multiple fields and validation.
+description: Create form components with react-hook-form and Yup validation. Use when creating complex forms with multiple fields and validation.
 ---
 
 # Create Form
@@ -21,7 +21,7 @@ Create form components following this project's conventions.
 ## When to Use
 
 - Creating complex forms (SignUpForm, ProfileForm, CheckoutForm)
-- Forms that need validation with Zod
+- Forms that need validation with Yup
 - Multi-field form sections
 - Forms that integrate with React Query mutations
 
@@ -34,7 +34,7 @@ Create form components following this project's conventions.
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { yupResolver } from '@hookform/resolvers/yup';
 import { Button, TextInput } from '@components/form';
 import { useCreate{Feature}Mutation } from '../../application/{feature}.mutations';
 import { {feature}Schema, {Feature}FormData } from '../../domain/{feature}.scheme';
@@ -43,7 +43,7 @@ import { create{Feature}PayloadAdapter } from '../../domain/{feature}.adapter';
 
 export function {Feature}Form() {
   const { control, handleSubmit, formState: { errors }, reset } = useForm<{Feature}FormData>({
-    resolver: zodResolver({feature}Schema),
+    resolver: yupResolver({feature}Schema),
     defaultValues: {
       email: '',
       password: '',
@@ -96,23 +96,24 @@ const styles = StyleSheet.create({
 });
 ```
 
-### Zod Schema
+### Yup Schema
 
 ```typescript
 // src/modules/{feature}/domain/{feature}.scheme.ts
-import z from 'zod';
+import * as yup from 'yup';
 
-export const {feature}Schema = z.object({
-  email: z
+export const {feature}Schema = yup.object({
+  email: yup
     .string()
-    .min(1, 'El email es requerido')
+    .required('El email es requerido')
     .email('Email inválido'),
-  password: z
+  password: yup
     .string()
+    .required('La contraseña debe tener al menos 8 caracteres')
     .min(8, 'La contraseña debe tener al menos 8 caracteres'),
 });
 
-export type {Feature}FormData = z.infer<typeof {feature}Schema>;
+export type {Feature}FormData = yup.InferType<typeof {feature}Schema>;
 ```
 
 ### Adapter
@@ -161,9 +162,9 @@ const styles = StyleSheet.create({
 
 ## Checklist
 
-1. Create Zod schema in `domain/{feature}.scheme.ts`
+1. Create Yup schema in `domain/{feature}.scheme.ts`
 2. Create adapter in `domain/{feature}.adapter.ts`
-3. Use `useForm` hook with `zodResolver`
+3. Use `useForm` hook with `yupResolver`
 4. Use form components from `@components/form`
 5. Handle loading and error states from mutation
 6. Call `reset()` on success if needed
@@ -177,7 +178,7 @@ const styles = StyleSheet.create({
 src/modules/{feature}/
 ├── domain/
 │   ├── {feature}.model.ts       # Payload/Response types
-│   ├── {feature}.scheme.ts      # Zod schema + inferred type
+│   ├── {feature}.scheme.ts      # Yup schema + inferred type
 │   └── {feature}.adapter.ts     # Form to payload adapter
 ├── application/
 │   └── {feature}.mutations.ts   # React Query mutation
@@ -212,7 +213,7 @@ Always use Spanish for validation messages:
 ## Form Stack
 
 - Form library: react-hook-form
-- Validation: @hookform/resolvers/zod
+- Validation: @hookform/resolvers/yup
 - Form components: `@components/form`
 
 ## Validation Messages
