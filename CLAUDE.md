@@ -133,3 +133,16 @@ Las tres implementaciones (http, firebase, mock) implementan esta misma interfaz
 ## Sincronización .ai ↔ .claude
 
 El directorio `.ai/` es la fuente de verdad que se comparte entre herramientas de IA. El script `bun run claude` copia `.ai/` a `.claude/` para sincronizar. Si se editan skills o reglas, hacerlo en `.ai/` y luego correr el script.
+
+## Skills Sugeridas (Pendientes de Implementación)
+
+| Skill | Tipo | Descripción |
+|-------|------|-------------|
+| internationalization | enforcement | Sistema i18n/l10n con i18next, estructura de locales, migración de strings |
+| deep-linking | enforcement | Deep links y universal links con React Navigation, configuración iOS/Android |
+| push-notifications | specialty | Notificaciones push end-to-end: permisos, tokens, foreground/background, deep linking |
+| maps-and-location | specialty | Mapas, geolocalización, geocoding, geofencing con react-native-maps |
+| payments | specialty | In-app purchases, Stripe, validación de receipts siguiendo clean architecture |
+| create-middleware | generation | Interceptores Axios: refresh tokens, retry, logging, headers dinámicos |
+| create-test | generation | Templates de test por capa (domain, infrastructure, application, UI) |
+| dependency-manager | agent | Gestión de dependencias nativas, compatibilidad New Architecture, pods, gradle |
