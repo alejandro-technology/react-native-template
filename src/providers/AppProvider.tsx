@@ -8,6 +8,7 @@ import {
 import SecureProvider from './SecureProvider';
 import NavigationProvider from './NavigationProvider';
 import ThemeProvider from '@theme/providers/ThemeProvider';
+import { AuthProvider } from '@modules/authentication';
 // Components
 import { GlobalDeleteConfirmation, GlobalToast } from '@modules/core/ui';
 // Styles
@@ -23,13 +24,13 @@ export default function AppProvider({ children }: PropsWithChildren) {
         <ThemeProvider>
           <SafeAreaProvider>
             <GestureHandlerProvider>
-              <NavigationProvider>
-                <SafeAreaView>
-                  {children}
-                </SafeAreaView>
-                <GlobalDeleteConfirmation />
-                <GlobalToast />
-              </NavigationProvider>
+              <AuthProvider>
+                <NavigationProvider>
+                  <SafeAreaView>{children}</SafeAreaView>
+                  <GlobalDeleteConfirmation />
+                  <GlobalToast />
+                </NavigationProvider>
+              </AuthProvider>
             </GestureHandlerProvider>
           </SafeAreaProvider>
         </ThemeProvider>
