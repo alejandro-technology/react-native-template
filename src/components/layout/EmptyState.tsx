@@ -56,7 +56,7 @@ export function EmptyState({
           },
         ]}
       >
-        {icon || <Icon name="mailbox" size={50} color={theme.colors.textSecondary} />}
+        {icon || <Icon name="mailbox" size={50} color="textSecondary" />}
       </Animated.View>
 
       <Text variant="h3" style={styles.title}>

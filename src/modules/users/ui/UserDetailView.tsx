@@ -62,7 +62,7 @@ export function UserDetailView({
   }
 
   return (
-    <RootLayout padding="md" onPress={goBack} title="Detalle de Usuario">
+    <RootLayout padding="md" title="Detalle de Usuario">
       <View style={styles.content}>
         <Card style={styles.card}>
           <Text variant="h2">{user.name}</Text>

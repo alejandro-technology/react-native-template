@@ -1,3 +1,5 @@
+import Config from 'react-native-config';
+
 export type ServiceProvider = 'http' | 'firebase' | 'mock';
 
 interface Config {
@@ -9,7 +11,7 @@ interface Config {
 }
 
 export const CONFIG: Config = {
-  SERVICE_PROVIDER: 'mock',
+  SERVICE_PROVIDER: Config.SERVICE_PROVIDER || 'mock',
   ROOT_CREDENTIALS: {
     // Root credentials for mock service
     USERNAME: '',

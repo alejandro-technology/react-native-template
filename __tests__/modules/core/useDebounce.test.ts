@@ -45,33 +45,29 @@ describe('useDebounce', () => {
 
   it('debe actualizar el valor después del delay', () => {
     const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
+      ({ value, delay }: { value: string; delay: number }) =>
+        useDebounce(value, delay),
       {
         initialProps: { value: 'initial', delay: 500 },
-      }
+      },
     );
 
-    // Cambiar el valor
     rerender({ value: 'updated', delay: 500 });
-
-    // Antes del delay, debe mantener el valor anterior
     expect(result.current).toBe('initial');
 
-    // Avanzar el tiempo
     act(() => {
       jest.advanceTimersByTime(500);
     });
 
-    // Después del delay, debe tener el nuevo valor
     expect(result.current).toBe('updated');
   });
 
   it('debe cancelar el debounce anterior si el valor cambia', () => {
     const { result, rerender } = renderHook(
-      ({ value }) => useDebounce(value, 500),
+      ({ value }: { value: string }) => useDebounce(value, 500),
       {
         initialProps: { value: 'initial' },
-      }
+      },
     );
 
     // Primer cambio
@@ -100,10 +96,11 @@ describe('useDebounce', () => {
 
   it('debe funcionar con diferentes tipos de datos', () => {
     const { result, rerender } = renderHook(
-      ({ value }) => useDebounce(value, 300),
+      ({ value }: { value: { name: string; age: number } }) =>
+        useDebounce(value, 300),
       {
         initialProps: { value: { name: 'John', age: 30 } },
-      }
+      },
     );
 
     expect(result.current).toEqual({ name: 'John', age: 30 });
@@ -118,10 +115,11 @@ describe('useDebounce', () => {
 
   it('debe respetar diferentes delays', () => {
     const { result, rerender } = renderHook(
-      ({ value, delay }) => useDebounce(value, delay),
+      ({ value, delay }: { value: string; delay: number }) =>
+        useDebounce(value, delay),
       {
         initialProps: { value: 'initial', delay: 1000 },
-      }
+      },
     );
 
     rerender({ value: 'updated', delay: 1000 });
@@ -145,11 +143,11 @@ function useCounter(initialValue = 0) {
   const [count, setCount] = React.useState(initialValue);
 
   const increment = React.useCallback(() => {
-    setCount((c) => c + 1);
+    setCount(c => c + 1);
   }, []);
 
   const decrement = React.useCallback(() => {
-    setCount((c) => c - 1);
+    setCount(c => c - 1);
   }, []);
 
   const reset = React.useCallback(() => {
@@ -214,18 +212,16 @@ describe('useCounter', () => {
   });
 
   it('debe mantener las funciones estables (memoizadas)', () => {
-    const { result, rerender } = renderHook(() => useCounter(0));
+    const { result } = renderHook(() => useCounter(0));
 
     const { increment: increment1, decrement: decrement1 } = result.current;
 
     act(() => {
       result.current.increment();
     });
-    rerender();
 
     const { increment: increment2, decrement: decrement2 } = result.current;
 
-    // Las funciones deben ser las mismas instancias
     expect(increment1).toBe(increment2);
     expect(decrement1).toBe(decrement2);
   });

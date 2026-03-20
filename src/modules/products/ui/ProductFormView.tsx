@@ -49,7 +49,6 @@ export function ProductFormView({
     <RootLayout
       scroll
       padding="lg"
-      onPress={goBack}
       title={isEditing ? 'Editar Producto' : 'Crear Producto'}
     >
       <Animated.View style={animatedStyle}>

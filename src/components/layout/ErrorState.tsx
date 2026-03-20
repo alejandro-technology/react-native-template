@@ -72,7 +72,7 @@ export function ErrorState({
           { backgroundColor: theme.colors.error + '20' },
         ]}
       >
-        <Icon name="warning" size={40} color={theme.colors.error} />
+        <Icon name="warning" size={40} color="error" />
       </View>
 
       <Text variant="h3" style={[styles.title, { color: theme.colors.error }]}>
