@@ -8,7 +8,7 @@ declare module '*.svg' {
 declare module 'react-native-config' {
   export interface NativeConfig {
     API_URL?: string;
-    SERVICE_PROVIDER?: ServiceProvider;
+    SERVICE_PROVIDER?: string;
   }
 
   export const Config: NativeConfig;
