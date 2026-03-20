@@ -4,19 +4,28 @@ import { View } from 'react-native';
 import { Text } from './Text';
 // Theme
 import { useTheme } from '@theme/index';
-import { BadgeVariant, getBadgeStyle } from '@theme/components/Badge.styles';
+import {
+  BadgeVariant,
+  BadgeSize,
+  getBadgeStyle,
+} from '@theme/components/Badge.styles';
 
 interface BadgeProps {
   label: string;
   variant?: BadgeVariant;
+  size?: BadgeSize;
 }
 
-export function Badge({ label, variant = 'default' }: BadgeProps) {
+export function Badge({ label, variant = 'default', size = 'md' }: BadgeProps) {
   const theme = useTheme();
-  const styles = getBadgeStyle({ variant, mode: theme.mode });
+  const styles = getBadgeStyle({ variant, size, mode: theme.mode });
 
   return (
-    <View style={styles.container}>
+    <View
+      style={styles.container}
+      accessibilityRole="text"
+      accessibilityLabel={label}
+    >
       <Text style={styles.text}>{label}</Text>
     </View>
   );

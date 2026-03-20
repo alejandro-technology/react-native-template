@@ -2,11 +2,14 @@ import { ViewStyle, TextStyle } from 'react-native';
 import { Colors, ThemeMode, colors } from '../colors';
 import { spacing } from '../spacing';
 import { borderRadius } from '../borders';
+import { typography } from '../typography';
 
 export type BadgeVariant = 'admin' | 'editor' | 'viewer' | 'default';
+export type BadgeSize = 'sm' | 'md' | 'lg';
 
 interface BadgeStyleProps {
   variant?: BadgeVariant;
+  size?: BadgeSize;
   mode?: ThemeMode;
 }
 
@@ -21,7 +24,7 @@ function getVariantStyles(
           backgroundColor: themeColors.primary,
         },
         text: {
-          color: '#FFFFFF',
+          color: themeColors.onPrimary,
         },
       };
 
@@ -31,7 +34,7 @@ function getVariantStyles(
           backgroundColor: themeColors.success,
         },
         text: {
-          color: '#FFFFFF',
+          color: themeColors.onSuccess,
         },
       };
 
@@ -59,23 +62,48 @@ function getVariantStyles(
   }
 }
 
+function getSizeStyles(size: BadgeSize) {
+  switch (size) {
+    case 'sm':
+      return {
+        paddingHorizontal: spacing.xs,
+        paddingVertical: spacing.xs / 4,
+        fontSize: typography.overline.fontSize,
+      };
+    case 'md':
+      return {
+        paddingHorizontal: spacing.sm,
+        paddingVertical: spacing.xs / 2,
+        fontSize: typography.overline.fontSize,
+      };
+    case 'lg':
+      return {
+        paddingHorizontal: spacing.md,
+        paddingVertical: spacing.xs,
+        fontSize: typography.caption.fontSize,
+      };
+  }
+}
+
 export function getBadgeStyle({
   variant = 'default',
+  size = 'md',
   mode = 'light',
 }: BadgeStyleProps): { container: ViewStyle; text: TextStyle } {
   const themeColors = colors[mode];
   const variantStyles = getVariantStyles(variant, themeColors);
+  const sizeConfig = getSizeStyles(size);
 
   return {
     container: {
-      paddingHorizontal: spacing.sm,
-      paddingVertical: spacing.xs / 2,
+      paddingHorizontal: sizeConfig.paddingHorizontal,
+      paddingVertical: sizeConfig.paddingVertical,
       borderRadius: borderRadius.sm,
       alignSelf: 'flex-start',
       ...variantStyles.container,
     },
     text: {
-      fontSize: 10,
+      fontSize: sizeConfig.fontSize,
       fontWeight: 'bold',
       letterSpacing: 0.5,
       textTransform: 'uppercase',

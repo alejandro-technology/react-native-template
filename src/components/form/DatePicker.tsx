@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextInput as RNTextInput } from 'react-native';
-import { Control, useController } from 'react-hook-form';
+import { Control, FieldValues, Path, useController } from 'react-hook-form';
 // Components
 import {
   DatePicker as DatePickerCore,
@@ -9,10 +9,10 @@ import {
 
 // -----------------------------------------------------------------------------
 
-interface DatePickerProps
+interface DatePickerProps<T extends FieldValues = any>
   extends Omit<DatePickerPropsCore, 'value' | 'onChange'> {
-  control: Control<any, any>;
-  name: string;
+  control: Control<T>;
+  name: Path<T>;
 }
 
 export const DatePicker = React.forwardRef<RNTextInput, DatePickerProps>(

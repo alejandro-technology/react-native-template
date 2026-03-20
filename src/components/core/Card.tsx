@@ -51,7 +51,7 @@ export function Card(props: CardProps) {
   });
 
   const cardStyle: ViewStyle = {
-    ...styles,
+    ...styles.container,
     ...(fullWidth && { width: '100%' }),
     ...customStyle,
   };

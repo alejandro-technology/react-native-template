@@ -8,7 +8,7 @@ import { useFadeSlide } from '@theme/hooks';
 import type {
   ToastType,
   ToastPosition,
-} from '@modules/core/infrastructure/app.storage';
+} from '@modules/core/application/app.storage';
 
 interface ToastProps {
   message: string;
@@ -67,8 +67,13 @@ export function Toast({
         styles.container,
         { opacity, transform: [{ translateY }] },
       ]}
+      accessibilityRole="alert"
+      accessibilityLiveRegion="assertive"
+      accessibilityLabel={message}
     >
-      <RNText style={fixedStyles.icon}>{styles.icon}</RNText>
+      <RNText style={[fixedStyles.icon, { color: styles.text.color }]}>
+        {styles.icon}
+      </RNText>
       <RNText style={styles.text}>{message}</RNText>
     </Animated.View>
   );
@@ -82,7 +87,6 @@ const fixedStyles = StyleSheet.create({
     zIndex: 9999,
   },
   icon: {
-    color: '#FFFFFF',
     fontSize: 16,
     fontWeight: 'bold',
   },

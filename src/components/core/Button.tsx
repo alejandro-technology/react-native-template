@@ -73,6 +73,8 @@ export function Button(props: ButtonProps) {
       onPress={handlePress}
       disabled={isDisabled}
       style={[styles.container, customStyle]}
+      accessibilityRole="button"
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
       {...pressableProps}
     >
       {loading && (

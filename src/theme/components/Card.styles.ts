@@ -72,14 +72,16 @@ export function getCardStyle({
   size = 'md',
   mode = 'light',
   borderRadius: borderRadiusToken = 'md',
-}: CardStyleProps): ViewStyle {
+}: CardStyleProps): { container: ViewStyle } {
   const themeColors = colors[mode];
   const sizeConfig = getSizeStyles(size);
   const variantStyles = getVariantStyles(variant, themeColors, mode);
 
   return {
-    borderRadius: borderRadius[borderRadiusToken],
-    ...sizeConfig,
-    ...variantStyles,
+    container: {
+      borderRadius: borderRadius[borderRadiusToken],
+      ...sizeConfig,
+      ...variantStyles,
+    },
   };
 }

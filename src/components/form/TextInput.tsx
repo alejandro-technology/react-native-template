@@ -1,6 +1,6 @@
 import React from 'react';
 import { TextInput as RNTextInput } from 'react-native';
-import { Control, useController } from 'react-hook-form';
+import { Control, FieldValues, Path, useController } from 'react-hook-form';
 // Components
 import {
   TextInput as TextInputCore,
@@ -9,9 +9,10 @@ import {
 
 // -----------------------------------------------------------------------------
 
-interface TextInputProps extends TextInputCoreProps {
-  control: Control<any, any>;
-  name: string;
+interface TextInputProps<T extends FieldValues = any>
+  extends TextInputCoreProps {
+  control: Control<T>;
+  name: Path<T>;
 }
 
 export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(

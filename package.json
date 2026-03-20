@@ -9,6 +9,10 @@
     "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "start": "react-native start",
     "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
     "pod-cocoa": "cd ios && bundle install",
     "pod-install": "cd ios && bundle exec pod install",
     "clean-android": "rm -rf android/build android/app/build && cd android && ./gradlew clean && cd ..",
@@ -17,7 +21,14 @@
     "clean-node": "rm -rf node_modules bun.lockb",
     "claude": "cp -r .ai/ .claude",
     "opencode": "cp -r .ai/ .opencode",
-    "trae": "cp -r .ai/ .trae"
+    "trae": "cp -r .ai/ .trae",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "src/**/*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
   },
   "dependencies": {
     "@hookform/resolvers": "5.2.2",
@@ -35,6 +46,7 @@
     "react": "19.2.0",
     "react-hook-form": "7.71.2",
     "react-native": "0.83.4",
+    "react-native-config": "1.6.1",
     "react-native-fast-image": "8.6.3",
     "react-native-gesture-handler": "2.30.0",
     "react-native-mmkv": "4.1.2",
@@ -62,7 +74,9 @@
     "@types/react": "^19.2.0",
     "babel-plugin-module-resolver": "5.0.2",
     "eslint": "^8.19.0",
+    "husky": "9.1.7",
     "jest": "^29.6.3",
+    "lint-staged": "16.4.0",
     "prettier": "2.8.8",
     "react-native-svg-transformer": "1.5.3",
     "react-test-renderer": "19.2.0",

@@ -22,7 +22,7 @@ export {
 
 // Infrastructure
 export { default as authService } from './infrastructure/auth.service';
-export { useAuthStorage, authSelectors } from './infrastructure/auth.storage';
+export { useAuthStorage, authSelectors } from './application/auth.storage';
 
 // Application
 export { authQueryKeys, useCurrentUser } from './application/auth.queries';

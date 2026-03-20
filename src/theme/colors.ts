@@ -45,6 +45,16 @@ export interface Colors {
   error: string;
   /** Color para información */
   info: string;
+
+  /** Colores de texto sobre fondos de color */
+  /** Texto sobre color primario */
+  onPrimary: string;
+  /** Texto sobre color de éxito */
+  onSuccess: string;
+  /** Texto sobre color de error */
+  onError: string;
+  /** Texto sobre color de información */
+  onInfo: string;
 }
 
 /**
@@ -61,6 +71,10 @@ const lightColors: Colors = {
   warning: '#F59E0B',
   error: '#EF4444',
   info: '#3B82F6',
+  onPrimary: '#FFFFFF',
+  onSuccess: '#FFFFFF',
+  onError: '#FFFFFF',
+  onInfo: '#FFFFFF',
 };
 
 /**
@@ -77,6 +91,10 @@ const darkColors: Colors = {
   warning: '#FBBF24',
   error: '#F87171',
   info: '#60A5FA',
+  onPrimary: '#0F172A',
+  onSuccess: '#0F172A',
+  onError: '#0F172A',
+  onInfo: '#0F172A',
 };
 
 /**
@@ -93,6 +111,10 @@ const primaryColors: Colors = {
   warning: '#D97706',
   error: '#DC2626',
   info: '#2563EB',
+  onPrimary: '#FFFFFF',
+  onSuccess: '#FFFFFF',
+  onError: '#FFFFFF',
+  onInfo: '#FFFFFF',
 };
 
 /**
@@ -109,6 +131,10 @@ const secondaryColors: Colors = {
   warning: '#CA8A04',
   error: '#B91C1C',
   info: '#0891B2',
+  onPrimary: '#FFFFFF',
+  onSuccess: '#FFFFFF',
+  onError: '#FFFFFF',
+  onInfo: '#FFFFFF',
 };
 
 /**
@@ -125,6 +151,10 @@ const premiumColors: Colors = {
   warning: '#B45309',
   error: '#BE123C',
   info: '#7C3AED',
+  onPrimary: '#FFFFFF',
+  onSuccess: '#FFFFFF',
+  onError: '#FFFFFF',
+  onInfo: '#FFFFFF',
 };
 
 /**

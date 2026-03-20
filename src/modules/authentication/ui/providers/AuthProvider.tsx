@@ -5,10 +5,7 @@ import React, {
   PropsWithChildren,
 } from 'react';
 import authService from '../../infrastructure/auth.service';
-import {
-  useAuthStorage,
-  authSelectors,
-} from '../../infrastructure/auth.storage';
+import { useAuthStorage, authSelectors } from '../../application/auth.storage';
 import type { UserEntity, AuthStatus } from '../../domain/auth.model';
 
 /**

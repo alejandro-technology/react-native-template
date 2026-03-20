@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import productService from '../infrastructure/product.service';
-import { useAppStorage } from '@modules/core/infrastructure/app.storage';
+import { useAppStorage } from '@modules/core/application/app.storage';
 
 export function useProductCreate() {
   const queryClient = useQueryClient();

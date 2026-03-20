@@ -3,8 +3,9 @@ import { Colors, ThemeMode, colors } from '../colors';
 import { spacing } from '../spacing';
 import { borderRadius } from '../borders';
 import { getShadows } from '../shadows';
+import { typography } from '../typography';
 
-import type { ToastType } from '@modules/core/infrastructure/app.storage';
+import type { ToastType } from '@modules/core/application/app.storage';
 
 interface ToastStyleProps {
   type?: ToastType;
@@ -54,8 +55,8 @@ export function getToastStyle({
       ...typeStyles.container,
     },
     text: {
-      color: '#FFFFFF',
-      fontSize: 14,
+      color: themeColors.onPrimary,
+      fontSize: typography.bodySmall.fontSize,
       fontWeight: '600',
       flex: 1,
       marginLeft: spacing.sm,

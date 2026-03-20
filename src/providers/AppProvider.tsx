@@ -11,6 +11,7 @@ import ThemeProvider from '@theme/providers/ThemeProvider';
 import { AuthProvider } from '@modules/authentication';
 // Components
 import { GlobalDeleteConfirmation, GlobalToast } from '@modules/core/ui';
+import { ErrorBoundary } from '@components/layout/ErrorBoundary';
 // Styles
 import { useTheme, commonStyles } from '@theme/index';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -19,23 +20,25 @@ import { View } from 'react-native';
 const queryClient = new QueryClient();
 export default function AppProvider({ children }: PropsWithChildren) {
   return (
-    <SecureProvider>
-      <QueryClientProvider client={queryClient}>
-        <ThemeProvider>
-          <SafeAreaProvider>
-            <GestureHandlerProvider>
-              <AuthProvider>
-                <NavigationProvider>
-                  <SafeAreaView>{children}</SafeAreaView>
-                  <GlobalDeleteConfirmation />
-                  <GlobalToast />
-                </NavigationProvider>
-              </AuthProvider>
-            </GestureHandlerProvider>
-          </SafeAreaProvider>
-        </ThemeProvider>
-      </QueryClientProvider>
-    </SecureProvider>
+    <ErrorBoundary>
+      <SecureProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider>
+            <SafeAreaProvider>
+              <GestureHandlerProvider>
+                <AuthProvider>
+                  <NavigationProvider>
+                    <SafeAreaView>{children}</SafeAreaView>
+                    <GlobalDeleteConfirmation />
+                    <GlobalToast />
+                  </NavigationProvider>
+                </AuthProvider>
+              </GestureHandlerProvider>
+            </SafeAreaProvider>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </SecureProvider>
+    </ErrorBoundary>
   );
 }
 

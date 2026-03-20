@@ -9,7 +9,7 @@ module.exports = {
     '__tests__/App.test.tsx', // App.test.tsx tiene dependencias complejas, usar tests de componentes individuales
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-gesture-handler|react-native-screens|react-native-safe-area-context|@react-native-firebase|react-native-mmkv|jail-monkey|@react-native-community)/)',
+    'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-gesture-handler|react-native-screens|react-native-safe-area-context|@react-native-firebase|react-native-mmkv|jail-monkey|@react-native-community|react-native-config)/)',
   ],
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
@@ -32,8 +32,13 @@ module.exports = {
     '!src/**/index.ts',
     '!src/utils/test-utils.tsx',
   ],
-  // No coverage threshold global - usar thresholds específicos por archivo
   coverageThreshold: {
+    global: {
+      branches: 20,
+      functions: 20,
+      lines: 20,
+      statements: 20,
+    },
     // Thresholds específicos para archivos con tests
     './src/components/core/Button.tsx': {
       branches: 70,

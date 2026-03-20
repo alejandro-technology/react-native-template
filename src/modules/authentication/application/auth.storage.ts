@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import { mmkvStorage } from '@config/storage';
+import { secureMMKVStorage } from '@config/storage';
 import type { UserEntity, AuthStatus } from '../domain/auth.model';
 
 /**
@@ -80,7 +80,7 @@ export const useAuthStorage = create<AuthStoreState>()(
     }),
     {
       name: 'auth-storage',
-      storage: createJSONStorage(() => mmkvStorage),
+      storage: createJSONStorage(() => secureMMKVStorage),
       // Solo persistir user y status, los computed se recalculan
       partialize: state => ({
         user: state.user,

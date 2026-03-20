@@ -9,7 +9,7 @@ import {
 } from '../domain/auth.adapter';
 // Infrastructure
 import authService from '../infrastructure/auth.service';
-import { useAuthStorage } from '../infrastructure/auth.storage';
+import { useAuthStorage } from './auth.storage';
 // Application
 import { authQueryKeys } from './auth.queries';
 

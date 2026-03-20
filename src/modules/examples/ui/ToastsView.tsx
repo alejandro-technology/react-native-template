@@ -3,7 +3,7 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 
 import { Button, Text } from '@components/core';
 import { spacing } from '@theme/index';
-import { useAppStorage } from '@modules/core/infrastructure/app.storage';
+import { useAppStorage } from '@modules/core/application/app.storage';
 
 export default function ToastsView() {
   const show = useAppStorage(state => state.toast.show);
@@ -18,7 +18,10 @@ export default function ToastsView() {
           <Button
             variant="primary"
             onPress={() =>
-              show({ message: 'Operacion realizada con exito', type: 'success' })
+              show({
+                message: 'Operacion realizada con exito',
+                type: 'success',
+              })
             }
           >
             Toast Success

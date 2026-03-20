@@ -1,17 +1,13 @@
 import React, { useState, useMemo } from 'react';
-import {
-  StyleSheet, 
-  View,
-  ScrollView,
-  ViewStyle,
-} from 'react-native';
+import { StyleSheet, View, ScrollView, ViewStyle } from 'react-native';
 import { Text } from './Text';
 import { Modal } from './Modal';
 import { TextInput } from './TextInput';
 import { AnimatedPressable } from './AnimatedPressable';
 import { useTheme } from '@theme/index';
 import { spacing } from '@theme/spacing';
-import { BorderRadiusToken } from '@theme/borders';
+import { borderRadius, BorderRadiusToken } from '@theme/borders';
+import { hp } from '@theme/responsive';
 import {
   SelectSize,
   getSelectStyle,
@@ -92,7 +88,13 @@ export function Select(props: SelectProps) {
 
   return (
     <View style={[fullWidth && baseStyles.fullWidth, containerStyle]}>
-      <AnimatedPressable onPress={handlePress} disabled={isDisabled}>
+      <AnimatedPressable
+        onPress={handlePress}
+        disabled={isDisabled}
+        accessibilityRole="combobox"
+        accessibilityState={{ disabled: isDisabled, expanded: isOpen }}
+        accessibilityLabel={label}
+      >
         <TextInput
           label={label}
           helperText={helperText}
@@ -142,11 +144,11 @@ const baseStyles = StyleSheet.create({
     width: '100%',
   },
   modalContent: {
-    maxHeight: 300,
+    maxHeight: hp(40),
   },
   option: {
     paddingVertical: spacing.md,
     paddingHorizontal: spacing.sm,
-    borderRadius: 4,
+    borderRadius: borderRadius.sm,
   },
 });

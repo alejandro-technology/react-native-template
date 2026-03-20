@@ -56,7 +56,7 @@ function getVariantStyles(
           opacity,
         },
         text: {
-          color: '#FFFFFF',
+          color: themeColors.onPrimary,
         },
       };
 

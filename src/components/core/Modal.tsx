@@ -64,6 +64,7 @@ export function Modal(props: ModalProps) {
       onRequestClose={onRequestClose}
       transparent
       statusBarTranslucent
+      accessibilityViewIsModal
     >
       <View style={[styles.overlay, overlayStyle]}>
         {closeOnBackdropPress && onRequestClose && (

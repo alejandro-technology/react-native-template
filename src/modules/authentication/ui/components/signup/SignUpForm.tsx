@@ -28,8 +28,8 @@ export default function SignUpForm() {
     },
   });
 
-  const onSubmit = (data: RegisterFormData) => {
-    console.log('Form data:', data);
+  const onSubmit = (_data: RegisterFormData) => {
+    // TODO: Implement signup mutation
   };
 
   return (

@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 // Components
 import { DeleteConfirmationSheet } from '../../../components/layout/DeleteConfirmationSheet';
 // Store
-import { useAppStorage } from '@modules/core/infrastructure/app.storage';
+import { useAppStorage } from '@modules/core/application/app.storage';
 
 export function GlobalDeleteConfirmation() {
   const { visible, entityName, entityType, onConfirm, close } = useAppStorage(

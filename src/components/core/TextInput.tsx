@@ -128,6 +128,9 @@ export const TextInput = forwardRef<RNTextInput, TextInputProps>(
             placeholderTextColor={
               placeholderTextColor || theme.colors.textSecondary
             }
+            accessibilityLabel={label}
+            accessibilityState={{ disabled: isDisabled }}
+            accessibilityHint={helperText}
             {...textInputProps}
           />
 

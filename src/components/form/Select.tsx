@@ -1,13 +1,14 @@
 import React from 'react';
-import { Control, useController } from 'react-hook-form';
+import { Control, FieldValues, Path, useController } from 'react-hook-form';
 import {
   Select as SelectCore,
   SelectProps as SelectCoreProps,
 } from '../core/Select';
 
-interface SelectProps extends Omit<SelectCoreProps, 'value' | 'onChange'> {
-  control: Control<any, any>;
-  name: string;
+interface SelectProps<T extends FieldValues = any>
+  extends Omit<SelectCoreProps, 'value' | 'onChange'> {
+  control: Control<T>;
+  name: Path<T>;
 }
 
 export function Select({ name, control, ...rest }: SelectProps) {

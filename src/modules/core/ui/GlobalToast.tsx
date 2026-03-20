@@ -2,7 +2,7 @@ import React from 'react';
 // Components
 import { Toast } from '@components/core';
 // Store
-import { useAppStorage } from '@modules/core/infrastructure/app.storage';
+import { useAppStorage } from '@modules/core/application/app.storage';
 
 export function GlobalToast() {
   const { visible, message, type, duration, position, hide } = useAppStorage(

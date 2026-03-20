@@ -17,7 +17,7 @@ import { useNavigationUsers } from '@navigation/hooks';
 // Theme
 import { spacing } from '@theme/index';
 // Store
-import { useAppStorage } from '@modules/core/infrastructure/app.storage';
+import { useAppStorage } from '@modules/core/application/app.storage';
 
 export function UserDetailView({
   route: {
@@ -94,7 +94,11 @@ export function UserDetailView({
         </Card>
 
         <View>
-          <Button variant="secondary" onPress={handleEdit} style={styles.button}>
+          <Button
+            variant="secondary"
+            onPress={handleEdit}
+            style={styles.button}
+          >
             Editar Usuario
           </Button>
           <Button

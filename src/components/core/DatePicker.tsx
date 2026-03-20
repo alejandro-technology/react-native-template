@@ -122,7 +122,16 @@ export const DatePicker = forwardRef<RNTextInput, DatePickerProps>(
 
     return (
       <View>
-        <AnimatedPressable onPress={handlePress} style={styles.iconButton}>
+        <AnimatedPressable
+          onPress={handlePress}
+          style={styles.iconButton}
+          accessibilityRole="button"
+          accessibilityLabel={
+            label ||
+            (mode === 'time' ? 'Seleccionar hora' : 'Seleccionar fecha')
+          }
+          accessibilityState={{ disabled: !!disabled }}
+        >
           <TextInput
             ref={ref}
             label={label}
@@ -134,7 +143,7 @@ export const DatePicker = forwardRef<RNTextInput, DatePickerProps>(
               <Icon
                 name={mode === 'time' ? 'clock' : 'calendar'}
                 size={18}
-                color={styles.icon.color as string}
+                color={styles.icon.color as never}
               />
             }
             placeholderTextColor={styles.placeholder.color}

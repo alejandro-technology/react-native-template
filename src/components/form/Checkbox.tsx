@@ -1,14 +1,14 @@
 import React from 'react';
-import { Control, useController } from 'react-hook-form';
+import { Control, FieldValues, Path, useController } from 'react-hook-form';
 import { Checkbox as CheckboxCore } from '@components/core';
 
-interface CheckboxProps
+interface CheckboxProps<T extends FieldValues = any>
   extends Omit<
     React.ComponentProps<typeof CheckboxCore>,
     'checked' | 'onChange'
   > {
-  control: Control<any, any>;
-  name: string;
+  control: Control<T>;
+  name: Path<T>;
 }
 
 export function Checkbox({ name, control, ...rest }: CheckboxProps) {

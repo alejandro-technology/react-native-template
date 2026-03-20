@@ -1,5 +1,7 @@
+import Config from 'react-native-config';
+
 export const API_ROUTES = {
-  ROOT: 'http://192.168.0.14:3002/bp',
+  ROOT: Config.API_URL ?? 'https://api.example.com',
   PRODUCTS: '/products',
   USERS: '/users',
   SIGNIN: '/auth/signin',

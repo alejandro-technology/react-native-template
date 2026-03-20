@@ -66,6 +66,9 @@ export function Checkbox(props: CheckboxProps) {
       onPress={handlePress}
       disabled={disabled}
       style={[styles.container, customStyle]}
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked, disabled }}
+      accessibilityLabel={typeof label === 'string' ? label : undefined}
       {...pressableProps}
     >
       <View style={styles.box}>
