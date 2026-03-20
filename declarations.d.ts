@@ -1,5 +1,3 @@
-import { ServiceProvider } from '@config/config';
-
 declare module '*.svg' {
   import React from 'react';
   import { SvgProps } from 'react-native-svg';
