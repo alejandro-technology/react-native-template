@@ -85,6 +85,25 @@ jest.mock('jail-monkey', () => ({
   },
 }));
 
+// Mock de react-native-svg
+jest.mock('react-native-svg', () => {
+  const React = require('react');
+  const { View } = require('react-native');
+  return {
+    Svg: (props: any) => React.createElement(View, props),
+    Path: (props: any) => React.createElement(View, props),
+    Circle: (props: any) => React.createElement(View, props),
+    Rect: (props: any) => React.createElement(View, props),
+    G: (props: any) => React.createElement(View, props),
+    Polyline: (props: any) => React.createElement(View, props),
+    Polygon: (props: any) => React.createElement(View, props),
+    Line: (props: any) => React.createElement(View, props),
+    Defs: (props: any) => React.createElement(View, props),
+    LinearGradient: (props: any) => React.createElement(View, props),
+    Stop: (props: any) => React.createElement(View, props),
+  };
+});
+
 // Silenciar warnings específicos
 const originalError = console.error;
 const originalWarn = console.warn;

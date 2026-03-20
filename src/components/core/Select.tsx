@@ -45,7 +45,7 @@ export function Select(props: SelectProps) {
     value,
     onChange,
     size = 'md',
-    borderRadius,
+    borderRadius: _borderRadius,
     fullWidth = false,
     disabled = false,
     modalTitle,
@@ -60,7 +60,7 @@ export function Select(props: SelectProps) {
   const styles = getSelectStyle({
     size,
     mode: theme.mode,
-    borderRadius,
+    borderRadius: _borderRadius,
     isOpen,
     isDisabled,
   });

@@ -12,7 +12,7 @@ class ProductMockService implements ProductRepository {
     return Promise.resolve(this.database);
   }
   getById(id: string): Promise<ProductEntity | Error> {
-    const product = this.database.find(product => product.id === id);
+    const product = this.database.find(_product => _product.id === id);
     if (!product) {
       return Promise.resolve(new Error('Product not found'));
     }
@@ -33,7 +33,7 @@ class ProductMockService implements ProductRepository {
     id: string,
     data: UpdateProductPayload,
   ): Promise<ProductEntity | Error> {
-    const product = this.database.find(product => product.id === id);
+    const product = this.database.find(_product => _product.id === id);
     if (!product) {
       return Promise.resolve(new Error('Product not found'));
     }

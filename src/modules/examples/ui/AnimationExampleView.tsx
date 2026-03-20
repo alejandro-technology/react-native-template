@@ -308,29 +308,17 @@ export default function AnimationExampleView() {
         {showList && (
           <View style={styles.listContainer}>
             <Animated.View
-              style={[
-                styles.listItem,
-                { backgroundColor: '#6366f1' },
-                list1Style,
-              ]}
+              style={[styles.listItem, styles.listItemPrimary, list1Style]}
             >
               <Text style={styles.listText}>Item 1</Text>
             </Animated.View>
             <Animated.View
-              style={[
-                styles.listItem,
-                { backgroundColor: '#8b5cf6' },
-                list2Style,
-              ]}
+              style={[styles.listItem, styles.listItemSecondary, list2Style]}
             >
               <Text style={styles.listText}>Item 2</Text>
             </Animated.View>
             <Animated.View
-              style={[
-                styles.listItem,
-                { backgroundColor: '#a855f7' },
-                list3Style,
-              ]}
+              style={[styles.listItem, styles.listItemTertiary, list3Style]}
             >
               <Text style={styles.listText}>Item 3</Text>
             </Animated.View>
@@ -343,7 +331,7 @@ export default function AnimationExampleView() {
         <Animated.View
           style={[
             styles.rotateBox,
-            { backgroundColor: '#f59e0b' },
+            styles.rotateBoxWarning,
             { transform: [{ rotate }] },
           ]}
         >
@@ -448,5 +436,17 @@ const styles = StyleSheet.create({
   rotateText: {
     fontSize: 36,
     color: 'white',
+  },
+  listItemPrimary: {
+    backgroundColor: '#6366f1',
+  },
+  listItemSecondary: {
+    backgroundColor: '#8b5cf6',
+  },
+  listItemTertiary: {
+    backgroundColor: '#a855f7',
+  },
+  rotateBoxWarning: {
+    backgroundColor: '#f59e0b',
   },
 });

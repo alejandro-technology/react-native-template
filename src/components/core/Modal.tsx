@@ -68,7 +68,11 @@ export function Modal(props: ModalProps) {
     >
       <View style={[styles.overlay, overlayStyle]}>
         {closeOnBackdropPress && onRequestClose && (
-          <Pressable style={styles.backdrop} onPress={onRequestClose} />
+          <Pressable
+            testID="modal-backdrop"
+            style={styles.backdrop}
+            onPress={onRequestClose}
+          />
         )}
         <View style={[styles.container, customStyle]}>
           {shouldRenderHeader && (

@@ -12,6 +12,7 @@ module.exports = {
     'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-gesture-handler|react-native-screens|react-native-safe-area-context|@react-native-firebase|react-native-mmkv|jail-monkey|@react-native-community|react-native-config)/)',
   ],
   moduleNameMapper: {
+    '\\.svg$': '<rootDir>/__mocks__/svgMock.js',
     '^@/(.*)$': '<rootDir>/src/$1',
     '^@modules/(.*)$': '<rootDir>/src/modules/$1',
     '^@components/(.*)$': '<rootDir>/src/components/$1',
