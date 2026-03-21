@@ -14,7 +14,7 @@ export const CONFIG: Config = {
   SERVICE_PROVIDER: (Config.SERVICE_PROVIDER as ServiceProvider) || 'mock',
   ROOT_CREDENTIALS: {
     // Root credentials for mock service
-    USERNAME: '',
-    PASSWORD: '',
+    USERNAME: 'user@example.com',
+    PASSWORD: 'example123',
   },
 };

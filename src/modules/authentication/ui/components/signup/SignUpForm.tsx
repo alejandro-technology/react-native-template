@@ -12,6 +12,7 @@ import {
 } from '@modules/authentication/domain/auth.scheme';
 // Theme
 import { spacing } from '@theme/spacing';
+import { useSignupMutation } from '@modules/authentication/application/auth.mutations';
 
 export default function SignUpForm() {
   const { control, handleSubmit } = useForm<RegisterFormData>({
@@ -28,8 +29,10 @@ export default function SignUpForm() {
     },
   });
 
-  const onSubmit = (_data: RegisterFormData) => {
-    // TODO: Implement signup mutation
+  const { mutate } = useSignupMutation();
+
+  const onSubmit = (form: RegisterFormData) => {
+    mutate(form);
   };
 
   return (

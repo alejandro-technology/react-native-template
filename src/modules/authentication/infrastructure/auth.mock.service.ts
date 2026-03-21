@@ -1,4 +1,5 @@
 import { storage } from '@config/storage';
+import { CONFIG } from '@config/config';
 import type { AuthRepository } from '../domain/auth.repository';
 import type {
   SignInPayload,
@@ -63,6 +64,24 @@ function mockUserToEntity(mockUser: MockUser): UserEntity {
  */
 class AuthMockService implements AuthRepository {
   private listeners: Set<AuthStateChangeCallback> = new Set();
+
+  private getRootCredentials() {
+    return CONFIG.ROOT_CREDENTIALS;
+  }
+
+  private buildRootUser(): MockUser {
+    const now = new Date().toISOString();
+    return {
+      id: 'mock-root-user',
+      email: this.getRootCredentials().USERNAME,
+      password: this.getRootCredentials().PASSWORD,
+      displayName: 'Root',
+      photoURL: null,
+      emailVerified: true,
+      createdAt: now,
+      lastLoginAt: now,
+    };
+  }
 
   /**
    * Obtiene todos los usuarios registrados
@@ -161,6 +180,23 @@ class AuthMockService implements AuthRepository {
   async signin(data: SignInPayload): Promise<SignInResponse | Error> {
     // Simular delay de red
     await new Promise(resolve => setTimeout(resolve, 500));
+
+    const rootCredentials = this.getRootCredentials();
+    const canUseRootCredentials =
+      rootCredentials.USERNAME.length > 0 &&
+      rootCredentials.PASSWORD.length > 0;
+
+    if (
+      canUseRootCredentials &&
+      data.email === rootCredentials.USERNAME &&
+      data.password === rootCredentials.PASSWORD
+    ) {
+      const rootUser = this.buildRootUser();
+      this.setCurrentUserInStorage(rootUser);
+      const userEntity = mockUserToEntity(rootUser);
+      this.notifyListeners(userEntity);
+      return { user: userEntity };
+    }
 
     const users = this.getUsers();
     const user = users.find(

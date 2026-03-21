@@ -3,7 +3,8 @@ import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, View, ScrollView, Animated } from 'react-native';
 
 import ComponentCard from './ComponentCard';
-import { Text, Icon } from '@components/core';
+import { Text, Icon, Button } from '@components/core';
+import { useSignoutMutation } from '@modules/authentication/application/auth.mutations';
 
 import { spacing } from '@theme/index';
 import { useTheme } from '@theme/index';
@@ -16,6 +17,7 @@ import { PrivateRoutes, ProductsRoutes, UsersRoutes } from '@navigation/routes';
 function AuthExampleView() {
   const { navigate } = useNavigation();
   const { mode } = useTheme();
+  const { mutate: signout, isPending: isSigningOut } = useSignoutMutation();
 
   const { opacityAnim, translateYAnim } = useHeroAnimation();
 
@@ -73,7 +75,7 @@ function AuthExampleView() {
           <Icon
             name={mode === 'dark' ? 'moon' : 'sun'}
             size={22}
-            color='primary'
+            color="primary"
           />
           <Text variant="caption" color="textSecondary">
             {mode}
@@ -89,24 +91,44 @@ function AuthExampleView() {
       </View>
 
       <View style={styles.cardsContainer}>
-        {COMPONENTS_CONFIG.filter(component => component.auth).slice(-2).map(component => (
-          <ComponentCard
-            key={component.title}
-            title={component.title}
-            description={component.description}
-            icon={component.icon}
-            color={component.color}
-            onPress={() => {
-              if (component.screen in ProductsRoutes) {
-                const args = [PrivateRoutes.Products, { screen: component.screen }] as const;
-                navigate(...args as never);
-              } else if (component.screen in UsersRoutes) {
-                const args = [PrivateRoutes.Users, { screen: component.screen }] as const;
-                navigate(...args as never);
-              }
-            }}
-          />
-        ))}
+        {COMPONENTS_CONFIG.filter(component => component.auth)
+          .slice(-2)
+          .map(component => (
+            <ComponentCard
+              key={component.title}
+              title={component.title}
+              description={component.description}
+              icon={component.icon}
+              color={component.color}
+              onPress={() => {
+                if (component.screen in ProductsRoutes) {
+                  const args = [
+                    PrivateRoutes.Products,
+                    { screen: component.screen },
+                  ] as const;
+                  navigate(...(args as never));
+                } else if (component.screen in UsersRoutes) {
+                  const args = [
+                    PrivateRoutes.Users,
+                    { screen: component.screen },
+                  ] as const;
+                  navigate(...(args as never));
+                }
+              }}
+            />
+          ))}
+      </View>
+
+      <View style={styles.logoutContainer}>
+        <Button
+          variant="outlined"
+          size="lg"
+          fullWidth
+          loading={isSigningOut}
+          onPress={() => signout()}
+        >
+          Cerrar sesión
+        </Button>
       </View>
 
       <View style={styles.footer}>
@@ -171,6 +193,9 @@ const styles = StyleSheet.create({
   },
   cardsContainer: {
     gap: spacing.md,
+  },
+  logoutContainer: {
+    marginTop: spacing.xl,
   },
   footer: {
     marginTop: spacing['2xl'],

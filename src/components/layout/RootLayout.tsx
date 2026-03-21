@@ -42,7 +42,8 @@ export function RootLayout({
   const defaultLeftOptions: ToolbarOptions[] = [
     { icon: 'arrow-left', onPress: goBack },
   ];
-  
+  const defaultRightOptions: ToolbarOptions[] = [{ icon: 'mailbox' }];
+
   const style = [
     styles.container,
     { backgroundColor, padding: padding && spacing[padding] },
@@ -58,7 +59,7 @@ export function RootLayout({
           <Toolbar
             title={title}
             leftOptions={leftOptions || defaultLeftOptions}
-            rightOptions={rightOptions}
+            rightOptions={rightOptions || defaultRightOptions}
           />
         )}
         <View style={style}>{children}</View>
