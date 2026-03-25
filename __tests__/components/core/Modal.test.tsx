@@ -66,7 +66,7 @@ describe('Modal Component', () => {
   });
 
   it('debe renderizar contenido sin header cuando no hay title ni icon', () => {
-    const { getByText, queryByText } = render(
+    const { getByText } = render(
       <Modal visible={true}>
         <Text>Solo contenido</Text>
       </Modal>,

@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { render, fireEvent } from '@utils/test-utils';
+import React from 'react';
+import { render } from '@utils/test-utils';
 import { ErrorBoundary } from '@components/layout/ErrorBoundary';
-import { Text, Pressable } from 'react-native';
+import { Text } from 'react-native';
 
 function ThrowingComponent({ shouldThrow }: { shouldThrow: boolean }) {
   if (shouldThrow) {
