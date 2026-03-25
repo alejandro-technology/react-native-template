@@ -17,7 +17,7 @@ export function useFocusSlideIn({
   offset = 50,
 }: FocusSlideInConfig = {}) {
   const startOffset = direction === 'right' ? offset : -offset;
-  
+
   const opacity = useRef(new Animated.Value(0)).current;
   const translateX = useRef(new Animated.Value(startOffset)).current;
 
@@ -40,7 +40,7 @@ export function useFocusSlideIn({
           useNativeDriver: true,
         }),
       ]).start();
-    }, [opacity, translateX, duration, delay, startOffset])
+    }, [opacity, translateX, duration, delay, startOffset]),
   );
 
   return {

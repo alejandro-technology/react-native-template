@@ -69,11 +69,14 @@ function MyScreen() {
 ### Tokens Disponibles
 
 **Colors** (semánticos):
-- `primary`, `secondary`, `success`, `warning`, `error`, `info`
+- `primary`, `success`, `warning`, `error`, `info`
 - `background`, `surface`, `border`
 - `text`, `textSecondary`
+- `onPrimary`, `onSuccess`, `onError`, `onInfo` (texto sobre fondos de color)
 
-**Spacing** (sistema 8pts):
+**ThemeMode**: `'light' | 'dark' | 'primary' | 'premium'`
+
+**Spacing** (escala basada en 4px):
 - `xs` (4px), `sm` (8px), `md` (12px), `base` (16px), `lg` (24px), `xl` (32px), `2xl` (48px), `3xl` (64px)
 
 **Typography** (variants):
@@ -83,7 +86,8 @@ function MyScreen() {
 **Responsive** (funciones):
 - `wScale(size)` - escala horizontal
 - `hScale(size)` - escala vertical
-- `moderateScale(size)` - escala moderada (para fonts)
+- `moderateScale(size)` - escala moderada (factor configurable)
+- `fScale(size)` - escala de fuente (para iconos y elementos no-Text que deben escalar)
 - `wp(percent)` - porcentaje de ancho
 - `hp(percent)` - porcentaje de alto
 

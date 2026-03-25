@@ -322,8 +322,14 @@ export function use{Feature}(id: string, enabled = true) {
 
 ```typescript
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+// Domain
+import { {Feature}FormData } from '../domain/{feature}.scheme';
+import { {feature}FormToPayloadAdapter } from '../domain/{feature}.adapter';
+// Services
 import {feature}Service from '../infrastructure/{feature}.service';
+// Core
 import { useAppStorage } from '@modules/core/application/app.storage';
+// Config
 import { QUERY_KEYS } from '@config/query.keys';
 
 export function use{Feature}Create() {
@@ -331,8 +337,9 @@ export function use{Feature}Create() {
   const { show } = useAppStorage(s => s.toast);
 
   return useMutation({
-    mutationFn: async (data: Parameters<typeof {feature}Service.create>[0]) => {
-      const result = await {feature}Service.create(data);
+    mutationFn: async (form: {Feature}FormData) => {
+      const payload = {feature}FormToPayloadAdapter(form);
+      const result = await {feature}Service.create(payload);
       if (result instanceof Error) {
         throw result;
       }
@@ -359,14 +366,9 @@ export function use{Feature}Update() {
   const { show } = useAppStorage(s => s.toast);
 
   return useMutation({
-    mutationFn: async ({
-      id,
-      data,
-    }: {
-      id: string;
-      data: Parameters<typeof {feature}Service.update>[1];
-    }) => {
-      const result = await {feature}Service.update(id, data);
+    mutationFn: async ({ id, form }: { id: string; form: {Feature}FormData }) => {
+      const payload = {feature}FormToPayloadAdapter(form);
+      const result = await {feature}Service.update(id, payload);
       if (result instanceof Error) {
         throw result;
       }
@@ -418,6 +420,8 @@ export function use{Feature}Delete() {
   });
 }
 ```
+
+**Nota**: Las mutations reciben `FormData` desde el UI y llaman al adapter internamente. El UI NO debe llamar al adapter directamente.
 
 **Register QUERY_KEYS** in `src/config/query.keys.ts`:
 

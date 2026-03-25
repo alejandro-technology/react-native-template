@@ -116,23 +116,32 @@ async getById(id: string): Promise<UserEntity> {
 ### Patrón en Application
 
 ```typescript
-// ✅ CORRECTO: Mutation convierte Error en throw
+// ✅ CORRECTO: Mutation convierte Error en throw + toast + invalidación
 // En src/modules/users/application/user.mutations.ts
 export function useUserCreate() {
+  const queryClient = useQueryClient();
+  const { show } = useAppStorage(s => s.toast);
   return useMutation({
-    mutationFn: async (data: UserFormData) => {
-      const payload = userFormToPayloadAdapter(data);
+    mutationFn: async (form: UserFormData) => {
+      const payload = userFormToPayloadAdapter(form);
       const result = await userService.create(payload);
-
       if (result instanceof Error) {
         throw result; // Convertir para React Query
       }
-
-      return userEntityAdapter(result);
+      return result;
+    },
+    onSuccess: () => {
+      show({ message: 'Usuario creado exitosamente', type: 'success' });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.USERS() });
+    },
+    onError: (error: Error) => {
+      show({ message: error.message, type: 'error' });
     },
   });
 }
 ```
+
+**Nota**: El adapter (`userFormToPayloadAdapter`) se llama en la capa de application (dentro de `mutationFn`), NO en la capa de UI. El FormView pasa `FormData` directamente a la mutation.
 
 ### Por Qué Este Patrón
 
@@ -154,5 +163,5 @@ grep "instanceof Error" src/modules/*/application/*.mutations.ts
 
 **Referencias**:
 - Servicio ejemplo: `src/modules/users/infrastructure/user.http.service.ts` (líneas 13-70)
-- Mutation ejemplo: `src/modules/users/application/user.mutations.ts` (líneas 8-76)
+- Mutation ejemplo: `src/modules/users/application/user.mutations.ts`
 - Ver `.ai/skills/enforcement/error-handling/skill.md` para detalles completos

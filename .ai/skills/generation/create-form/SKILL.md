@@ -179,7 +179,6 @@ import {
 } from '../application/{feature}.mutations';
 // Domain
 import type { {Feature}FormData } from '../domain/{feature}.scheme';
-import { {feature}FormToPayloadAdapter } from '../domain/{feature}.adapter';
 // Navigation
 import { {Feature}sRoutes, {Feature}sScreenProps } from '@navigation/routes';
 
@@ -194,16 +193,14 @@ export function {Feature}FormView({
   const existingItem = params?.{feature};
   const isEditing = !!existingItem;
 
-  const handleSubmit = (data: {Feature}FormData) => {
-    const payload = {feature}FormToPayloadAdapter(data);
-
+  function handleSubmit(form: {Feature}FormData) {
     if (isEditing) {
-      updateItem({ id: existingItem.id, data: payload });
+      updateItem({ id: existingItem.id, form });
     } else {
-      createItem(payload);
+      createItem(form);
     }
     goBack();
-  };
+  }
 
   return (
     <RootLayout
@@ -220,6 +217,8 @@ export function {Feature}FormView({
   );
 }
 ```
+
+**Key rule**: The FormView passes `FormData` directly to the mutation. The adapter (`{feature}FormToPayloadAdapter`) is called inside the mutation's `mutationFn` in the application layer, NOT in the UI layer.
 
 ### 4. Adapter (`domain/{feature}.adapter.ts`)
 

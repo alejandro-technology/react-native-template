@@ -12,7 +12,7 @@ export type BaseThemeMode = 'light' | 'dark';
 /**
  * Temas personalizados disponibles
  */
-export type CustomThemeMode = 'primary' | 'secondary' | 'premium';
+export type CustomThemeMode = 'primary' | 'premium';
 
 /**
  * Todos los modos de tema soportados
@@ -118,26 +118,6 @@ const primaryColors: Colors = {
 };
 
 /**
- * Colores para el tema secundario (verde naturaleza)
- */
-const secondaryColors: Colors = {
-  background: '#F0FDF4',
-  surface: '#FFFFFF',
-  border: '#BBF7D0',
-  text: '#14532D',
-  textSecondary: '#16A34A',
-  primary: '#16A34A',
-  success: '#15803D',
-  warning: '#CA8A04',
-  error: '#B91C1C',
-  info: '#0891B2',
-  onPrimary: '#FFFFFF',
-  onSuccess: '#FFFFFF',
-  onError: '#FFFFFF',
-  onInfo: '#FFFFFF',
-};
-
-/**
  * Colores para el tema premium (púrpura elegante)
  */
 const premiumColors: Colors = {
@@ -164,7 +144,6 @@ export const colors: Record<ThemeMode, Colors> = {
   light: lightColors,
   dark: darkColors,
   primary: primaryColors,
-  secondary: secondaryColors,
   premium: premiumColors,
 } as const;
 
