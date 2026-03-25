@@ -5,7 +5,7 @@ import { borderRadius } from '../borders';
 import { getShadows } from '../shadows';
 import { typography } from '../typography';
 
-import type { ToastType } from '@modules/core/application/app.storage';
+import type { ToastType } from '@modules/core/domain/app.model';
 
 interface ToastStyleProps {
   type?: ToastType;
