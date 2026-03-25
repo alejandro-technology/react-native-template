@@ -142,7 +142,11 @@ export default function ButtonsView() {
           >
             Large Primary with Icon
           </Button>
-          <Button variant="outlined" size="sm" leftIcon={<Icon name="input" size={16} />}>
+          <Button
+            variant="outlined"
+            size="sm"
+            leftIcon={<Icon name="input" size={16} />}
+          >
             Small Outlined with Icon
           </Button>
           <Button variant="ghost" size="md" disabled>

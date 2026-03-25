@@ -36,7 +36,7 @@ export function useFocusFadeIn({
           useNativeDriver: true,
         }),
       ]).start();
-    }, [opacity, translateY, duration, delay, offset])
+    }, [opacity, translateY, duration, delay, offset]),
   );
 
   return {

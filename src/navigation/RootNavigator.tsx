@@ -5,13 +5,12 @@ import PrivateNavigator from './stacks/PrivateStackNavigator';
 // Hooks
 import { useAuth } from '@modules/authentication';
 
-
 export default function RootNavigator() {
   const { isAuthenticated } = useAuth();
 
   if (isAuthenticated) {
-    return <PrivateNavigator />
+    return <PrivateNavigator />;
   }
 
-  return <PublicNavigator />
+  return <PublicNavigator />;
 }

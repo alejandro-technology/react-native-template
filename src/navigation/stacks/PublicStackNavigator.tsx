@@ -4,7 +4,10 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import ExamplesNavigator from './ExampleStackNavigator';
 import AuthenticationNavigator from './AuthenticationStackNavigator';
 // Routes
-import { PublicRoutes, PublicStackParamList } from '@navigation/routes/public.routes';
+import {
+  PublicRoutes,
+  PublicStackParamList,
+} from '@navigation/routes/public.routes';
 
 const Stack = createNativeStackNavigator<PublicStackParamList>();
 

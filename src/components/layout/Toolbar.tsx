@@ -53,7 +53,7 @@ export function Toolbar({ title, leftOptions, rightOptions }: Props) {
 
       <View style={styles.titleContainer}>
         <View style={styles.title}>
-          <Text variant="h4" numberOfLines={1} align='center'>
+          <Text variant="h4" numberOfLines={1} align="center">
             {title}
           </Text>
         </View>
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   title: {
     width: '55%',
     alignItems: 'center',
-    alignSelf: 'center'
+    alignSelf: 'center',
   },
   rightContainer: {
     alignItems: 'flex-end',

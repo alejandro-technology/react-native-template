@@ -19,7 +19,8 @@ class UserMockService implements UserRepository {
     }
 
     return this.database.filter(user => {
-      const haystack = `${user.name} ${user.email} ${user.phone} ${user.role}`.toLowerCase();
+      const haystack =
+        `${user.name} ${user.email} ${user.phone} ${user.role}`.toLowerCase();
       return haystack.includes(searchText);
     });
   }
@@ -50,7 +51,10 @@ class UserMockService implements UserRepository {
     return user;
   }
 
-  async update(id: string, data: UpdateUserPayload): Promise<UserEntity | Error> {
+  async update(
+    id: string,
+    data: UpdateUserPayload,
+  ): Promise<UserEntity | Error> {
     const user = this.database.find(item => item.id === id);
     if (!user) {
       return new Error('User not found');

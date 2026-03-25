@@ -17,7 +17,7 @@ export default function SignInView() {
   const { navigate } = useNavigationAuthentication();
 
   return (
-    <RootLayout padding='md'>
+    <RootLayout padding="md">
       <View style={styles.container}>
         <View style={styles.header}>
           <Text variant="h1">Inicio de sesion</Text>

@@ -18,18 +18,12 @@ export default function PrivateNavigator() {
         animationDuration: 2500,
       }}
     >
-      <Stack.Screen
-        name={PrivateRoutes.Example}
-        component={AuthExampleView}
-      />
+      <Stack.Screen name={PrivateRoutes.Example} component={AuthExampleView} />
       <Stack.Screen
         name={PrivateRoutes.Products}
         component={ProductsNavigator}
       />
-      <Stack.Screen
-        name={PrivateRoutes.Users}
-        component={UsersNavigator}
-      />
+      <Stack.Screen name={PrivateRoutes.Users} component={UsersNavigator} />
     </Stack.Navigator>
   );
 }

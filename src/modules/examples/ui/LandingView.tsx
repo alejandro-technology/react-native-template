@@ -74,7 +74,7 @@ function LandingView() {
           <Icon
             name={mode === 'dark' ? 'moon' : 'sun'}
             size={22}
-            color='primary'
+            color="primary"
           />
           <Text variant="caption" color="textSecondary">
             {mode}
@@ -90,24 +90,32 @@ function LandingView() {
       </View>
 
       <View style={styles.cardsContainer}>
-        {COMPONENTS_CONFIG.filter(component => !component.auth).map(component => (
-          <ComponentCard
-            key={component.title}
-            title={component.title}
-            description={component.description}
-            icon={component.icon}
-            color={component.color}
-            onPress={() => {
-              if (component.screen in AuthenticationRoutes) {
-                const args = [PublicRoutes.Authentication, { screen: component.screen }] as const;
-                navigate(...args as never);
-              } else if (component.screen in ExamplesRoutes) {
-                const args = [PublicRoutes.Examples, { screen: component.screen }] as const;
-                navigate(...args as never);
-              }
-            }}
-          />
-        ))}
+        {COMPONENTS_CONFIG.filter(component => !component.auth).map(
+          component => (
+            <ComponentCard
+              key={component.title}
+              title={component.title}
+              description={component.description}
+              icon={component.icon}
+              color={component.color}
+              onPress={() => {
+                if (component.screen in AuthenticationRoutes) {
+                  const args = [
+                    PublicRoutes.Authentication,
+                    { screen: component.screen },
+                  ] as const;
+                  navigate(...(args as never));
+                } else if (component.screen in ExamplesRoutes) {
+                  const args = [
+                    PublicRoutes.Examples,
+                    { screen: component.screen },
+                  ] as const;
+                  navigate(...(args as never));
+                }
+              }}
+            />
+          ),
+        )}
       </View>
 
       <View style={styles.footer}>

@@ -54,8 +54,8 @@ export default function AvatarsView() {
           Iniciales
         </Text>
         <Text variant="bodySmall" color="textSecondary">
-          Nombre completo genera dos iniciales, nombre corto usa las primeras dos
-          letras
+          Nombre completo genera dos iniciales, nombre corto usa las primeras
+          dos letras
         </Text>
         <View style={styles.row}>
           <View style={styles.item}>

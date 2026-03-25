@@ -55,7 +55,10 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
  * @param options - Opciones de render
  * @returns Resultado del render con utilities de testing library
  */
-const customRender = (ui: React.ReactElement, options?: CustomRenderOptions) => {
+const customRender = (
+  ui: React.ReactElement,
+  options?: CustomRenderOptions,
+) => {
   const { queryClient, ...renderOptions } = options || {};
 
   return render(ui, {

@@ -20,14 +20,8 @@ export default function AuthenticationNavigator() {
         animationDuration: 2500,
       }}
     >
-      <Stack.Screen
-        name={AuthenticationRoutes.SignIn}
-        component={SignInView}
-      />
-      <Stack.Screen
-        name={AuthenticationRoutes.SignUp}
-        component={SignUpView}
-      />
+      <Stack.Screen name={AuthenticationRoutes.SignIn} component={SignInView} />
+      <Stack.Screen name={AuthenticationRoutes.SignUp} component={SignUpView} />
     </Stack.Navigator>
   );
 }
