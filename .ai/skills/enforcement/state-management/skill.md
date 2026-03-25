@@ -9,6 +9,7 @@ tags:
   - mmkv
   - persistence
   - caching
+last_updated: 2026-03-25
 triggers:
   - 'Creating stores'
   - 'Caching strategies'
@@ -68,20 +69,26 @@ Enforces the three-tier state management strategy used throughout the project.
 
 ### Query Key Convention
 
-```typescript
-// List queries: ['{entities}', 'list', ...filters]
-queryKey: ['products', 'list', filter?.searchText];
+Use centralized `QUERY_KEYS` from `@config/query.keys`:
 
-// Detail queries: ['{entities}', 'detail', id]
-queryKey: ['products', 'detail', id];
+```typescript
+// src/config/query.keys.ts
+export const QUERY_KEYS = {
+  PRODUCTS: (search = '') => ['products', 'search', search],
+  PRODUCT_DETAIL: (id: string) => ['products', 'detail', id],
+  USERS: (search = '') => ['users', 'search', search],
+  USER_DETAIL: (id: string) => ['users', 'detail', id],
+};
 ```
 
 ### Query Hook Pattern
 
 ```typescript
+import { QUERY_KEYS } from '@config/query.keys';
+
 export function useProducts(filter?: ProductFilter, enabled = true) {
   return useQuery({
-    queryKey: ['products', 'list', filter?.searchText],
+    queryKey: QUERY_KEYS.PRODUCTS(filter?.searchText),
     queryFn: async () => {
       const result = await productService.getAll(filter);
       if (result instanceof Error) {
@@ -97,13 +104,16 @@ export function useProducts(filter?: ProductFilter, enabled = true) {
 ### Mutation Hook Pattern
 
 ```typescript
+import { QUERY_KEYS } from '@config/query.keys';
+
 export function useProductCreate() {
   const queryClient = useQueryClient();
   const { show } = useAppStorage(s => s.toast);
 
   return useMutation({
-    mutationFn: async (data: Parameters<typeof productService.create>[0]) => {
-      const result = await productService.create(data);
+    mutationFn: async (form: ProductFormData) => {
+      const payload = productFormToPayloadAdapter(form);
+      const result = await productService.create(payload);
       if (result instanceof Error) {
         throw result;
       }
@@ -113,21 +123,28 @@ export function useProductCreate() {
       show({
         message: 'Producto creado exitosamente',
         type: 'success',
-        position: 'bottom',
       });
-      queryClient.invalidateQueries({ queryKey: ['products'] });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS() });
+    },
+    onError: (error: Error) => {
+      show({
+        message: error.message,
+        type: 'error',
+      });
     },
   });
 }
 ```
 
+**Key**: Mutations receive `FormData` from the UI and call the adapter (`formToPayloadAdapter`) inside `mutationFn`. The UI does NOT call the adapter directly.
+
 ### Cache Invalidation Rules
 
-| Action | Invalidate                                        |
-| ------ | ------------------------------------------------- |
-| Create | `['{entities}']` (all lists)                      |
-| Update | `['{entities}']` + `['{entities}', 'detail', id]` |
-| Delete | `['{entities}']` (all lists)                      |
+| Action | Invalidate                                                       |
+| ------ | ---------------------------------------------------------------- |
+| Create | `QUERY_KEYS.{ENTITIES}()` (all lists)                           |
+| Update | `QUERY_KEYS.{ENTITIES}()` + `QUERY_KEYS.{ENTITY}_DETAIL(id)`   |
+| Delete | `QUERY_KEYS.{ENTITIES}()` (all lists)                           |
 
 ## Zustand Patterns
 
@@ -181,11 +198,11 @@ export const useAppStorage = create<AppState>(set => ({
 | R2   | Query keys follow `[entity, scope, ...params]` convention                        |
 | R3   | Mutations MUST invalidate related query keys on success                          |
 | R4   | Success feedback uses `useAppStorage(s => s.toast).show()`                       |
-| R5   | Toast messages: Spanish, `type: 'success'`, `position: 'bottom'`                 |
+| R5   | Toast messages: Spanish, `type: 'success'` for success, `type: 'error'` for errors |
 | R6   | Persisted stores use MMKV via `createJSONStorage(() => mmkvStorage)`             |
 | R7   | `enabled` parameter controls query execution (disabled for conditional fetching) |
 | R8   | Detail query uses `enabled: enabled && Boolean(id)` guard                        |
-| R9   | Mutation types inferred via `Parameters<typeof service.method>[N]`               |
+| R9   | Mutations receive `FormData` and call adapter inside `mutationFn`                |
 
 ## Anti-Patterns
 
@@ -203,7 +220,7 @@ const { data: products } = useProducts();
 setProducts([...products, newProduct]);
 
 // CORRECT: Invalidate and let React Query refetch
-queryClient.invalidateQueries({ queryKey: ['products'] });
+queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS() });
 
 // WRONG: Fetching in useEffect
 useEffect(() => {

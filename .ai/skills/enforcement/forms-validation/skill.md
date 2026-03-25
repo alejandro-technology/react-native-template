@@ -3,6 +3,7 @@ name: forms-validation
 category: enforcement
 layer: ui
 priority: high
+last_updated: 2026-03-25
 tags:
   - react-hook-form
   - yup
@@ -13,7 +14,7 @@ triggers:
   - 'Creating forms'
   - 'Defining schemas'
   - 'Form data flow review'
-description: Enforce form patterns using react-hook-form, Yup validation, and adapter functions. Use when creating forms, defining schemas, or reviewing form data flow.
+description: Enforce form patterns using react-hook-form, Yup validation, and adapter functions. Adapter is called in the application layer (mutations), NOT in the UI layer. Use when creating forms, defining schemas, or reviewing form data flow.
 ---
 
 # Forms & Validation Skill
@@ -30,18 +31,21 @@ Enforces the form architecture: Yup schemas, react-hook-form integration, and ad
 ## Form Data Flow
 
 ```
-Schema (Yup)          Form (react-hook-form)       Adapter           Service
-─────────────         ──────────────────────       ─────────         ───────
-productSchema    →    useForm<ProductFormData>  →   formToPayload  →  service.create()
-  ├─ name                ├─ control                   └─ returns       └─ CreatePayload
-  ├─ description         ├─ handleSubmit                 CreatePayload
+Schema (Yup)          Form (react-hook-form)       Mutation (application)      Service
+─────────────         ──────────────────────       ──────────────────────      ───────
+productSchema    →    useForm<ProductFormData>  →   adapter + service.create()
+  ├─ name                ├─ control                   ├─ formToPayloadAdapter()
+  ├─ description         ├─ handleSubmit              └─ service.create(payload)
   └─ price               └─ errors
 ```
+
+**Key**: The adapter is called inside the mutation's `mutationFn` in the application layer, NOT in the UI layer. The FormView passes `FormData` directly to the mutation.
 
 ## Schema Pattern (`domain/{entity}.scheme.ts`)
 
 ```typescript
 import * as yup from 'yup';
+import type { InferType } from 'yup';
 
 export const {entity}Schema = yup.object({
   name: yup
@@ -51,21 +55,22 @@ export const {entity}Schema = yup.object({
   description: yup
     .string()
     .max(500, 'La descripcion debe tener maximo 500 caracteres')
-    .optional(),
+    .defined(),
   price: yup
     .number()
-    .transform((value, originalValue) =>
-      originalValue === '' ? undefined : Number(originalValue),
+    .transform((value: number, originalValue: unknown) =>
+      originalValue === '' || originalValue === null ? NaN : value,
     )
-    .required('El precio es requerido')
-    .min(1, 'El precio debe ser mayor a 0'),
+    .typeError('El precio debe ser mayor a 0')
+    .min(1, 'El precio debe ser mayor a 0')
+    .required('El precio debe ser mayor a 0'),
   email: yup
     .string()
     .required('El email es requerido')
     .email('Debe ser un email valido'),
 });
 
-export type {Entity}FormData = yup.InferType<typeof {entity}Schema>;
+export type {Entity}FormData = InferType<typeof {entity}Schema>;
 ```
 
 ### Yup Rules
@@ -74,7 +79,7 @@ export type {Entity}FormData = yup.InferType<typeof {entity}Schema>;
 | ---------------- | -------------------- | ----------------------------------------------- |
 | Required string  | `.required('message')` | `.required('El nombre es requerido')`             |
 | Max length       | `.max(N, 'message')` | `.max(100, 'Maximo 100 caracteres')`            |
-| Optional field   | `.optional()`        | `.string().max(500).optional()`                 |
+| Optional field   | `.defined()`         | `.string().max(500).defined()`                  |
 | Type coercion    | `.transform(...)`    | `.number().transform((v, raw) => Number(raw))` |
 | Email validation | `.email('message')`  | `.email('Debe ser un email valido')`            |
 | Error format     | String format ONLY   | `.required('message')` NOT `.required({ message })` |
@@ -150,34 +155,32 @@ export function {Entity}FormView({
   route: { params },
   navigation: { goBack },
 }: {Entities}ScreenProps<{Entities}Routes.{Entity}Form>) {
-  const { mutate: create{Entity}, isPending: isCreating } = use{Entity}Create();
-  const { mutate: update{Entity}, isPending: isUpdating } = use{Entity}Update();
+  const { mutateAsync: createItem, isPending: isCreating } = use{Entity}Create();
+  const { mutateAsync: updateItem, isPending: isUpdating } = use{Entity}Update();
 
   const isLoading = isCreating || isUpdating;
-  const {entity} = params?.{entity};
-  const isEditing = !!{entity};
+  const existingItem = params?.{entity};
+  const isEditing = !!existingItem;
 
-  const handleSubmit = (data: {Entity}FormData) => {
-    const payload = {entity}FormToPayloadAdapter(data);
+  function handleSubmit(form: {Entity}FormData) {
     if (isEditing) {
-      update{Entity}({ id: {entity}.id, data: payload }, {});
+      updateItem({ id: existingItem.id, form });
     } else {
-      create{Entity}(payload, {});
+      createItem(form);
     }
     goBack();
-  };
+  }
 
   return (
     <RootLayout
       scroll
       padding="lg"
-      onPress={goBack}
       title={isEditing ? 'Editar {Entidad}' : 'Crear {Entidad}'}
     >
       <{Entity}Form
         onSubmit={handleSubmit}
         isLoading={isLoading}
-        initialData={{entity}}
+        initialData={existingItem}
       />
     </RootLayout>
   );
@@ -219,15 +222,15 @@ export function {entity}EntityAdapter(data: {Entity}Entity): {Entity}Entity {
 | Rule | Description                                                    |
 | ---- | -------------------------------------------------------------- |
 | R1   | Schemas live in `domain/{entity}.scheme.ts`                    |
-| R2   | FormData type inferred via `yup.InferType<typeof schema>`      |
+| R2   | FormData type inferred via `InferType<typeof schema>` (import type from 'yup') |
 | R3   | Error messages in Spanish, string format only                  |
 | R4   | All string fields must have `.max()` defined                   |
-| R5   | Optional fields use `.optional()` suffix                       |
+| R5   | Optional fields use `.defined()` suffix                        |
 | R6   | Numeric fields from inputs use `transform` for coercion        |
 | R7   | Form uses `yupResolver`                                         |
 | R8   | Form component receives `onSubmit`, `isLoading`, `initialData` |
 | R9   | FormView handles create/edit mode via `params?.{entity}`       |
-| R10  | FormView calls adapter before passing to mutation              |
+| R10  | Adapter is called inside the mutation's `mutationFn` (application layer), NOT in UI |
 | R11  | Submit button text: `'Actualizar'` (edit) or `'Crear'` (new)   |
 
 ## Anti-Patterns
@@ -239,12 +242,12 @@ if (name.length < 1) setError('Required');
 // CORRECT: Yup schema handles all validation
 const schema = yup.object({ name: yup.string().required('El nombre es requerido') });
 
-// WRONG: Sending form data directly to service
-createProduct(formData);
-
-// CORRECT: Transform via adapter
+// WRONG: Calling adapter in UI layer
 const payload = productFormToPayloadAdapter(formData);
 createProduct(payload);
+
+// CORRECT: Pass FormData to mutation, adapter is called inside mutationFn
+createItem(formData);
 
 // WRONG: Object format for error messages
 .min(1, { message: 'El nombre es requerido' })

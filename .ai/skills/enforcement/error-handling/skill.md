@@ -8,6 +8,7 @@ tags:
   - error-boundaries
   - user-feedback
   - try-catch
+last_updated: 2026-03-25
 triggers:
   - 'Implementing error flows'
   - 'Creating error messages'
@@ -100,13 +101,21 @@ queryFn: async () => {
   return result;
 },
 
-// Mutations
-mutationFn: async (data) => {
-  const result = await productService.create(data);
+// Mutations — receive FormData, call adapter inside mutationFn
+mutationFn: async (form: ProductFormData) => {
+  const payload = productFormToPayloadAdapter(form);
+  const result = await productService.create(payload);
   if (result instanceof Error) {
     throw result;
   }
   return result;
+},
+onSuccess: () => {
+  show({ message: 'Producto creado exitosamente', type: 'success' });
+  queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS() });
+},
+onError: (error: Error) => {
+  show({ message: error.message, type: 'error' });
 },
 ```
 

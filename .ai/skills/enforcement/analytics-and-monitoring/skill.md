@@ -3,23 +3,25 @@ name: analytics-and-monitoring
 category: enforcement
 layer: cross-cutting
 priority: medium
+last_updated: 2026-03-25
 tags:
   - analytics
   - crash-reporting
   - performance
-  - firebase-analytics
   - tracking
 triggers:
   - 'Adding analytics'
   - 'Implementing tracking'
   - 'Crash reporting setup'
   - 'Performance monitoring'
-description: Enforce analytics and monitoring patterns with factory-based providers, typed events, screen tracking via React Navigation, crash reporting, and performance monitoring.
+description: Planned patterns for analytics and monitoring using the project's factory architecture. NOTE - Firebase Analytics, Crashlytics, and Performance packages are NOT currently installed. This skill documents the recommended implementation approach when these packages are added.
 ---
 
-# Analytics & Monitoring Skill
+# Analytics & Monitoring Skill (Planned)
 
-Enforces consistent analytics, crash reporting, and performance monitoring patterns using the project's factory architecture.
+**STATUS: NOT YET IMPLEMENTED** — The required Firebase packages (`@react-native-firebase/analytics`, `@react-native-firebase/crashlytics`, `@react-native-firebase/perf`) are **not currently installed**. Only `@react-native-firebase/app`, `auth`, `firestore`, and `storage` (v23.0.0) are available.
+
+This skill documents the **recommended** patterns for when analytics is added to the project. It follows the same factory architecture used by existing services.
 
 ## When to Use
 
@@ -459,13 +461,15 @@ grep -rn "recordError" src/modules/*/infrastructure/ --include="*.ts"
 # Should have crash reporting in error paths
 ```
 
-## Dependencies
+## Dependencies (TO BE INSTALLED)
 
-| Package | Purpose |
-|---------|---------|
-| `@react-native-firebase/analytics` | Analytics tracking |
-| `@react-native-firebase/crashlytics` | Crash reporting |
-| `@react-native-firebase/perf` | Performance monitoring |
+| Package | Purpose | Status |
+|---------|---------|--------|
+| `@react-native-firebase/analytics` | Analytics tracking | **Not installed** |
+| `@react-native-firebase/crashlytics` | Crash reporting | **Not installed** |
+| `@react-native-firebase/perf` | Performance monitoring | **Not installed** |
+
+**Before implementing**: Install the required packages and verify compatibility with the current `@react-native-firebase/app` v23.0.0.
 
 ## References
 

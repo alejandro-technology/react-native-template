@@ -3,6 +3,7 @@ name: theme-styling
 category: enforcement
 layer: ui
 priority: high
+last_updated: 2026-03-25
 tags:
   - theme-system
   - design-tokens
@@ -13,7 +14,7 @@ triggers:
   - 'Styling components'
   - 'Creating theme-aware UI'
   - 'Adding animations'
-description: Guide the 5-mode theme system, design tokens, component style factories, and animation hooks. Use when styling components, creating theme-aware UI, or adding animations.
+description: Guide the 4-mode theme system, design tokens, component style factories, and animation hooks. Use when styling components, creating theme-aware UI, or adding animations.
 ---
 
 # Theme & Styling Skill
@@ -30,14 +31,13 @@ Enforces the design token system, theme-aware component styling, and animation p
 
 ## Theme System Overview
 
-5 theme modes, all accessible via `useTheme()`:
+4 theme modes, all accessible via `useTheme()`:
 
 | Mode        | Background | Primary | Use Case       |
 | ----------- | ---------- | ------- | -------------- |
 | `light`     | #f6f6f8    | #3B82F6 | Default light  |
 | `dark`      | #0F172A    | #60A5FA | Dark mode      |
 | `primary`   | #EFF6FF    | #2563EB | Corporate blue |
-| `secondary` | #F0FDF4    | #16A34A | Nature green   |
 | `premium`   | #FAF5FF    | #7C3AED | Elegant purple |
 
 ## Design Tokens
@@ -188,7 +188,7 @@ const { animatedStyle } = useFocusSlideIn({
 | R7   | Screen entrance animations handled by `RootLayout` (not individual views) |
 | R8   | List items do NOT use `useFocusFadeIn` — animation comes from layout     |
 | R9   | Buttons use `variant` prop (`primary`, `secondary`, `outlined`, `ghost`) |
-| R10  | Cards use `variant` prop (`elevated`, `outlined`)                        |
+| R10  | Cards use `variant` prop (`elevated`, `outlined`, `filled`, `ghost`)     |
 
 ## Anti-Patterns
 

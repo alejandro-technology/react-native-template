@@ -3,324 +3,369 @@ name: react-native-firebase
 category: specialty
 layer: infrastructure
 priority: medium
+last_updated: 2026-03-25
 tags:
   - firebase
   - firestore
   - auth
-  - analytics
-  - crashlytics
+  - storage
 triggers:
   - 'Using Firebase services'
   - 'Implementing authentication'
-  - 'Setting up analytics'
-description: Firebase services configuration and usage patterns for React Native
+  - 'Creating Firebase service'
+description: Firebase integration patterns following Clean Architecture. Covers Firestore CRUD with T|Error pattern, Firebase Auth with repository interface, Cloud Storage, and centralized error handling with Spanish messages. Only documents installed packages (app, auth, firestore, storage v23.0.0).
 ---
 
-## Firebase Services
+# React Native Firebase
 
-All Firebase services are pre-configured in the app. Import and use them as follows:
+Firebase integration following the project's Clean Architecture and T|Error pattern.
 
-### Firebase Auth
+## Installed Packages
+
+```json
+"@react-native-firebase/app": "23.0.0",
+"@react-native-firebase/auth": "23.0.0",
+"@react-native-firebase/firestore": "23.0.0",
+"@react-native-firebase/storage": "23.0.0"
+```
+
+**No other Firebase packages are installed.** Cloud Functions, Crashlytics, Analytics, Messaging, and Remote Config are NOT available.
+
+## Firebase Module Structure
+
+```
+src/modules/firebase/
+├── domain/
+│   ├── firebase.error.ts         # manageFirebaseError() — centralized error handler
+│   ├── firebase.messages.ts      # FIREBASE_MESSAGES — Spanish error messages
+│   ├── firestore.model.ts        # Firestore operation types
+│   ├── firestore.repository.ts   # Firestore service interface
+│   ├── storage.model.ts          # Storage operation types
+│   ├── storage.repository.ts     # Storage service interface
+│   └── storage.adapter.ts        # Firebase metadata adapter
+├── infrastructure/
+│   ├── firebase.config.ts        # Firebase app instance
+│   ├── firestore.service.ts      # Firestore read/write operations
+│   └── storage.service.ts        # Cloud Storage file operations
+└── application/
+    ├── firestore.hooks.ts        # Custom React hooks
+    ├── storage.mutations.ts      # React Query mutations
+    └── storage.queries.ts        # React Query queries
+```
+
+## Error Handling: `manageFirebaseError()`
+
+All Firebase services use `manageFirebaseError()` to convert Firebase errors into `Error` objects with localized Spanish messages. This follows the T|Error pattern — services NEVER throw.
+
+**Location**: `src/modules/firebase/domain/firebase.error.ts`
 
 ```typescript
-import auth from '@react-native-firebase/auth';
+import { manageFirebaseError } from '@modules/firebase/domain/firebase.error';
 
-const signIn = async (email: string, password: string) => {
-  const userCredential = await auth().signInWithEmailAndPassword(
-    email,
-    password,
-  );
-  return userCredential.user;
-};
-
-const signOut = async () => {
-  await auth().signOut();
-};
-
-const onAuthStateChanged = (callback: (user: User | null) => void) => {
-  return auth().onAuthStateChanged(callback);
-};
-
-const createUserWithEmailAndPassword = async (
-  email: string,
-  password: string,
-) => {
-  const userCredential = await auth().createUserWithEmailAndPassword(
-    email,
-    password,
-  );
-  return userCredential.user;
-};
-
-const sendPasswordResetEmail = async (email: string) => {
-  await auth().sendPasswordResetEmail(email);
-};
-
-const updateProfile = async (profile: {
-  displayName?: string;
-  photoURL?: string;
-}) => {
-  const user = auth().currentUser;
-  if (user) {
-    await user.updateProfile(profile);
+// Usage in any Firebase service method:
+async getAll(): Promise<Entity[] | Error> {
+  try {
+    // ... Firebase operation
+    return data;
+  } catch (error) {
+    return manageFirebaseError(error); // Returns Error, NEVER throws
   }
-};
-```
-
-### Firestore
-
-```typescript
-import firestore from '@react-native-firebase/firestore';
-
-const getAppointments = async (userId: string) => {
-  const snapshot = await firestore()
-    .collection('appointments')
-    .where('userId', '==', userId)
-    .get();
-
-  return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-};
-
-const createAppointment = async (data: AppointmentData) => {
-  const docRef = await firestore()
-    .collection('appointments')
-    .add({
-      ...data,
-      createdAt: firestore.FieldValue.serverTimestamp(),
-    });
-  return docRef.id;
-};
-
-const updateAppointment = async (
-  id: string,
-  data: Partial<AppointmentData>,
-) => {
-  await firestore().collection('appointments').doc(id).update(data);
-};
-
-const deleteAppointment = async (id: string) => {
-  await firestore().collection('appointments').doc(id).delete();
-};
-
-const getDoc = async (collection: string, id: string) => {
-  const doc = await firestore().collection(collection).doc(id).get();
-  return doc.exists ? { id: doc.id, ...doc.data() } : null;
-};
-
-// Real-time listener
-const subscribeToAppointments = (
-  userId: string,
-  callback: (appointments: Appointment[]) => void,
-) => {
-  return firestore()
-    .collection('appointments')
-    .where('userId', '==', userId)
-    .onSnapshot(snapshot => {
-      const appointments = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      callback(appointments);
-    });
-};
-
-// Batch operations
-const batchWrite = async (operations: WriteOperation[]) => {
-  const batch = firestore().batch();
-
-  operations.forEach(op => {
-    const docRef = firestore().collection(op.collection).doc(op.id);
-    if (op.type === 'set') {
-      batch.set(docRef, op.data);
-    } else if (op.type === 'update') {
-      batch.update(docRef, op.data);
-    } else if (op.type === 'delete') {
-      batch.delete(docRef);
-    }
-  });
-
-  await batch.commit();
-};
-```
-
-### Cloud Functions
-
-```typescript
-import functions from '@react-native-firebase/functions';
-
-const callFunction = async (functionName: string, data?: object) => {
-  const httpsCallable = functions().httpsCallable(functionName);
-  const result = await httpsCallable(data);
-  return result.data;
-};
-
-// Example: send notification
-await callFunction('sendPushNotification', {
-  userId: 'user-123',
-  title: 'Appointment Reminder',
-  body: 'Your appointment is in 1 hour',
-});
-
-// Using region
-const callFunctionWithRegion = async (functionName: string, data?: object) => {
-  const httpsCallable = functions().httpsCallable(functionName);
-  const result = await httpsCallable(data);
-  return result.data;
-};
-
-// Callable with timeout
-const callFunctionWithTimeout = async (functionName: string, data?: object) => {
-  const httpsCallable = functions().httpsCallable(functionName);
-  const result = await httpsCallable(data);
-  return result.data;
-};
-```
-
-### Crashlytics
-
-```typescript
-import crashlytics from '@react-native-firebase/crashlytics';
-
-const logError = (error: Error, context?: object) => {
-  crashlytics().recordError(error);
-  crashlytics().log(`Error in ${context}: ${error.message}`);
-};
-
-const setUserIdentifier = (userId: string) => {
-  crashlytics().setUserId(userId);
-};
-
-const logCustomKey = (key: string, value: string) => {
-  crashlytics().setAttribute(key, value);
-};
-
-const logMessage = (message: string) => {
-  crashlytics().log(message);
-};
-
-const setCrashlyticsCollectionEnabled = (enabled: boolean) => {
-  crashlytics().setCrashlyticsCollectionEnabled(enabled);
-};
-
-// Using with try-catch
-try {
-  await riskyOperation();
-} catch (error) {
-  crashlytics().recordError(error);
-  throw error;
 }
 ```
 
-### Analytics
+**Error codes handled**:
+
+| Category | Codes | Message (Spanish) |
+|----------|-------|-------------------|
+| Auth | `auth/email-already-in-use` | El correo electrónico ya está en uso |
+| Auth | `auth/invalid-email` | El correo electrónico no es válido |
+| Auth | `auth/weak-password` | La contraseña debe tener al menos 6 caracteres |
+| Auth | `auth/user-not-found` | No existe un usuario con este correo electrónico |
+| Auth | `auth/wrong-password` | La contraseña es incorrecta |
+| Auth | `auth/network-request-failed` | No pudimos conectar con el servidor... |
+| Storage | `storage/object-not-found` | El archivo no fue encontrado |
+| Storage | `storage/unauthorized` | No tienes permisos... |
+| Storage | `storage/quota-exceeded` | Has excedido tu cuota... |
+| Firestore | `firestore/not-found` | El documento no fue encontrado |
+| Firestore | `firestore/already-exists` | El documento ya existe |
+| Firestore | `firestore/permission-denied` | Permiso denegado |
+| Firestore | `firestore/unavailable` | Servicio no disponible |
+
+Some errors set `error.name` for special handling:
+- `'DuplicateIdentifierError'` — email-already-in-use, already-exists
+- `'FormError'` — invalid-email, weak-password, invalid-argument
+
+## Firestore CRUD Pattern (Feature Modules)
+
+Feature modules implement Firestore services as classes implementing the repository interface. Uses `COLLECTIONS` from config.
+
+### Firebase Service Template
 
 ```typescript
-import analytics from '@react-native-firebase/analytics';
+// src/modules/{feature}/infrastructure/{feature}.firebase.service.ts
+import firestore from '@react-native-firebase/firestore';
+import { manageFirebaseError } from '@modules/firebase/domain/firebase.error';
+import { {Feature}Repository } from '../domain/{feature}.repository';
+import type {
+  Create{Feature}Payload,
+  {Feature}Entity,
+  {Feature}Filter,
+  Update{Feature}Payload,
+} from '../domain/{feature}.model';
+import { COLLECTIONS } from '@config/collections.routes';
 
-const logScreenView = async (screenName: string) => {
-  await analytics().logScreenView({
-    screen_name: screenName,
-    screen_class: screenName,
-  });
-};
+class {Feature}FirebaseService implements {Feature}Repository {
+  private firestore = firestore();
 
-const logEvent = async (eventName: string, params?: object) => {
-  await analytics().logEvent(eventName, params);
-};
+  async getAll(filter?: {Feature}Filter): Promise<{Feature}Entity[] | Error> {
+    try {
+      const snapshot = await this.firestore
+        .collection(COLLECTIONS.{FEATURES})
+        .get();
 
-// Predefined events
-await analytics().logSignUp({ method: 'email' });
-await analytics().logLogin({ method: 'email' });
-await analytics().logPurchase({ currency: 'USD', value: 29.99 });
-await analytics().logAddToCart({
-  currency: 'USD',
-  value: 10.0,
-  item_id: 'item_123',
-});
-await analytics().logBeginCheckout({ currency: 'USD', value: 50.0 });
-await analytics().logSearch({ search_term: 'haircut' });
+      let items = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      })) as {Feature}Entity[];
 
-// User properties
-await analytics().setUserProperty('is_premium', 'true');
-await analytics().setUserId('user_123');
+      if (filter?.searchText) {
+        const searchLower = filter.searchText.toLowerCase();
+        items = items.filter(item =>
+          item.name.toLowerCase().includes(searchLower),
+        );
+      }
 
-// Reset analytics
-await analytics().resetAnalyticsData();
+      return items;
+    } catch (error) {
+      return manageFirebaseError(error);
+    }
+  }
+
+  async getById(id: string): Promise<{Feature}Entity | Error> {
+    try {
+      const docRef = this.firestore.collection(COLLECTIONS.{FEATURES}).doc(id);
+      const snapshot = await docRef.get();
+
+      if (!snapshot.exists) {
+        return new Error('{Feature} no encontrado');
+      }
+
+      return {
+        id: snapshot.id,
+        ...snapshot.data(),
+      } as {Feature}Entity;
+    } catch (error) {
+      return manageFirebaseError(error);
+    }
+  }
+
+  async create(data: Create{Feature}Payload): Promise<{Feature}Entity | Error> {
+    try {
+      const now = new Date().toISOString();
+      const docRef = await this.firestore.collection(COLLECTIONS.{FEATURES}).add({
+        ...data,
+        createdAt: now,
+        updatedAt: now,
+      });
+
+      const snapshot = await docRef.get();
+
+      return {
+        id: snapshot.id,
+        ...snapshot.data(),
+      } as {Feature}Entity;
+    } catch (error) {
+      return manageFirebaseError(error);
+    }
+  }
+
+  async update(
+    id: string,
+    data: Update{Feature}Payload,
+  ): Promise<{Feature}Entity | Error> {
+    try {
+      const docRef = this.firestore.collection(COLLECTIONS.{FEATURES}).doc(id);
+      const now = new Date().toISOString();
+
+      await docRef.update({
+        ...data,
+        updatedAt: now,
+      });
+
+      const snapshot = await docRef.get();
+
+      return {
+        id: snapshot.id,
+        ...snapshot.data(),
+      } as {Feature}Entity;
+    } catch (error) {
+      return manageFirebaseError(error);
+    }
+  }
+
+  async delete(id: string): Promise<void | Error> {
+    try {
+      const docRef = this.firestore.collection(COLLECTIONS.{FEATURES}).doc(id);
+      await docRef.delete();
+      return;
+    } catch (error) {
+      return manageFirebaseError(error);
+    }
+  }
+}
+
+function create{Feature}FirebaseService(): {Feature}Repository {
+  return new {Feature}FirebaseService();
+}
+
+export default create{Feature}FirebaseService();
 ```
 
-### Messaging
+### Key Rules
+
+- **Always** use `COLLECTIONS.{FEATURES}` from `@config/collections.routes`, never hardcode collection names
+- **Always** return `Promise<T | Error>`, never throw
+- **Always** wrap Firebase calls in try/catch and use `manageFirebaseError(error)` in catch
+- **Always** implement the repository interface from domain
+- Client-side filtering (Firestore doesn't support full-text search natively)
+- Set `createdAt`/`updatedAt` timestamps as ISO strings
+
+### Collections Config
 
 ```typescript
-import messaging from '@react-native-firebase/messaging';
-
-const requestPermission = async () => {
-  const authorizationStatus = await messaging().requestPermission();
-  return authorizationStatus === messaging.AuthorizationStatus.AUTHORIZED;
-};
-
-const getToken = async () => {
-  return await messaging().getToken();
-};
-
-const onMessageReceived = (callback: (message: RemoteMessage) => void) => {
-  return messaging().onMessage(callback);
-};
-
-const onNotificationOpenedApp = (
-  callback: (message: RemoteMessage) => void,
-) => {
-  return messaging().onNotificationOpenedApp(callback);
-};
-
-const getInitialNotification = async () => {
-  const message = await messaging().getInitialNotification();
-  return message;
-};
-
-// Topic subscription
-const subscribeToTopic = async (topic: string) => {
-  await messaging().subscribeToTopic(topic);
-};
-
-const unsubscribeFromTopic = async (topic: string) => {
-  await messaging().unsubscribeFromTopic(topic);
-};
-
-// Channel configuration for Android
-const setupNotificationChannel = () => {
-  // Handled automatically by react-native-firebase
+// src/config/collections.routes.ts
+export const COLLECTIONS = {
+  PRODUCTS: 'products',
+  USERS: 'users',
 };
 ```
 
-### Remote Config
+Add new collections here when creating new modules.
+
+## Authentication
+
+The auth module follows Clean Architecture with 3 provider implementations.
+
+### Auth Repository Interface
 
 ```typescript
-import remoteConfig from '@react-native-firebase/remote-config';
-
-const initializeRemoteConfig = async () => {
-  await remoteConfig().setDefaults({
-    enable_promotions: true,
-    max_booking_days: 30,
-    cancellation_hours: 24,
-    app_version: '1.0.0',
-  });
-  await remoteConfig().fetchAndActivate();
-};
-
-const fetchConfig = async () => {
-  // Fetch with expiration
-  await remoteConfig().fetch(3600); // 1 hour cache
-  await remoteConfig().activate();
-};
-
-const getConfigValue = (key: string): string | boolean | number => {
-  return (
-    remoteConfig().getValue(key).asNumber() ||
-    remoteConfig().getValue(key).asBoolean() ||
-    remoteConfig().getValue(key).asString()
-  );
-};
-
-const getAllConfig = () => {
-  return remoteConfig().getAll();
-};
+// src/modules/authentication/domain/auth.repository.ts
+export interface AuthRepository {
+  signup(data: SignUpPayload): Promise<SignUpResponse | Error>;
+  signin(data: SignInPayload): Promise<SignInResponse | Error>;
+  signout(): Promise<void | Error>;
+  getCurrentUser(): Promise<UserEntity | null | Error>;
+  onAuthStateChanged(callback: AuthStateCallback): AuthStateUnsubscribe;
+  sendEmailVerification(): Promise<void | Error>;
+  sendPasswordResetEmail(email: string): Promise<void | Error>;
+  updateProfile(data: Partial<UserEntity>): Promise<UserEntity | Error>;
+  deleteAccount(): Promise<void | Error>;
+}
 ```
+
+### Firebase Auth Service
+
+```typescript
+// src/modules/authentication/infrastructure/firebase-auth.service.ts
+import auth from '@react-native-firebase/auth';
+import { manageFirebaseError } from '@modules/firebase/domain/firebase.error';
+import { AuthRepository } from '../domain/auth.repository';
+
+class FirebaseAuthService implements AuthRepository {
+  async signin(data: SignInPayload): Promise<SignInResponse | Error> {
+    try {
+      const credential = await auth().signInWithEmailAndPassword(
+        data.email,
+        data.password,
+      );
+      return { user: firebaseUserToEntity(credential.user) };
+    } catch (error) {
+      return manageFirebaseError(error);
+    }
+  }
+
+  // onAuthStateChanged is the ONE method that doesn't follow T|Error
+  // It uses a listener callback pattern
+  onAuthStateChanged(callback: AuthStateCallback): AuthStateUnsubscribe {
+    return auth().onAuthStateChanged(user => {
+      callback(user ? firebaseUserToEntity(user) : null);
+    });
+  }
+
+  // ... other methods follow same T|Error pattern
+}
+```
+
+### Auth State Management Flow
+
+```
+FirebaseAuthService.onAuthStateChanged()
+    ↓ (listener callback)
+AuthProvider (sets up listener in useEffect)
+    ↓ (updates store)
+useAuthStorage (Zustand + secure MMKV persistence)
+    ↓ (provides hooks)
+UI Components: useAuth(), useIsAuthenticated(), useCurrentAuthUser()
+```
+
+The `AuthProvider` lives in UI layer and imports from infrastructure (this is the documented exception to the architecture rule — it needs the `onAuthStateChanged` listener).
+
+### Auth Service Factory
+
+```typescript
+// src/modules/authentication/infrastructure/auth.service.ts
+function createAuthService(): AuthRepository {
+  switch (CONFIG.SERVICE_PROVIDER) {
+    case 'http': return authHttpService;
+    case 'firebase': return authFirebaseService;
+    case 'mock': return authMockService;
+    default: throw new Error(`Unknown provider: ${CONFIG.SERVICE_PROVIDER}`);
+  }
+}
+export default createAuthService();
+```
+
+## Configuration
+
+### Firebase Config Files
+
+| Platform | File | Git Status |
+|----------|------|------------|
+| iOS | `ios/GoogleService-Info.plist` | gitignored |
+| Android | `android/app/google-services.json` | gitignored |
+
+These files must be obtained from the Firebase Console and placed manually.
+
+### Service Provider Switch
+
+In `src/config/config.ts`, set `CONFIG.SERVICE_PROVIDER`:
+
+| Value | Uses |
+|-------|------|
+| `'firebase'` | Firestore + Firebase Auth |
+| `'http'` | Axios + REST API |
+| `'mock'` | Hardcoded data |
+
+No code changes needed in feature modules — the factory pattern handles the switch.
+
+## Checklist: Adding Firebase to a New Module
+
+1. Add collection name to `src/config/collections.routes.ts`
+2. Create `{feature}.firebase.service.ts` in infrastructure/
+3. Implement `{Feature}Repository` interface
+4. Use `COLLECTIONS.{FEATURES}` for collection name
+5. Use `manageFirebaseError(error)` in all catch blocks
+6. Return `Promise<T | Error>`, never throw
+7. Register in factory: `case 'firebase': return {feature}FirebaseService`
+8. Set `createdAt`/`updatedAt` timestamps in create/update
+
+## References
+
+- Firebase module: `src/modules/firebase/`
+- Error handling: `src/modules/firebase/domain/firebase.error.ts`
+- Error messages: `src/modules/firebase/domain/firebase.messages.ts`
+- Product Firebase service: `src/modules/products/infrastructure/product.firebase.service.ts`
+- User Firebase service: `src/modules/users/infrastructure/user.firebase.service.ts`
+- Auth Firebase service: `src/modules/authentication/infrastructure/firebase-auth.service.ts`
+- Collections config: `src/config/collections.routes.ts`
+- Create Firebase Service skill: `.ai/skills/generation/create-firebase-service/skill.md`

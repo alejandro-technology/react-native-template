@@ -3,9 +3,10 @@ name: api-layer
 category: enforcement
 layer: infrastructure
 priority: high
+last_updated: 2026-03-25
 tags:
   - service-factory
-  - dual-provider
+  - tri-provider
   - axios
   - firebase
   - http-client
@@ -13,30 +14,31 @@ triggers:
   - 'Creating a new service'
   - 'Adding API endpoints'
   - 'Switching data providers'
-description: Guide and enforce the dual-provider service architecture (HTTP + Firebase), factory pattern, and error contract. Use when creating services, implementing API calls, or switching data providers.
+description: Guide and enforce the tri-provider service architecture (HTTP + Firebase + Mock), factory pattern, and error contract. Use when creating services, implementing API calls, or switching data providers.
 ---
 
 # API Layer Skill
 
-Enforces the service factory pattern, dual-provider architecture, and error handling contract.
+Enforces the service factory pattern, tri-provider architecture, and error handling contract.
 
 ## When to Use
 
-- Creating a new service (HTTP or Firebase implementation)
+- Creating a new service (HTTP, Firebase, or Mock implementation)
 - Adding API endpoints
 - Implementing data access logic
 - Reviewing service layer code
-- Switching between HTTP and Firebase providers
+- Switching between HTTP, Firebase, and Mock providers
 
 ## Core Pattern: Service Factory
 
-Every entity has three infrastructure files:
+Every entity has four infrastructure files:
 
 ```
 infrastructure/
 ├── {entity}.service.ts           # Factory (decides which provider)
 ├── {entity}.http.service.ts      # Axios implementation
-└── {entity}.firebase.service.ts  # Firestore implementation
+├── {entity}.firebase.service.ts  # Firestore implementation
+└── {entity}.mock.service.ts      # Mock implementation (hardcoded data)
 ```
 
 ### Factory File (`{entity}.service.ts`)
@@ -45,6 +47,7 @@ infrastructure/
 import { {Entity}Repository } from '../domain/{entity}.repository';
 import {entity}HttpService from './{entity}.http.service';
 import {entity}FirebaseService from './{entity}.firebase.service';
+import {entity}MockService from './{entity}.mock.service';
 import { CONFIG } from '@config/config';
 
 function create{Entity}Service(): {Entity}Repository {
@@ -53,6 +56,8 @@ function create{Entity}Service(): {Entity}Repository {
       return {entity}HttpService;
     case 'firebase':
       return {entity}FirebaseService;
+    case 'mock':
+      return {entity}MockService;
     default:
       throw new Error(
         `Unknown {entity} service provider: ${CONFIG.SERVICE_PROVIDER}`,
@@ -306,7 +311,7 @@ Change one value in `src/config/config.ts`:
 
 ```typescript
 export const CONFIG: Config = {
-  SERVICE_PROVIDER: 'firebase', // Change to 'http' for REST API
+  SERVICE_PROVIDER: 'firebase', // Change to 'http' for REST API or 'mock' for hardcoded data
 };
 ```
 
@@ -316,7 +321,7 @@ No other code changes needed. UI and application layers remain untouched.
 
 | Rule | Description                                                                       |
 | ---- | --------------------------------------------------------------------------------- |
-| R1   | Every entity has 3 infrastructure files (factory + http + firebase)               |
+| R1   | Every entity has 4 infrastructure files (factory + http + firebase + mock)        |
 | R2   | Factory reads `CONFIG.SERVICE_PROVIDER`, nothing else                             |
 | R3   | HTTP service uses `axiosService` from network module                              |
 | R4   | Firebase service uses `firestore()` from `@react-native-firebase/firestore`       |

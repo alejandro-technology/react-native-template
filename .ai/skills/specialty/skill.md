@@ -1,6 +1,7 @@
 ---
 name: specialty
 description: Index of specialty skills for specific technologies and integrations.
+last_updated: 2026-03-25
 ---
 
 # Specialty Skills
@@ -9,7 +10,7 @@ These skills provide deep domain knowledge and patterns for specific technologie
 
 ## Available Skills
 
-| Skill                                                   | Layer          | Priority | Description                                                                                                                                                                                                                                                         |
-| ------------------------------------------------------- | -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [Component Catalog](component-catalog/SKILL.md)         | ui             | high     | Complete catalog of all available components (core, form, layout) with props, variants, sizes, defaults, and usage examples. Reference for building screens and choosing the right component for each use case.                                                                                                                                                         |
-| [React Native Firebase](react-native-firebase/SKILL.md) | infrastructure | medium   | Deep integration patterns for Firebase services in React Native: Authentication (email/password, Google, Apple), Firestore CRUD operations with real-time listeners, Cloud Storage file uploads, Push Notifications (FCM), Analytics, Crashlytics, and Remote Config. Includes error handling, offline persistence, security rules, and migration from HTTP to Firebase. |
+| Skill                                                    | Layer          | Priority | Description                                                                                                                                                                                       |
+| -------------------------------------------------------- | -------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Component Catalog](component-catalog/skill.md)          | ui             | high     | Complete catalog of all available components (core, form, layout) with props, variants, sizes, defaults, and usage examples. Reference for building screens and choosing the right component.       |
+| [React Native Firebase](react-native-firebase/skill.md)  | infrastructure | medium   | Firebase integration following Clean Architecture: Firestore CRUD with T\|Error pattern, Firebase Auth with repository interface, Cloud Storage, and centralized error handling (manageFirebaseError). Only covers installed packages (app, auth, firestore, storage v23.0.0). |

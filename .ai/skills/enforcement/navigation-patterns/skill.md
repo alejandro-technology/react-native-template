@@ -8,6 +8,7 @@ tags:
   - typed-routes
   - stack-navigator
   - navigation-hooks
+last_updated: 2026-03-25
 triggers:
   - 'Adding screens'
   - 'Creating navigation flows'

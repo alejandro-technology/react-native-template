@@ -8,6 +8,7 @@ tags:
   - layer-boundaries
   - module-structure
   - dependency-rules
+last_updated: 2026-03-25
 triggers:
   - 'Creating a new feature module'
   - 'Pull request with module changes'
@@ -98,7 +99,8 @@ modules/{entities}/
 ├── infrastructure/
 │   ├── {entity}.service.ts      # Factory → returns provider singleton
 │   ├── {entity}.http.service.ts # Axios implementation
-│   └── {entity}.firebase.service.ts # Firestore implementation
+│   ├── {entity}.firebase.service.ts # Firestore implementation
+│   └── {entity}.mock.service.ts # Mock implementation (hardcoded data)
 ├── application/
 │   ├── {entity}.queries.ts      # useEntities + useEntity hooks
 │   └── {entity}.mutations.ts    # useCreate + useUpdate + useDelete
@@ -133,7 +135,7 @@ modules/{entities}/
 
 - Reads `CONFIG.SERVICE_PROVIDER`
 - Returns singleton via `export default create{Entity}Service()`
-- Supports `'http'` and `'firebase'` cases
+- Supports `'http'`, `'firebase'`, and `'mock'` cases
 
 ### R5: Application hooks follow naming convention
 
@@ -182,6 +184,7 @@ src/modules/orders/
     order.service.ts
     order.http.service.ts
     order.firebase.service.ts
+    order.mock.service.ts
   application/
     order.queries.ts
     order.mutations.ts

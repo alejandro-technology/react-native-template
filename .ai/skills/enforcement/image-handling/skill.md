@@ -3,6 +3,7 @@ name: image-handling
 category: enforcement
 layer: cross-cutting
 priority: medium
+last_updated: 2026-03-25
 tags:
   - images
   - camera

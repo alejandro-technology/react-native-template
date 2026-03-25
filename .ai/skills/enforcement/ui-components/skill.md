@@ -8,6 +8,7 @@ tags:
   - style-factories
   - theme-tokens
   - component-system
+last_updated: 2026-03-25
 triggers:
   - 'Creating components in src/components/'
   - 'Modifying shared components'
@@ -23,7 +24,7 @@ description: Enforces the 3-tier component system (core, form, layout), theme to
 | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | **Name**        | `ui-components`                                                                                                                                                    |
 | **Description** | Enforces the 3-tier component system (core, form, layout), theme token usage, component style factories, and consistent API patterns across all shared components. |
-| **Purpose**     | Maintain visual consistency, prevent style drift, and ensure all components integrate with the 5-mode theme system.                                                |
+| **Purpose**     | Maintain visual consistency, prevent style drift, and ensure all components integrate with the 4-mode theme system.                                                |
 | **Category**    | UI/UX, Quality, Performance                                                                                                                                        |
 
 ## 2. Trigger
@@ -123,13 +124,14 @@ export function TextInput({ name, control, ...props }: FormTextInputProps) {
 
 ```typescript
 // src/components/layout/RootLayout.tsx — screen wrapper
-interface RootLayoutProps {
+interface Props {
   children: React.ReactNode;
-  scroll?: boolean; // ScrollView vs View
-  padding?: 'sm' | 'md' | 'lg';
-  toolbar?: boolean; // Show back button toolbar
-  title?: string;
-  onPress?: () => void; // Toolbar back action
+  scroll?: boolean;            // ScrollView vs View (default: true)
+  padding?: SpacingToken;      // Spacing token for padding
+  toolbar?: boolean;           // Show toolbar (default: true)
+  title?: string;              // Toolbar title
+  rightOptions?: ToolbarOptions[]; // Right toolbar actions
+  leftOptions?: ToolbarOptions[];  // Left toolbar actions (default: back arrow)
 }
 ```
 

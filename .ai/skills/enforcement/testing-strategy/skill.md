@@ -3,6 +3,7 @@ name: testing-strategy
 category: enforcement
 layer: cross-cutting
 priority: high
+last_updated: 2026-03-25
 tags:
   - jest
   - testing-library
@@ -290,35 +291,34 @@ describe('productFormToPayloadAdapter', () => {
 import { productSchema } from '@modules/products/domain/product.scheme';
 
 describe('productSchema', () => {
-  it('validates correct data', () => {
-    const result = productSchema.safeParse({
+  it('validates correct data', async () => {
+    const data = {
       name: 'Valid Product',
       description: 'A description',
-      price: '100',
-    });
-    expect(result.success).toBe(true);
+      price: 100,
+    };
+    await expect(productSchema.validate(data)).resolves.toBeDefined();
   });
 
-  it('rejects empty name', () => {
-    const result = productSchema.safeParse({
+  it('rejects empty name', async () => {
+    const data = {
       name: '',
-      price: '100',
-    });
-    expect(result.success).toBe(false);
-    if (!result.success) {
-      expect(result.error.issues[0].message).toBe('El nombre es requerido');
-    }
+      description: '',
+      price: 100,
+    };
+    await expect(productSchema.validate(data)).rejects.toThrow(
+      'El nombre es requerido',
+    );
   });
 
-  it('coerces price from string to number', () => {
-    const result = productSchema.safeParse({
+  it('coerces price from string to number', async () => {
+    const data = {
       name: 'Product',
+      description: '',
       price: '100',
-    });
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(typeof result.data.price).toBe('number');
-    }
+    };
+    const result = await productSchema.validate(data);
+    expect(typeof result.price).toBe('number');
   });
 });
 ```

@@ -9,6 +9,7 @@ tags:
   - typescript
   - naming-conventions
   - imports
+last_updated: 2026-03-25
 triggers:
   - 'Creating new files'
   - 'Code review'
@@ -86,7 +87,8 @@ module.exports = {
       "@hooks/*": ["src/hooks/*"],
       "@modules/*": ["src/modules/*"],
       "@theme/*": ["src/theme/*"],
-      "@navigation/*": ["src/navigation/*"]
+      "@navigation/*": ["src/navigation/*"],
+      "@utils/*": ["src/utils/*"]
     }
   }
 }
@@ -117,6 +119,7 @@ import { productSchema } from '../../domain/product.scheme';
 | `@navigation/*`  | `src/navigation/*` | Navigation routes, hooks    |
 | `@hooks/*`       | `src/hooks/*`      | Shared utility hooks        |
 | `@assets/*`      | `src/assets/*`     | Static assets               |
+| `@utils/*`       | `src/utils/*`      | Utility functions           |
 | Relative (`../`) | Same module        | Intra-module imports        |
 
 ## Naming Conventions
@@ -166,7 +169,6 @@ interface Props {
 module.exports = {
   presets: ['module:@react-native/babel-preset'],
   plugins: [
-    '@babel/plugin-transform-export-namespace-from',
     [
       'module-resolver',
       {
@@ -181,6 +183,7 @@ module.exports = {
           '@modules': './src/modules',
           '@theme': './src/theme',
           '@navigation': './src/navigation',
+          '@utils': './src/utils',
         },
       },
     ],
@@ -188,7 +191,7 @@ module.exports = {
 };
 ```
 
-**Critical:** Keep Babel plugins aligned with current dependency requirements and verify compatibility before removing any plugin.
+**Critical:** Keep Babel `module-resolver` aliases aligned with `tsconfig.json` paths.
 
 ## Import Organization
 
@@ -221,7 +224,7 @@ import type { ProductsScreenProps } from '@navigation/routes';
 | Rule                           | Description                                          |
 | ------------------------------ | ---------------------------------------------------- |
 | No unused imports              | Remove imports that aren't referenced                |
-| No `React` import in RN 0.84+  | JSX transform handles this automatically             |
+| No stale `React` imports        | JSX transform handles this automatically             |
 | Prefer named exports           | `export function Button()` over `export default`     |
 | Default exports for services   | Factory singletons: `export default createService()` |
 | Default exports for navigators | `export default function Navigator()`                |
@@ -289,8 +292,7 @@ const styles = StyleSheet.create({
 | R8   | Types/interfaces defined before component                             |
 | R9   | Hooks at top of component body, then handlers, then render            |
 | R10  | Service files export default singleton via factory                    |
-| R11  | `@babel/plugin-transform-export-namespace-from` always present        |
-| R12  | Path aliases in both `tsconfig.json` and `babel.config.js` must match |
+| R11  | Path aliases in both `tsconfig.json` and `babel.config.js` must match |
 
 ## Anti-Patterns
 

@@ -3,6 +3,7 @@ name: security-hardening
 category: enforcement
 layer: cross-cutting
 priority: high
+last_updated: 2026-03-25
 tags:
   - secure-storage
   - authentication

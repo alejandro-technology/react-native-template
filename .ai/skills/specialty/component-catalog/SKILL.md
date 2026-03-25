@@ -3,6 +3,7 @@ name: component-catalog
 category: specialty
 layer: ui
 priority: high
+last_updated: 2026-03-25
 tags:
   - components
   - props
@@ -29,7 +30,7 @@ Complete reference of all available components, their props, variants, and usage
 |------|-----------|
 | **Core** | AnimatedPressable, Avatar, Badge, Button, Card, Checkbox, DatePicker, Icon, Modal, Select, Text, TextInput, Toast |
 | **Form** | Checkbox, DatePicker, Select, TextInput |
-| **Layout** | DeleteConfirmationSheet, EmptyState, ErrorState, Header, ItemSeparatorComponent, LoadingState, RootLayout, Toolbar |
+| **Layout** | DeleteConfirmationSheet, EmptyState, ErrorBoundary, ErrorState, Header, ItemSeparatorComponent, LoadingState, RootLayout, Toolbar |
 
 ### Variant Matrix
 
@@ -128,7 +129,7 @@ interface TextProps extends RNTextProps {
 | `button` | 14px | semiBold | — (uppercase) |
 | `overline` | 10px | medium | — (uppercase) |
 
-**Color variants**: `text` · `textSecondary` · `primary` · `secondary` · `success` · `warning` · `error` · `info` · `background` · `surface` · `border`
+**Color variants** (all `ColorVariant` keys): `text` · `textSecondary` · `primary` · `success` · `warning` · `error` · `info` · `background` · `surface` · `border` · `onPrimary` · `onSuccess` · `onError` · `onInfo`
 
 ```typescript
 <Text variant="h1">Título principal</Text>
@@ -579,7 +580,7 @@ interface RootLayoutProps {
 ```typescript
 // Standard screen with toolbar
 <RootLayout title="Productos">
-  <FlatList ... />
+  <FlashList ... />
 </RootLayout>
 
 // No scroll, no toolbar
@@ -753,7 +754,7 @@ modal.open({
 
 **Import**: `import { ItemSeparatorComponent } from '@components/layout'`
 
-No props. Simple spacer (`height: spacing.md`) for FlatList/SectionList.
+No props. Simple spacer (`height: spacing.md`) for FlashList/FlatList/SectionList.
 
 ```typescript
 <FlatList

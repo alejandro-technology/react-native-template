@@ -8,6 +8,7 @@ tags:
   - module-isolation
   - configuration
   - bootstrapping
+last_updated: 2026-03-25
 triggers:
   - 'Adding modules'
   - 'Scaling architecture'
@@ -118,7 +119,8 @@ modules/{entities}/
 ├── infrastructure/   # External services
 │   ├── {entity}.service.ts          # Factory (provider switcher)
 │   ├── {entity}.http.service.ts     # HTTP implementation
-│   └── {entity}.firebase.service.ts # Firebase implementation
+│   ├── {entity}.firebase.service.ts # Firebase implementation
+│   └── {entity}.mock.service.ts     # Mock implementation
 ├── application/      # React Query hooks
 │   ├── {entity}.queries.ts
 │   └── {entity}.mutations.ts
@@ -177,11 +179,13 @@ When adding module `{Entities}`:
    <Stack.Screen name={PublicRoutes.{Entities}} component={{Entities}Navigator} />
    ```
 
-4. **React Query Keys** — Follow the convention:
+4. **React Query Keys** — Register in `src/config/query.keys.ts`:
    ```typescript
-   // List queries:  ['{entities}', 'list', searchText]
-   // Detail queries: ['{entities}', 'detail', id]
-   // Mutations invalidate: ['{entities}']
+   export const QUERY_KEYS = {
+     // ...existing keys
+     {ENTITIES}: (search = '') => ['{entities}', 'search', search],
+     {ENTITY}_DETAIL: (id: string) => ['{entities}', 'detail', id],
+   };
    ```
 
 ## Configuration Centralization
@@ -190,7 +194,7 @@ When adding module `{Entities}`:
 
 ```typescript
 // src/config/config.ts
-export type ServiceProvider = 'http' | 'firebase';
+export type ServiceProvider = 'http' | 'firebase' | 'mock';
 
 interface Config {
   SERVICE_PROVIDER: ServiceProvider;
@@ -213,6 +217,8 @@ function create{Entity}Service(): {Entity}Repository {
       return {entity}HttpService;
     case 'firebase':
       return {entity}FirebaseService;
+    case 'mock':
+      return {entity}MockService;
     default:
       throw new Error(`Unknown provider: ${CONFIG.SERVICE_PROVIDER}`);
   }
@@ -304,7 +310,7 @@ queryKey: ['orders', orderId, 'items', 'detail', itemId];
 Toast and confirmation modal are managed globally via Zustand:
 
 ```typescript
-// src/modules/core/infrastructure/app.storage.ts
+// src/modules/core/application/app.storage.ts
 interface AppState {
   toast: {
     show: (config: ToastConfig) => void;
@@ -333,10 +339,10 @@ interface AppState {
 
 ## Shared Hooks
 
-Cross-cutting hooks live in `src/hooks/`:
+Cross-cutting hooks live in `src/modules/core/application/`:
 
 ```typescript
-// src/hooks/useDebounce.ts
+// src/modules/core/application/core.hooks.ts
 export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState(value);
   useEffect(() => {
@@ -347,14 +353,13 @@ export function useDebounce<T>(value: T, delay: number): T {
 }
 ```
 
-### When to Use Shared vs Module Hooks
+### When to Use Core vs Module Hooks
 
-| Shared (`@hooks/*`) | Module (`application/`)            |
-| ------------------- | ---------------------------------- |
-| `useDebounce`       | `useProducts`                      |
-| `useKeyboard`       | `useProductCreate`                 |
-| `useNetworkStatus`  | `useAuthSignIn`                    |
-| Generic utilities   | Feature-specific queries/mutations |
+| Core (`@modules/core/application/`) | Module (`application/`)            |
+| ----------------------------------- | ---------------------------------- |
+| `useDebounce`                       | `useProducts`                      |
+| `useKeyboard`                       | `useProductCreate`                 |
+| Generic utilities                   | Feature-specific queries/mutations |
 
 ## Validation Rules
 
@@ -366,10 +371,10 @@ export function useDebounce<T>(value: T, delay: number): T {
 | R4   | Firebase collections centralized in `src/config/collections.routes.ts`     |
 | R5   | Provider order: Security → State → Theme → SafeArea → Gesture → Navigation |
 | R6   | New modules register in: config, navigation routes, root navigator         |
-| R7   | Query keys follow `['{entities}', 'list'\|'detail', param]` pattern        |
+| R7   | Query keys use centralized `QUERY_KEYS` from `@config/query.keys`          |
 | R8   | Create/Delete invalidate list; Update invalidates list + detail            |
 | R9   | Global UI components placed inside NavigationProvider in AppProvider       |
-| R10  | Cross-cutting hooks in `src/hooks/`, feature hooks in `application/`       |
+| R10  | Cross-cutting hooks in `src/modules/core/application/`, feature hooks in module `application/` |
 | R11  | Adding a new provider type requires zero changes to domain/application/UI  |
 | R12  | Each module is independently removable (no cross-module domain imports)    |
 
@@ -410,9 +415,15 @@ const queryClient = new QueryClient(); // in multiple files
 // CORRECT: Single QueryClient in AppProvider
 // Configured once, provided globally
 
-// WRONG: Adding feature hooks to src/hooks/
+// WRONG: Adding feature hooks to src/hooks/ or src/modules/core/
 // src/hooks/useProducts.ts ← Feature-specific!
 
 // CORRECT: Feature hooks in module's application layer
 // src/modules/products/application/product.queries.ts
+
+// WRONG: Using raw query key arrays
+queryClient.invalidateQueries({ queryKey: ['products'] });
+
+// CORRECT: Using centralized QUERY_KEYS
+queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS() });
 ```

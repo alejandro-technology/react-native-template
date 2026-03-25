@@ -3,6 +3,7 @@ name: accessibility
 category: enforcement
 layer: ui
 priority: high
+last_updated: 2026-03-25
 tags:
   - a11y
   - screen-reader

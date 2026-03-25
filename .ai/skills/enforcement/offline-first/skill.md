@@ -3,6 +3,7 @@ name: offline-first
 category: enforcement
 layer: cross-cutting
 priority: high
+last_updated: 2026-03-25
 tags:
   - offline
   - cache
