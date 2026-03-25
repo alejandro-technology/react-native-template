@@ -17,7 +17,28 @@ import { useTheme, commonStyles } from '@theme/index';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { View } from 'react-native';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // Enterprise-friendly defaults: avoid refetch on focus, short staleTime,
+      // and conservative retry policy (no retry for 4xx client errors).
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 5, // 5 minutes
+      retry: (failureCount: number, error: unknown) => {
+        const status = (error as any)?.response?.status;
+        // Don't retry for client errors (4xx)
+        if (typeof status === 'number' && status >= 400 && status < 500) {
+          return false;
+        }
+        // Retry up to 2 times for other errors (network/server)
+        return failureCount < 2;
+      },
+    },
+    mutations: {
+      retry: false,
+    },
+  },
+});
 export default function AppProvider({ children }: PropsWithChildren) {
   return (
     <ErrorBoundary>
@@ -67,8 +88,8 @@ function SafeAreaView({ children }: PropsWithChildren) {
         ...commonStyles.flex,
         paddingTop: insets.top,
         paddingBottom: insets.bottom,
-        left: insets.left,
-        right: insets.right,
+        paddingLeft: insets.left,
+        paddingRight: insets.right,
       }}
     >
       {children}
