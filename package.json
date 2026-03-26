@@ -22,6 +22,7 @@
     "claude": "cp -r .ai/ .claude",
     "opencode": "cp -r .ai/ .opencode",
     "trae": "cp -r .ai/ .trae",
+    "droid": "cp -r .ai/ .factory && mv .factory/agents .factory/droids",
     "prepare": "husky"
   },
   "lint-staged": {
