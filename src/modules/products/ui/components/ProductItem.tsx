@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 // Components
 import { Text, Card } from '@components/core';
 // Types
-import type { ProductEntity } from '../../domain/product.model';
+import type { Product } from '../../domain/product.model';
 // Theme
 import { spacing } from '@theme/index';
 // Navigation
@@ -11,7 +11,7 @@ import { ProductsRoutes } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';
 
 interface ProductItemProps {
-  product: ProductEntity;
+  product: Product;
   index: number;
 }
 

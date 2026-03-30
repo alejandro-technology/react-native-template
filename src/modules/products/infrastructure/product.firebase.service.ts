@@ -1,31 +1,34 @@
-import firestore from '@react-native-firebase/firestore';
+import { Timestamp } from '@react-native-firebase/firestore';
+// Firebase
+import { firestoreService } from '@modules/firebase';
 import { manageFirebaseError } from '@modules/firebase/domain/firebase.error';
-import { ProductRepository } from '../domain/product.repository';
+import { firestoreCollectionAdapter } from '@modules/firebase/domain/firestore/firestore.adapter';
+// Domain
 import type {
   CreateProductPayload,
   ProductEntity,
+  ProductFirebase,
   ProductFilter,
   UpdateProductPayload,
 } from '../domain/product.model';
+import { ProductRepository } from '../domain/product.repository';
+// Config
 import { COLLECTIONS } from '@config/collections.routes';
 
 class ProductFirebaseService implements ProductRepository {
-  private firestore = firestore();
-
   async getAll(filter?: ProductFilter): Promise<ProductEntity[] | Error> {
     try {
-      const snapshot = await this.firestore
-        .collection(COLLECTIONS.PRODUCTS)
-        .get();
+      const result = await firestoreService.list<ProductFirebase>({
+        collection: COLLECTIONS.PRODUCTS,
+      });
+      if (result instanceof Error) {
+        return result;
+      }
 
-      let products = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as ProductEntity[];
-
+      const products = firestoreCollectionAdapter<ProductEntity>(result.docs);
       if (filter?.searchText) {
         const searchLower = filter.searchText.toLowerCase();
-        products = products.filter(
+        return products.filter(
           p =>
             p.name.toLowerCase().includes(searchLower) ||
             p.description.toLowerCase().includes(searchLower) ||
@@ -41,17 +44,22 @@ class ProductFirebaseService implements ProductRepository {
 
   async getById(id: string): Promise<ProductEntity | Error> {
     try {
-      const docRef = this.firestore.collection(COLLECTIONS.PRODUCTS).doc(id);
-      const snapshot = await docRef.get();
-
-      if (!snapshot.exists) {
+      const result = await firestoreService.get<ProductFirebase>({
+        collection: COLLECTIONS.PRODUCTS,
+        id,
+      });
+      if (result instanceof Error) {
+        return result;
+      }
+      if (!result.exists || !result.data) {
         return new Error('Producto no encontrado');
       }
+      const productEntity: ProductEntity = {
+        id,
+        ...result.data,
+      };
 
-      return {
-        id: snapshot.id,
-        ...snapshot.data(),
-      } as ProductEntity;
+      return productEntity;
     } catch (error) {
       return manageFirebaseError(error);
     }
@@ -59,19 +67,30 @@ class ProductFirebaseService implements ProductRepository {
 
   async create(data: CreateProductPayload): Promise<ProductEntity | Error> {
     try {
-      const now = new Date().toISOString();
-      const docRef = await this.firestore.collection(COLLECTIONS.PRODUCTS).add({
-        ...data,
-        createdAt: now,
-        updatedAt: now,
+      const now = new Date();
+      const result = await firestoreService.create<ProductFirebase>({
+        collection: COLLECTIONS.PRODUCTS,
+        data: {
+          ...data,
+          description: data.description ?? '',
+          createdAt: Timestamp.fromDate(now),
+          updatedAt: Timestamp.fromDate(now),
+        },
       });
+      if (result instanceof Error) {
+        return result;
+      }
 
-      const snapshot = await docRef.get();
+      if (!result.data) {
+        return new Error('No se pudo crear el producto');
+      }
 
-      return {
-        id: snapshot.id,
-        ...snapshot.data(),
-      } as ProductEntity;
+      const productEntity: ProductEntity = {
+        id: result.id,
+        ...result.data,
+      };
+
+      return productEntity;
     } catch (error) {
       return manageFirebaseError(error);
     }
@@ -82,20 +101,38 @@ class ProductFirebaseService implements ProductRepository {
     data: UpdateProductPayload,
   ): Promise<ProductEntity | Error> {
     try {
-      const docRef = this.firestore.collection(COLLECTIONS.PRODUCTS).doc(id);
-      const now = new Date().toISOString();
+      const now = new Date();
 
-      await docRef.update({
-        ...data,
-        updatedAt: now,
+      const updateResult = await firestoreService.update<
+        Omit<ProductEntity, 'id'>
+      >({
+        collection: COLLECTIONS.PRODUCTS,
+        id,
+        data: {
+          ...data,
+          updatedAt: Timestamp.fromDate(now),
+        },
       });
+      if (updateResult instanceof Error) {
+        return updateResult;
+      }
 
-      const snapshot = await docRef.get();
+      const result = await firestoreService.get<ProductFirebase>({
+        collection: COLLECTIONS.PRODUCTS,
+        id,
+      });
+      if (result instanceof Error) {
+        return result;
+      }
+      if (!result.exists || !result.data) {
+        return new Error('Producto no encontrado');
+      }
 
-      return {
-        id: snapshot.id,
-        ...snapshot.data(),
-      } as ProductEntity;
+      const productEntity: ProductEntity = {
+        id: result.id,
+        ...result.data,
+      };
+      return productEntity;
     } catch (error) {
       return manageFirebaseError(error);
     }
@@ -103,8 +140,13 @@ class ProductFirebaseService implements ProductRepository {
 
   async delete(id: string): Promise<void | Error> {
     try {
-      const docRef = this.firestore.collection(COLLECTIONS.PRODUCTS).doc(id);
-      await docRef.delete();
+      const result = await firestoreService.delete({
+        collection: COLLECTIONS.PRODUCTS,
+        id,
+      });
+      if (result instanceof Error) {
+        return result;
+      }
       return;
     } catch (error) {
       return manageFirebaseError(error);

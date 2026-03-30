@@ -1,4 +1,4 @@
-import { ProductEntity } from '@modules/products/domain/product.model';
+import { Product } from '@modules/products/domain/product.model';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export enum ProductsRoutes {
@@ -10,7 +10,7 @@ export enum ProductsRoutes {
 export type ProductsStackParamList = {
   [ProductsRoutes.ProductList]: undefined;
   [ProductsRoutes.ProductDetail]: { productId: string };
-  [ProductsRoutes.ProductForm]?: { product: ProductEntity };
+  [ProductsRoutes.ProductForm]?: { product: Product };
 };
 
 export type ProductsScreenProps<T extends keyof ProductsStackParamList> =

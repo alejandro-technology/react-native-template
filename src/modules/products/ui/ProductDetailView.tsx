@@ -12,8 +12,8 @@ import {
 import { useProduct } from '../application/product.queries';
 import { useProductDelete } from '../application/product.mutations';
 // Navigation
-import { ProductsRoutes, ProductsScreenProps } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';
+import { ProductsRoutes, ProductsScreenProps } from '@navigation/routes';
 // Theme
 import { spacing } from '@theme/index';
 // Store
@@ -59,6 +59,8 @@ export function ProductDetailView({
       />
     );
   }
+  console.log('Product: ', product);
+
   return (
     <RootLayout padding="md" title="Detalle de Producto">
       <View style={styles.content}>
@@ -75,10 +77,10 @@ export function ProductDetailView({
         <Card style={styles.card}>
           <Text variant="caption">Fechas</Text>
           <Text variant="body">
-            Creado: {new Date(product.createdAt).toLocaleDateString()}
+            Creado: {product.createdAt.toLocaleDateString()}
           </Text>
           <Text variant="body">
-            Actualizado: {new Date(product.updatedAt).toLocaleDateString()}
+            Actualizado: {product.updatedAt.toLocaleDateString()}
           </Text>
         </Card>
 

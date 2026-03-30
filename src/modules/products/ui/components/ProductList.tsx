@@ -13,11 +13,11 @@ import {
 // Hooks
 import { useProducts } from '@modules/products/application/product.queries';
 // Types
-import type { ProductEntity } from '../../domain/product.model';
+import type { Product } from '../../domain/product.model';
 // Theme
 import { spacing } from '@theme/index';
 
-const renderProductItem: ListRenderItem<ProductEntity> = ({ item, index }) => (
+const renderProductItem: ListRenderItem<Product> = ({ item, index }) => (
   <ProductItem product={item} index={index} />
 );
 

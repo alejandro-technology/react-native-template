@@ -1,3 +1,4 @@
+import { Timestamp } from '@react-native-firebase/firestore';
 import {
   ProductEntity,
   CreateProductPayload,
@@ -22,8 +23,8 @@ class ProductMockService implements ProductRepository {
     const product: ProductEntity = {
       id: Math.random().toString(36).substring(2),
       ...data,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
+      createdAt: Timestamp.fromDate(new Date()),
+      updatedAt: Timestamp.fromDate(new Date()),
       description: data.description || '',
     };
     this.database.push(product);
@@ -38,7 +39,7 @@ class ProductMockService implements ProductRepository {
       return Promise.resolve(new Error('Product not found'));
     }
     Object.assign(product, data);
-    product.updatedAt = new Date().toISOString();
+    product.updatedAt = Timestamp.fromDate(new Date());
     return Promise.resolve(product);
   }
   delete(id: string): Promise<void | Error> {

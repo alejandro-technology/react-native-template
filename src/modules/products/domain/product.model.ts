@@ -1,10 +1,12 @@
-export interface ProductEntity {
+import type { Timestamp } from '@react-native-firebase/firestore';
+
+export interface Product {
   id: string;
   name: string;
   description: string;
   price: number;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface CreateProductPayload {
@@ -22,3 +24,12 @@ export interface UpdateProductPayload {
 export interface ProductFilter {
   searchText?: string;
 }
+
+// Only need for Firebase, as the rest of the app should work with the Product interface
+export interface ProductEntity
+  extends Omit<Product, 'createdAt' | 'updatedAt'> {
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+export interface ProductFirebase extends Omit<ProductEntity, 'id'> {}

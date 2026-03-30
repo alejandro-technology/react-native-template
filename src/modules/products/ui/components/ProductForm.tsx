@@ -7,13 +7,13 @@ import { spacing } from '@theme/index';
 import { Button } from '@components/core';
 import { TextInput } from '@components/form';
 // Domain
-import type { ProductEntity } from '../../domain/product.model';
+import type { Product } from '../../domain/product.model';
 import { productSchema, ProductFormData } from '../../domain/product.scheme';
 
 interface ProductFormProps {
   onSubmit: (data: ProductFormData) => void;
   isLoading?: boolean;
-  initialData?: ProductEntity;
+  initialData?: Product;
 }
 
 export function ProductForm({
