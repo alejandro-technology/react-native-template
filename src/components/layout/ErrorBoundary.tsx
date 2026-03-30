@@ -1,7 +1,9 @@
-import React, { Component, ErrorInfo, PropsWithChildren } from 'react';
 import { View, StyleSheet } from 'react-native';
+import React, { Component, ErrorInfo, PropsWithChildren } from 'react';
+// Components
 import { Text } from '@components/core/Text';
 import { Button } from '@components/core/Button';
+// Theme
 import { spacing } from '@theme/spacing';
 
 interface ErrorBoundaryState {

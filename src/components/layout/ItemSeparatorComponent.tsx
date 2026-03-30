@@ -1,5 +1,6 @@
-import { StyleSheet, View } from 'react-native';
 import React from 'react';
+import { StyleSheet, View } from 'react-native';
+// Theme
 import { spacing } from '@theme/spacing';
 
 export function ItemSeparatorComponent() {

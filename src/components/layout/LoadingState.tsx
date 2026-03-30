@@ -3,9 +3,9 @@ import { View, StyleSheet, Animated } from 'react-native';
 // Components
 import { Text } from '@components/core';
 // Theme
-import { spacing, ANIMATION_EASING } from '@theme/index';
 import { useTheme } from '@theme/index';
 import { useAnimatedLoop } from '@theme/hooks';
+import { spacing, ANIMATION_EASING } from '@theme/index';
 
 interface LoadingStateProps {
   message?: string;

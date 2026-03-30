@@ -1,5 +1,6 @@
 import React from 'react';
 import { Control, FieldValues, Path, useController } from 'react-hook-form';
+// Components
 import { Checkbox as CheckboxCore } from '@components/core';
 
 interface CheckboxProps<T extends FieldValues = any>

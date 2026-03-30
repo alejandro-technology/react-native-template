@@ -76,10 +76,7 @@ function GestureHandlerProvider({ children }: PropsWithChildren) {
         backgroundColor,
       }}
     >
-      <StatusBar
-        barStyle={isDark ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundColor}
-      />
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       {children}
     </GestureHandlerRootView>
   );

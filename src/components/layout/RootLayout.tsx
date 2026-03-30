@@ -1,5 +1,8 @@
 import React, { PropsWithChildren } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { Animated, StyleSheet, View } from 'react-native';
+// Components
+import { Toolbar, ToolbarOptions } from './Toolbar';
 // Theme
 import {
   ANIMATION_DURATION,
@@ -7,8 +10,6 @@ import {
   useFocusFadeIn,
   useTheme,
 } from '@theme/index';
-import { Toolbar, ToolbarOptions } from './Toolbar';
-import { useNavigation } from '@react-navigation/native';
 
 interface Props {
   scroll?: boolean;
@@ -42,7 +43,7 @@ export function RootLayout({
   const defaultLeftOptions: ToolbarOptions[] = [
     { icon: 'arrow-left', onPress: goBack },
   ];
-  const defaultRightOptions: ToolbarOptions[] = [{ icon: 'mailbox' }];
+  const defaultRightOptions: ToolbarOptions[] = [{ icon: 'bell' }];
 
   const style = [
     styles.container,
