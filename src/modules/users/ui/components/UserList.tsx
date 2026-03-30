@@ -13,11 +13,11 @@ import {
 // Hooks
 import { useUsers } from '@modules/users/application/user.queries';
 // Types
-import type { UserEntity } from '../../domain/user.model';
+import type { User } from '../../domain/user.model';
 // Theme
 import { spacing } from '@theme/index';
 
-const renderUserItem: ListRenderItem<UserEntity> = ({ item, index }) => (
+const renderUserItem: ListRenderItem<User> = ({ item, index }) => (
   <UserItem user={item} index={index} />
 );
 

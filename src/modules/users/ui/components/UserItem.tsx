@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 // Components
 import { Text, Card, Avatar, Badge, Icon } from '@components/core';
 // Types
-import type { UserEntity } from '../../domain/user.model';
+import type { User } from '../../domain/user.model';
 // Theme
 import { spacing } from '@theme/index';
 // Navigation
@@ -14,7 +14,7 @@ import { getRoleVariant } from '@modules/users/domain/user.utils';
 import { formatJoinDate } from '@modules/core/domain/date.utils';
 
 interface UserItemProps {
-  user: UserEntity;
+  user: User;
   index: number;
 }
 
@@ -46,7 +46,9 @@ export const UserItem = React.memo(function UserItem({ user }: UserItemProps) {
         </View>
         <View style={styles.infoItem}>
           <Icon name="calendar" size={14} />
-          <Text variant="caption">{formatJoinDate(user.createdAt)}</Text>
+          <Text variant="caption">
+            {formatJoinDate(user.createdAt.toISOString())}
+          </Text>
         </View>
       </View>
     </Card>

@@ -1,3 +1,4 @@
+import { Timestamp } from '@react-native-firebase/firestore';
 import type {
   CreateUserPayload,
   UpdateUserPayload,
@@ -39,12 +40,12 @@ class UserMockService implements UserRepository {
       return new Error('User already exists');
     }
 
-    const now = new Date().toISOString();
+    const now = new Date();
     const user: UserEntity = {
       id: Math.random().toString(36).substring(2),
       ...data,
-      createdAt: now,
-      updatedAt: now,
+      createdAt: Timestamp.fromDate(now),
+      updatedAt: Timestamp.fromDate(now),
     };
 
     this.database.push(user);
@@ -61,7 +62,7 @@ class UserMockService implements UserRepository {
     }
 
     Object.assign(user, data);
-    user.updatedAt = new Date().toISOString();
+    user.updatedAt = Timestamp.fromDate(new Date());
     return user;
   }
 

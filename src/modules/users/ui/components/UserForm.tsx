@@ -7,13 +7,13 @@ import { spacing } from '@theme/index';
 import { Button } from '@components/core';
 import { TextInput } from '@components/form';
 // Domain
-import type { UserEntity } from '../../domain/user.model';
+import type { User } from '../../domain/user.model';
 import { userSchema, UserFormData } from '../../domain/user.scheme';
 
 interface UserFormProps {
   onSubmit: (data: UserFormData) => void;
   isLoading?: boolean;
-  initialData?: UserEntity;
+  initialData?: User;
 }
 
 export function UserForm({

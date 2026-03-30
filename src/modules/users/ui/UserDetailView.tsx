@@ -12,8 +12,8 @@ import {
 import { useUser } from '../application/user.queries';
 import { useUserDelete } from '../application/user.mutations';
 // Navigation
-import { UsersRoutes, UsersScreenProps } from '@navigation/routes';
 import { useNavigationUsers } from '@navigation/hooks';
+import { UsersRoutes, UsersScreenProps } from '@navigation/routes';
 // Theme
 import { spacing } from '@theme/index';
 // Store

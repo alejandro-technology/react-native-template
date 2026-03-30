@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 // Services
 import userService from '../infrastructure/user.service';
-// Types
+// Domain
+import {
+  userEntityToUserAdapter,
+  userEntityToUsersAdapter,
+} from '../domain/user.adapter';
 import type { UserFilter } from '../domain/user.repository';
-// COnfig
+// Config
 import { QUERY_KEYS } from '@config/query.keys';
 
 export function useUsers(filter?: UserFilter, enabled = true) {
@@ -14,7 +18,7 @@ export function useUsers(filter?: UserFilter, enabled = true) {
       if (result instanceof Error) {
         throw result;
       }
-      return result;
+      return userEntityToUsersAdapter(result);
     },
     enabled,
   });
@@ -28,7 +32,7 @@ export function useUser(id: string, enabled = true) {
       if (result instanceof Error) {
         throw result;
       }
-      return result;
+      return userEntityToUserAdapter(result);
     },
     enabled: enabled && Boolean(id),
   });

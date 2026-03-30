@@ -1,4 +1,4 @@
-import { UserEntity } from '@modules/users/domain/user.model';
+import { User } from '@modules/users/domain/user.model';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export enum UsersRoutes {
@@ -10,7 +10,7 @@ export enum UsersRoutes {
 export type UsersStackParamList = {
   [UsersRoutes.UserList]: undefined;
   [UsersRoutes.UserDetail]: { userId: string };
-  [UsersRoutes.UserForm]?: { user: UserEntity };
+  [UsersRoutes.UserForm]?: { user: User };
 };
 
 export type UsersScreenProps<T extends keyof UsersStackParamList> =

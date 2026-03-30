@@ -1,29 +1,35 @@
-import firestore from '@react-native-firebase/firestore';
+import { Timestamp } from '@react-native-firebase/firestore';
+// Firebase
+import { firestoreService } from '@modules/firebase';
 import { manageFirebaseError } from '@modules/firebase/domain/firebase.error';
-import { UserRepository } from '../domain/user.repository';
+import { firestoreCollectionAdapter } from '@modules/firebase/domain/firestore/firestore.adapter';
+// Domain
 import type {
   CreateUserPayload,
   UserEntity,
   UserFilter,
   UpdateUserPayload,
+  UserFirebase,
 } from '../domain/user.model';
+import { UserRepository } from '../domain/user.repository';
+// Config
 import { COLLECTIONS } from '@config/collections.routes';
 
 class UserFirebaseService implements UserRepository {
-  private firestore = firestore();
-
   async getAll(filter?: UserFilter): Promise<UserEntity[] | Error> {
     try {
-      const snapshot = await this.firestore.collection(COLLECTIONS.USERS).get();
+      const result = await firestoreService.list<UserFirebase>({
+        collection: COLLECTIONS.USERS,
+      });
+      if (result instanceof Error) {
+        return result;
+      }
 
-      let users = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as UserEntity[];
+      const users = firestoreCollectionAdapter<UserEntity>(result.docs);
 
       if (filter?.searchText) {
         const searchLower = filter.searchText.toLowerCase();
-        users = users.filter(
+        return users.filter(
           u =>
             u.name.toLowerCase().includes(searchLower) ||
             u.email.toLowerCase().includes(searchLower) ||
@@ -41,17 +47,22 @@ class UserFirebaseService implements UserRepository {
 
   async getById(id: string): Promise<UserEntity | Error> {
     try {
-      const docRef = this.firestore.collection(COLLECTIONS.USERS).doc(id);
-      const snapshot = await docRef.get();
-
-      if (!snapshot.exists) {
+      const result = await firestoreService.get<Omit<UserEntity, 'id'>>({
+        collection: COLLECTIONS.USERS,
+        id,
+      });
+      if (result instanceof Error) {
+        return result;
+      }
+      if (!result.exists || !result.data) {
         return new Error('Usuario no encontrado');
       }
 
-      return {
-        id: snapshot.id,
-        ...snapshot.data(),
-      } as UserEntity;
+      const userEntity: UserEntity = {
+        id,
+        ...result.data,
+      };
+      return userEntity;
     } catch (error) {
       return manageFirebaseError(error);
     }
@@ -59,18 +70,26 @@ class UserFirebaseService implements UserRepository {
 
   async create(data: CreateUserPayload): Promise<UserEntity | Error> {
     try {
-      const now = new Date().toISOString();
-      const docRef = await this.firestore.collection(COLLECTIONS.USERS).add({
-        ...data,
-        createdAt: now,
-        updatedAt: now,
+      const now = new Date();
+      const result = await firestoreService.create<Omit<UserEntity, 'id'>>({
+        collection: COLLECTIONS.USERS,
+        data: {
+          ...data,
+          createdAt: Timestamp.fromDate(now),
+          updatedAt: Timestamp.fromDate(now),
+        },
       });
+      if (result instanceof Error) {
+        return result;
+      }
 
-      const snapshot = await docRef.get();
+      if (!result.data) {
+        return new Error('No se pudo crear el usuario');
+      }
 
       return {
-        id: snapshot.id,
-        ...snapshot.data(),
+        id: result.id,
+        ...(result.data as Omit<UserEntity, 'id'>),
       } as UserEntity;
     } catch (error) {
       return manageFirebaseError(error);
@@ -82,20 +101,38 @@ class UserFirebaseService implements UserRepository {
     data: UpdateUserPayload,
   ): Promise<UserEntity | Error> {
     try {
-      const docRef = this.firestore.collection(COLLECTIONS.USERS).doc(id);
-      const now = new Date().toISOString();
+      const now = new Date();
 
-      await docRef.update({
-        ...data,
-        updatedAt: now,
+      const updateResult = await firestoreService.update<
+        Omit<UserEntity, 'id'>
+      >({
+        collection: COLLECTIONS.USERS,
+        id,
+        data: {
+          ...data,
+          updatedAt: Timestamp.fromDate(now),
+        },
       });
+      if (updateResult instanceof Error) {
+        return updateResult;
+      }
 
-      const snapshot = await docRef.get();
+      const result = await firestoreService.get<Omit<UserEntity, 'id'>>({
+        collection: COLLECTIONS.USERS,
+        id,
+      });
+      if (result instanceof Error) {
+        return result;
+      }
+      if (!result.exists || !result.data) {
+        return new Error('Usuario no encontrado');
+      }
 
-      return {
-        id: snapshot.id,
-        ...snapshot.data(),
-      } as UserEntity;
+      const userEntity: UserEntity = {
+        id,
+        ...result.data,
+      };
+      return userEntity;
     } catch (error) {
       return manageFirebaseError(error);
     }
@@ -103,8 +140,13 @@ class UserFirebaseService implements UserRepository {
 
   async delete(id: string): Promise<void | Error> {
     try {
-      const docRef = this.firestore.collection(COLLECTIONS.USERS).doc(id);
-      await docRef.delete();
+      const result = await firestoreService.delete({
+        collection: COLLECTIONS.USERS,
+        id,
+      });
+      if (result instanceof Error) {
+        return result;
+      }
       return;
     } catch (error) {
       return manageFirebaseError(error);
