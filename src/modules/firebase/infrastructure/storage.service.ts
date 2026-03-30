@@ -1,17 +1,25 @@
-import storage from '@react-native-firebase/storage';
+import {
+  deleteObject,
+  getDownloadURL,
+  getMetadata,
+  getStorage,
+  list,
+  putFile,
+  ref,
+} from '@react-native-firebase/storage';
 import { manageFirebaseError } from '../domain/firebase.error';
-import type { StorageRepository } from '../domain/storage.repository';
+import type { StorageRepository } from '../domain/storage/storage.repository';
 import type {
   File,
   FileMetadata,
   ListOptions,
   UploadOptions,
   UploadResult,
-} from '../domain/storage.model';
-import { adaptFirebaseMetadata } from '../domain/storage.adapter';
+} from '../domain/storage/storage.model';
+import { adaptFirebaseMetadata } from '../domain/storage/storage.adapter';
 
 class FirebaseStorageService implements StorageRepository {
-  private storage = storage();
+  private storage = getStorage();
 
   async upload(
     path: string,
@@ -19,8 +27,8 @@ class FirebaseStorageService implements StorageRepository {
     options?: UploadOptions,
   ): Promise<UploadResult | Error> {
     try {
-      const ref = this.storage.ref(path);
-      const task = ref.putFile(file.uri, {
+      const storageRef = ref(this.storage, path);
+      const task = putFile(storageRef, file.uri, {
         contentType: options?.contentType,
         customMetadata: options?.customMetadata,
         cacheControl: options?.cacheControl,
@@ -35,7 +43,7 @@ class FirebaseStorageService implements StorageRepository {
       }
 
       const snapshot = await task;
-      const url = await ref.getDownloadURL();
+      const url = await getDownloadURL(storageRef);
 
       return {
         path: snapshot.metadata.fullPath,
@@ -49,7 +57,7 @@ class FirebaseStorageService implements StorageRepository {
 
   async getDownloadURL(path: string): Promise<string | Error> {
     try {
-      const url = await this.storage.ref(path).getDownloadURL();
+      const url = await getDownloadURL(ref(this.storage, path));
       return url;
     } catch (error) {
       return manageFirebaseError(error);
@@ -58,7 +66,7 @@ class FirebaseStorageService implements StorageRepository {
 
   async delete(path: string): Promise<void | Error> {
     try {
-      await this.storage.ref(path).delete();
+      await deleteObject(ref(this.storage, path));
       return;
     } catch (error) {
       return manageFirebaseError(error);
@@ -70,14 +78,14 @@ class FirebaseStorageService implements StorageRepository {
     options?: ListOptions,
   ): Promise<FileMetadata[] | Error> {
     try {
-      const ref = this.storage.ref(path);
-      const result = await ref.list({
+      const storageRef = ref(this.storage, path);
+      const result = await list(storageRef, {
         maxResults: options?.maxResults,
         pageToken: options?.pageToken,
       });
 
       const metadata = await Promise.all(
-        result.items.map(item => item.getMetadata()),
+        result.items.map(item => getMetadata(item)),
       );
 
       return metadata.map(adaptFirebaseMetadata);
@@ -88,7 +96,7 @@ class FirebaseStorageService implements StorageRepository {
 
   async getMetadata(path: string): Promise<FileMetadata | Error> {
     try {
-      const metadata = await this.storage.ref(path).getMetadata();
+      const metadata = await getMetadata(ref(this.storage, path));
       return adaptFirebaseMetadata(metadata);
     } catch (error) {
       return manageFirebaseError(error);

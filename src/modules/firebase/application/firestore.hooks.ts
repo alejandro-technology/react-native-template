@@ -6,7 +6,7 @@ import type {
   FirestoreDocument,
   ListDocumentsPayload,
   UpdateDocumentPayload,
-} from '../domain/firestore.repository';
+} from '../domain/firestore/firestore.repository';
 
 interface CreateParams<T> {
   payload: CreateDocumentPayload<T>;

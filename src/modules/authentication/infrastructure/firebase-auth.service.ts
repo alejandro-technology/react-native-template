@@ -1,5 +1,6 @@
-import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth';
+import type { FirebaseAuthTypes } from '@react-native-firebase/auth';
 import { manageFirebaseError } from '@modules/firebase/domain/firebase.error';
+import firebaseAuthenticationService from '@modules/firebase/infrastructure/authentication.service';
 import type { AuthRepository } from '../domain/auth.repository';
 import type {
   SignUpPayload,
@@ -41,16 +42,17 @@ function firebaseUserToEntity(
 class FirebaseAuthService implements AuthRepository {
   async signup(data: SignUpPayload): Promise<SignUpResponse | Error> {
     try {
-      const userCredential = await auth().createUserWithEmailAndPassword(
+      const userCredential = await firebaseAuthenticationService.signup(
         data.email,
         data.password,
       );
 
       // Actualizar displayName si se proporciona
       if (data.displayName) {
-        await userCredential.user.updateProfile({
+        await firebaseAuthenticationService.updateProfile(userCredential.user, {
           displayName: data.displayName,
         });
+        await firebaseAuthenticationService.reload(userCredential.user);
       }
 
       return {
@@ -63,7 +65,7 @@ class FirebaseAuthService implements AuthRepository {
 
   async signin(data: SignInPayload): Promise<SignInResponse | Error> {
     try {
-      const userCredential = await auth().signInWithEmailAndPassword(
+      const userCredential = await firebaseAuthenticationService.signin(
         data.email,
         data.password,
       );
@@ -78,7 +80,7 @@ class FirebaseAuthService implements AuthRepository {
 
   async signout(): Promise<void | Error> {
     try {
-      await auth().signOut();
+      await firebaseAuthenticationService.signout();
       return;
     } catch (error) {
       return manageFirebaseError(error);
@@ -87,7 +89,7 @@ class FirebaseAuthService implements AuthRepository {
 
   async getCurrentUser(): Promise<UserEntity | null | Error> {
     try {
-      const firebaseUser = auth().currentUser;
+      const firebaseUser = firebaseAuthenticationService.getCurrentUser();
       if (!firebaseUser) {
         return null;
       }
@@ -98,7 +100,7 @@ class FirebaseAuthService implements AuthRepository {
   }
 
   onAuthStateChanged(callback: AuthStateChangeCallback): AuthStateUnsubscribe {
-    return auth().onAuthStateChanged(firebaseUser => {
+    return firebaseAuthenticationService.onAuthStateChanged(firebaseUser => {
       if (firebaseUser) {
         callback(firebaseUserToEntity(firebaseUser));
       } else {
@@ -109,11 +111,11 @@ class FirebaseAuthService implements AuthRepository {
 
   async sendEmailVerification(): Promise<void | Error> {
     try {
-      const firebaseUser = auth().currentUser;
+      const firebaseUser = firebaseAuthenticationService.getCurrentUser();
       if (!firebaseUser) {
         return new Error('No hay usuario autenticado');
       }
-      await firebaseUser.sendEmailVerification();
+      await firebaseAuthenticationService.sendEmailVerification(firebaseUser);
       return;
     } catch (error) {
       return manageFirebaseError(error);
@@ -122,7 +124,7 @@ class FirebaseAuthService implements AuthRepository {
 
   async sendPasswordResetEmail(email: string): Promise<void | Error> {
     try {
-      await auth().sendPasswordResetEmail(email);
+      await firebaseAuthenticationService.sendPasswordResetEmail(email);
       return;
     } catch (error) {
       return manageFirebaseError(error);
@@ -134,16 +136,16 @@ class FirebaseAuthService implements AuthRepository {
     photoURL?: string;
   }): Promise<UserEntity | Error> {
     try {
-      const firebaseUser = auth().currentUser;
+      const firebaseUser = firebaseAuthenticationService.getCurrentUser();
       if (!firebaseUser) {
         return new Error('No hay usuario autenticado');
       }
 
-      await firebaseUser.updateProfile(data);
+      await firebaseAuthenticationService.updateProfile(firebaseUser, data);
       // Recargar para obtener datos actualizados
-      await firebaseUser.reload();
+      await firebaseAuthenticationService.reload(firebaseUser);
 
-      const updatedUser = auth().currentUser;
+      const updatedUser = firebaseAuthenticationService.getCurrentUser();
       if (!updatedUser) {
         return new Error('Error al obtener usuario actualizado');
       }
@@ -156,11 +158,11 @@ class FirebaseAuthService implements AuthRepository {
 
   async deleteAccount(): Promise<void | Error> {
     try {
-      const firebaseUser = auth().currentUser;
+      const firebaseUser = firebaseAuthenticationService.getCurrentUser();
       if (!firebaseUser) {
         return new Error('No hay usuario autenticado');
       }
-      await firebaseUser.delete();
+      await firebaseAuthenticationService.deleteAccount(firebaseUser);
       return;
     } catch (error) {
       return manageFirebaseError(error);

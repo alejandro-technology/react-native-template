@@ -1,3 +1,4 @@
+import { StatusBar, View } from 'react-native';
 import React, { PropsWithChildren } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
@@ -15,7 +16,6 @@ import { ErrorBoundary } from '@components/layout/ErrorBoundary';
 // Styles
 import { useTheme, commonStyles } from '@theme/index';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { View } from 'react-native';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -39,6 +39,7 @@ const queryClient = new QueryClient({
     },
   },
 });
+
 export default function AppProvider({ children }: PropsWithChildren) {
   return (
     <ErrorBoundary>
@@ -65,9 +66,9 @@ export default function AppProvider({ children }: PropsWithChildren) {
 
 function GestureHandlerProvider({ children }: PropsWithChildren) {
   const {
+    isDark,
     colors: { background: backgroundColor },
   } = useTheme();
-
   return (
     <GestureHandlerRootView
       style={{
@@ -75,6 +76,10 @@ function GestureHandlerProvider({ children }: PropsWithChildren) {
         backgroundColor,
       }}
     >
+      <StatusBar
+        barStyle={isDark ? 'light-content' : 'dark-content'}
+        backgroundColor={backgroundColor}
+      />
       {children}
     </GestureHandlerRootView>
   );

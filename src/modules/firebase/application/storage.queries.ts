@@ -1,6 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import storageService from '../infrastructure/storage.service';
-import type { ListOptions, FileMetadata } from '../domain/storage.repository';
+import type {
+  ListOptions,
+  FileMetadata,
+} from '../domain/storage/storage.repository';
 
 interface UseListFilesParams {
   path: string;

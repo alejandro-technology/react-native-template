@@ -5,7 +5,7 @@ import type {
   ListOptions,
   UploadOptions,
   UploadResult,
-} from '../domain/storage.repository';
+} from '../domain/storage/storage.repository';
 
 interface UploadParams {
   path: string;
