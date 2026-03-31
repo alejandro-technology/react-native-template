@@ -116,6 +116,88 @@ jest.mock('react-native-svg', () => {
   };
 });
 
+// Mock de @react-native-community/netinfo
+jest.mock('@react-native-community/netinfo', () => ({
+  default: {
+    fetch: jest.fn(() =>
+      Promise.resolve({
+        type: 'wifi',
+        isConnected: true,
+        isInternetReachable: true,
+        isWifiEnabled: true,
+        isConnectionExpensive: false,
+        details: {},
+      }),
+    ),
+    addEventListener: jest.fn(() => jest.fn()),
+  },
+  NetInfoStateType: {
+    unknown: 'unknown',
+    none: 'none',
+    cellular: 'cellular',
+    wifi: 'wifi',
+    bluetooth: 'bluetooth',
+    ethernet: 'ethernet',
+    wimax: 'wimax',
+    vpn: 'vpn',
+    other: 'other',
+  },
+}));
+
+// Mock de react-native-permissions
+jest.mock('react-native-permissions', () => ({
+  check: jest.fn(() => Promise.resolve('granted')),
+  request: jest.fn(() => Promise.resolve('granted')),
+  checkMultiple: jest.fn(() =>
+    Promise.resolve({
+      'android.permission.CAMERA': 'granted',
+    }),
+  ),
+  requestMultiple: jest.fn(() =>
+    Promise.resolve({
+      'android.permission.CAMERA': 'granted',
+    }),
+  ),
+  openSettings: jest.fn(() => Promise.resolve()),
+  RESULTS: {
+    UNAVAILABLE: 'unavailable',
+    DENIED: 'denied',
+    LIMITED: 'limited',
+    GRANTED: 'granted',
+    BLOCKED: 'blocked',
+  },
+  PERMISSIONS: {
+    IOS: {
+      CAMERA: 'ios.permission.CAMERA',
+      MICROPHONE: 'ios.permission.MICROPHONE',
+      PHOTO_LIBRARY: 'ios.permission.PHOTO_LIBRARY',
+      LOCATION_WHEN_IN_USE: 'ios.permission.LOCATION_WHEN_IN_USE',
+      LOCATION_ALWAYS: 'ios.permission.LOCATION_ALWAYS',
+      NOTIFICATIONS: 'ios.permission.NOTIFICATIONS',
+      CONTACTS: 'ios.permission.CONTACTS',
+      CALENDARS: 'ios.permission.CALENDARS',
+      BLUETOOTH: 'ios.permission.BLUETOOTH',
+      MOTION: 'ios.permission.MOTION',
+      APP_TRACKING_TRANSPARENCY: 'ios.permission.APP_TRACKING_TRANSPARENCY',
+      FACE_ID: 'ios.permission.FACE_ID',
+    },
+    ANDROID: {
+      CAMERA: 'android.permission.CAMERA',
+      RECORD_AUDIO: 'android.permission.RECORD_AUDIO',
+      READ_EXTERNAL_STORAGE: 'android.permission.READ_EXTERNAL_STORAGE',
+      WRITE_EXTERNAL_STORAGE: 'android.permission.WRITE_EXTERNAL_STORAGE',
+      ACCESS_FINE_LOCATION: 'android.permission.ACCESS_FINE_LOCATION',
+      ACCESS_COARSE_LOCATION: 'android.permission.ACCESS_COARSE_LOCATION',
+      POST_NOTIFICATIONS: 'android.permission.POST_NOTIFICATIONS',
+      READ_CONTACTS: 'android.permission.READ_CONTACTS',
+      READ_CALENDAR: 'android.permission.READ_CALENDAR',
+      BLUETOOTH_CONNECT: 'android.permission.BLUETOOTH_CONNECT',
+      ACTIVITY_RECOGNITION: 'android.permission.ACTIVITY_RECOGNITION',
+      BODY_SENSORS: 'android.permission.BODY_SENSORS',
+    },
+  },
+}));
+
 // Silenciar warnings específicos
 const originalError = console.error;
 const originalWarn = console.warn;

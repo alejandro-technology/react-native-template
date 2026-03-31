@@ -1,23 +1,23 @@
-import { StatusBar, View } from 'react-native';
-import React, { PropsWithChildren, useEffect, useState } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { View } from 'react-native';
 import {
   SafeAreaProvider,
   useSafeAreaInsets,
 } from 'react-native-safe-area-context';
+import React, { PropsWithChildren } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 // Providers
 import SecureProvider from './SecureProvider';
 import NavigationProvider from './NavigationProvider';
-import ThemeProvider from '@theme/providers/ThemeProvider';
+import NetworkProvider from './NetworkProvider';
 import { AuthProvider } from '@modules/authentication';
+import ThemeProvider from '@theme/providers/ThemeProvider';
+import SecureStorageProvider from './SecureStorageProvider';
+import GestureHandlerProvider from './GestureHandlerProvider';
 // Components
-import { GlobalDeleteConfirmation, GlobalToast } from '@modules/core/ui';
 import { ErrorBoundary } from '@components/layout/ErrorBoundary';
-// Config
-import { initSecureStorage } from '@config/storage';
+import { GlobalDeleteConfirmation, GlobalToast } from '@modules/core/ui';
 // Styles
-import { useTheme, commonStyles } from '@theme/index';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { commonStyles } from '@theme/index';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -50,59 +50,23 @@ export default function AppProvider({ children }: PropsWithChildren) {
           <ThemeProvider>
             <SafeAreaProvider>
               <GestureHandlerProvider>
-                <SecureStorageInitializer>
-                  <AuthProvider>
-                    <NavigationProvider>
-                      <SafeAreaView>{children}</SafeAreaView>
-                      <GlobalDeleteConfirmation />
-                      <GlobalToast />
-                    </NavigationProvider>
-                  </AuthProvider>
-                </SecureStorageInitializer>
+                <SecureStorageProvider>
+                  <NetworkProvider>
+                    <AuthProvider>
+                      <NavigationProvider>
+                        <SafeAreaView>{children}</SafeAreaView>
+                        <GlobalDeleteConfirmation />
+                        <GlobalToast />
+                      </NavigationProvider>
+                    </AuthProvider>
+                  </NetworkProvider>
+                </SecureStorageProvider>
               </GestureHandlerProvider>
             </SafeAreaProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </SecureProvider>
     </ErrorBoundary>
-  );
-}
-
-function SecureStorageInitializer({ children }: PropsWithChildren) {
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    initSecureStorage()
-      .then(() => setIsReady(true))
-      .catch(error => {
-        console.warn('Failed to initialize secure storage:', error);
-        // Continue anyway - secure storage will use fallback
-        setIsReady(true);
-      });
-  }, []);
-
-  if (!isReady) {
-    return null;
-  }
-
-  return <>{children}</>;
-}
-
-function GestureHandlerProvider({ children }: PropsWithChildren) {
-  const {
-    isDark,
-    colors: { background: backgroundColor },
-  } = useTheme();
-  return (
-    <GestureHandlerRootView
-      style={{
-        ...commonStyles.flex,
-        backgroundColor,
-      }}
-    >
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      {children}
-    </GestureHandlerRootView>
   );
 }
 

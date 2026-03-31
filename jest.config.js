@@ -31,6 +31,8 @@ module.exports = {
     '!src/**/*.routes.ts',
     '!src/**/index.ts',
     '!src/utils/test-utils.tsx',
+    // Exclude example/demo modules from coverage reports
+    '!src/modules/examples/**',
   ],
   coverageThreshold: {
     global: {
