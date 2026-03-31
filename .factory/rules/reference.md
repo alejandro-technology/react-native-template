@@ -33,12 +33,13 @@ Quick lookup for path aliases and naming conventions. For commands and architect
 
 ## Naming Conventions
 
-| Element    | Convention        | Example                 |
-| ---------- | ----------------- | ----------------------- |
-| Components | PascalCase        | `Button`, `ProductItem` |
-| Functions  | camelCase         | `handleSubmit`          |
-| Hooks      | `use` + camelCase | `useProducts`           |
-| Constants  | SCREAMING_SNAKE   | `API_ROUTES`            |
+| Element    | Convention        | Example                              |
+| ---------- | ----------------- | ------------------------------------ |
+| Screens    | PascalCase        | `ProductsListView`, `UserDetailView` |
+| Components | PascalCase        | `Button`, `ProductItem`, `Card`      |
+| Functions  | camelCase         | `handleSubmit`, `onPress`            |
+| Hooks      | `use` + camelCase | `useProducts`, `useCustomers`        |
+| Constants  | SCREAMING_SNAKE   | `API_ROUTES`, `QUERY_KEYS`           |
 
 ---
 
