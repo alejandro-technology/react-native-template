@@ -1,7 +1,7 @@
 ---
 name: performance-auditor
 description: Audits React Native code for performance issues including unnecessary re-renders, missing memoization, inefficient lists, and heavy computations.
-model: inherit
+model: gpt-5.3-codex
 tools: ["Read", "LS", "Grep", "Glob", "Execute"]
 ---
 

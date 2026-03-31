@@ -14,6 +14,7 @@ triggers:
 description: Manages Git operations including conventional commits, branch management, and repository maintenance for React Native projects.
 mode: subagent
 temperature: 0.1
+model: claude-haiku-4-5-20251001
 tools:
   write: false
   edit: false

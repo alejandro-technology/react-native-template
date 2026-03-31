@@ -13,6 +13,7 @@ triggers:
 description: Reviews code for Clean Architecture compliance, error handling patterns, dependency flow, and code quality standards.
 mode: subagent
 temperature: 0.1
+model: claude-opus-4-6
 tools:
   write: false
   edit: false

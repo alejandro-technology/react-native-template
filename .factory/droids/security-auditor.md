@@ -1,7 +1,7 @@
 ---
 name: security-auditor
 description: Audits the codebase for security vulnerabilities, exposed secrets, insecure storage, and missing hardening measures.
-model: inherit
+model: claude-opus-4-6
 tools: ["Read", "LS", "Grep", "Glob", "Execute", "WebSearch", "FetchUrl"]
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: git-manager
 description: Manages Git operations including conventional commits, branch management, and repository maintenance for React Native projects.
-model: inherit
+model: claude-haiku-4-5-20251001
 tools: ["Read", "LS", "Grep", "Glob", "Execute"]
 ---
 

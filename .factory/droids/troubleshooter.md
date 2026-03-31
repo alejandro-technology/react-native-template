@@ -1,7 +1,7 @@
 ---
 name: troubleshooter
 description: Diagnoses React Native build failures, Metro bundler issues, CocoaPods errors, Gradle problems, and New Architecture incompatibilities.
-model: inherit
+model: claude-sonnet-4-6
 tools: ["Read", "LS", "Grep", "Glob", "Execute"]
 ---
 

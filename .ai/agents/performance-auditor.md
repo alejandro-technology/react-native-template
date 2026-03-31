@@ -13,6 +13,7 @@ triggers:
 description: Audits React Native code for performance issues including unnecessary re-renders, missing memoization, inefficient lists, and heavy computations.
 mode: subagent
 temperature: 0.1
+model: gpt-5.3-codex
 tools:
   write: false
   edit: false

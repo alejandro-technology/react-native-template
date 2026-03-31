@@ -1,7 +1,7 @@
 ---
 name: theme-auditor
 description: Audits code looking for hardcoded colors, spacing, or typography (static values instead of theme tokens).
-model: inherit
+model: claude-haiku-4-5-20251001
 tools: ["Read", "LS", "Grep", "Glob", "Create", "Edit"]
 ---
 

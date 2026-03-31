@@ -13,6 +13,7 @@ triggers:
 description: Audits the codebase for security vulnerabilities, exposed secrets, insecure storage, and missing hardening measures.
 mode: subagent
 temperature: 0.1
+model: claude-opus-4-6
 tools:
   write: false
   edit: false

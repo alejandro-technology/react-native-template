@@ -1,7 +1,7 @@
 ---
 name: migration-assistant
 description: Assists with dependency upgrades, library migrations, and breaking change resolution for React Native projects.
-model: inherit
+model: gpt-5.4
 tools: ["Read", "LS", "Grep", "Glob", "Create", "Edit", "Execute", "WebSearch", "FetchUrl"]
 ---
 

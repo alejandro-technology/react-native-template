@@ -1,7 +1,7 @@
 ---
 name: code-reviewer
 description: Reviews code for Clean Architecture compliance, error handling patterns, dependency flow, and code quality standards.
-model: inherit
+model: claude-opus-4-6
 tools: ["Read", "LS", "Grep", "Glob", "Execute"]
 ---
 
