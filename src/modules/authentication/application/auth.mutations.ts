@@ -2,9 +2,9 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 // Domain
 import { RegisterFormData, SignInFormData } from '../domain/auth.scheme';
 import {
-  signInPayloadAdapter,
+  signInFormToPayloadAdapter,
   signInResponseAdapter,
-  signUpPayloadAdapter,
+  signUpFormToPayloadAdapter,
   signUpResponseAdapter,
 } from '../domain/auth.adapter';
 // Infrastructure
@@ -34,7 +34,7 @@ export function useSignupMutation() {
 
   return useMutation({
     mutationFn: async (data: RegisterFormData) => {
-      const payload = signUpPayloadAdapter(data);
+      const payload = signUpFormToPayloadAdapter(data);
       const result = await authService.signup(payload);
 
       if (result instanceof Error) {
@@ -73,7 +73,7 @@ export function useSigninMutation() {
 
   return useMutation({
     mutationFn: async (data: SignInFormData) => {
-      const payload = signInPayloadAdapter(data);
+      const payload = signInFormToPayloadAdapter(data);
       const result = await authService.signin(payload);
 
       if (result instanceof Error) {

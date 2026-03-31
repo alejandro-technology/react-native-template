@@ -1,9 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 // Domain
-import {
-  productEntityToProductAdapter,
-  productFormToPayloadAdapter,
-} from '../domain/product.adapter';
+import { productFormToPayloadAdapter } from '../domain/product.adapter';
 import { ProductFormData } from '../domain/product.scheme';
 // Services
 import productService from '../infrastructure/product.service';
@@ -23,7 +20,7 @@ export function useProductCreate() {
       if (result instanceof Error) {
         throw result;
       }
-      return productEntityToProductAdapter(result);
+      return result;
     },
     onSuccess: () => {
       show({
@@ -52,7 +49,7 @@ export function useProductUpdate() {
       if (result instanceof Error) {
         throw result;
       }
-      return productEntityToProductAdapter(result);
+      return result;
     },
     onSuccess: (_, variables) => {
       show({

@@ -1,45 +1,41 @@
-import { Timestamp } from '@react-native-firebase/firestore';
 import {
-  ProductEntity,
+  Product,
   CreateProductPayload,
   UpdateProductPayload,
 } from '../domain/product.model';
 import { ProductFilter, ProductRepository } from '../domain/product.repository';
 
 class ProductMockService implements ProductRepository {
-  database: ProductEntity[] = [];
+  database: Product[] = [];
 
-  getAll(_?: ProductFilter): Promise<ProductEntity[] | Error> {
+  getAll(_?: ProductFilter): Promise<Product[] | Error> {
     return Promise.resolve(this.database);
   }
-  getById(id: string): Promise<ProductEntity | Error> {
+  getById(id: string): Promise<Product | Error> {
     const product = this.database.find(_product => _product.id === id);
     if (!product) {
       return Promise.resolve(new Error('Product not found'));
     }
     return Promise.resolve(product);
   }
-  create(data: CreateProductPayload): Promise<ProductEntity | Error> {
-    const product: ProductEntity = {
+  create(data: CreateProductPayload): Promise<Product | Error> {
+    const product: Product = {
       id: Math.random().toString(36).substring(2),
       ...data,
-      createdAt: Timestamp.fromDate(new Date()),
-      updatedAt: Timestamp.fromDate(new Date()),
+      createdAt: new Date(),
+      updatedAt: new Date(),
       description: data.description || '',
     };
     this.database.push(product);
     return Promise.resolve(product);
   }
-  update(
-    id: string,
-    data: UpdateProductPayload,
-  ): Promise<ProductEntity | Error> {
+  update(id: string, data: UpdateProductPayload): Promise<Product | Error> {
     const product = this.database.find(_product => _product.id === id);
     if (!product) {
       return Promise.resolve(new Error('Product not found'));
     }
     Object.assign(product, data);
-    product.updatedAt = Timestamp.fromDate(new Date());
+    product.updatedAt = new Date();
     return Promise.resolve(product);
   }
   delete(id: string): Promise<void | Error> {

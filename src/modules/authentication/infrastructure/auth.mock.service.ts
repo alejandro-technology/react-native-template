@@ -6,7 +6,7 @@ import type {
   SignInResponse,
   SignUpPayload,
   SignUpResponse,
-  UserEntity,
+  AuthUser,
   AuthStateChangeCallback,
   AuthStateUnsubscribe,
 } from '../domain/auth.model';
@@ -38,17 +38,17 @@ function generateMockId(): string {
 }
 
 /**
- * Convierte MockUser a UserEntity (sin password)
+ * Convierte MockUser a AuthUser (sin password)
  */
-function mockUserToEntity(mockUser: MockUser): UserEntity {
+function mockUserToEntity(mockUser: MockUser): AuthUser {
   return {
     id: mockUser.id,
     email: mockUser.email,
     displayName: mockUser.displayName,
     photoURL: mockUser.photoURL,
     emailVerified: mockUser.emailVerified,
-    createdAt: mockUser.createdAt,
-    lastLoginAt: mockUser.lastLoginAt,
+    createdAt: new Date(mockUser.createdAt),
+    lastLoginAt: new Date(mockUser.lastLoginAt),
   };
 }
 
@@ -134,7 +134,7 @@ class AuthMockService implements AuthRepository {
   /**
    * Notifica a todos los listeners sobre cambio de estado
    */
-  private notifyListeners(user: UserEntity | null): void {
+  private notifyListeners(user: AuthUser | null): void {
     this.listeners.forEach(callback => {
       try {
         callback(user);
@@ -227,7 +227,7 @@ class AuthMockService implements AuthRepository {
     return;
   }
 
-  async getCurrentUser(): Promise<UserEntity | null | Error> {
+  async getCurrentUser(): Promise<AuthUser | null | Error> {
     const mockUser = this.getCurrentUserFromStorage();
     if (!mockUser) {
       return null;
@@ -293,7 +293,7 @@ class AuthMockService implements AuthRepository {
   async updateProfile(data: {
     displayName?: string;
     photoURL?: string;
-  }): Promise<UserEntity | Error> {
+  }): Promise<AuthUser | Error> {
     // Simular delay de red
     await new Promise(resolve => setTimeout(resolve, 300));
 

@@ -1,9 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 // Domain
-import {
-  userEntityToUserAdapter,
-  userFormToPayloadAdapter,
-} from '../domain/user.adapter';
+import { userFormToPayloadAdapter } from '../domain/user.adapter';
 import { UserFormData } from '../domain/user.scheme';
 // Services
 import userService from '../infrastructure/user.service';
@@ -22,7 +19,7 @@ export function useUserCreate() {
       if (result instanceof Error) {
         throw result;
       }
-      return userEntityToUserAdapter(result);
+      return result;
     },
     onSuccess: () => {
       show({
@@ -50,7 +47,7 @@ export function useUserUpdate() {
       if (result instanceof Error) {
         throw result;
       }
-      return userEntityToUserAdapter(result);
+      return result;
     },
     onSuccess: (_, variables) => {
       show({

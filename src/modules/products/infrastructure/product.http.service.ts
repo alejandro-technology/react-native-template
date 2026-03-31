@@ -4,28 +4,27 @@ import { API_ROUTES } from '@config/api.routes';
 import { ProductRepository } from '../domain/product.repository';
 import type {
   CreateProductPayload,
-  ProductEntity,
+  Product,
   ProductFilter,
   UpdateProductPayload,
 } from '../domain/product.model';
 
 class ProductHttpService implements ProductRepository {
-  async getAll(filter?: ProductFilter): Promise<ProductEntity[] | Error> {
+  async getAll(filter?: ProductFilter): Promise<Product[] | Error> {
     try {
       const params = filter?.searchText ? { search: filter.searchText } : {};
-      const response = await axiosService.get<ProductEntity[]>(
-        API_ROUTES.PRODUCTS,
-        { params },
-      );
+      const response = await axiosService.get<Product[]>(API_ROUTES.PRODUCTS, {
+        params,
+      });
       return response.data;
     } catch (error) {
       return manageAxiosError(error);
     }
   }
 
-  async getById(id: string): Promise<ProductEntity | Error> {
+  async getById(id: string): Promise<Product | Error> {
     try {
-      const response = await axiosService.get<ProductEntity>(
+      const response = await axiosService.get<Product>(
         `${API_ROUTES.PRODUCTS}/${id}`,
       );
       return response.data;
@@ -34,9 +33,9 @@ class ProductHttpService implements ProductRepository {
     }
   }
 
-  async create(data: CreateProductPayload): Promise<ProductEntity | Error> {
+  async create(data: CreateProductPayload): Promise<Product | Error> {
     try {
-      const response = await axiosService.post<ProductEntity>(
+      const response = await axiosService.post<Product>(
         API_ROUTES.PRODUCTS,
         data,
       );
@@ -49,9 +48,9 @@ class ProductHttpService implements ProductRepository {
   async update(
     id: string,
     data: UpdateProductPayload,
-  ): Promise<ProductEntity | Error> {
+  ): Promise<Product | Error> {
     try {
-      const response = await axiosService.put<ProductEntity>(
+      const response = await axiosService.put<Product>(
         `${API_ROUTES.PRODUCTS}/${id}`,
         data,
       );

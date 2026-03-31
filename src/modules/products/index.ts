@@ -5,7 +5,7 @@ export {
   useProductDelete,
 } from './application/product.mutations';
 export type {
-  ProductEntity,
+  Product,
   CreateProductPayload,
   UpdateProductPayload,
 } from './domain/product.model';

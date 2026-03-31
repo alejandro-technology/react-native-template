@@ -7,25 +7,27 @@ import type {
   SignUpResponse,
   SignInPayload,
   SignInResponse,
-  UserEntity,
+  AuthUser,
   AuthStateChangeCallback,
   AuthStateUnsubscribe,
 } from '../domain/auth.model';
 
 /**
- * Convierte un usuario de Firebase a UserEntity
+ * Convierte un usuario de Firebase a AuthUser
  */
-function firebaseUserToEntity(
-  firebaseUser: FirebaseAuthTypes.User,
-): UserEntity {
+function firebaseUserToEntity(firebaseUser: FirebaseAuthTypes.User): AuthUser {
   return {
     id: firebaseUser.uid,
     email: firebaseUser.email ?? '',
     displayName: firebaseUser.displayName,
     photoURL: firebaseUser.photoURL,
     emailVerified: firebaseUser.emailVerified,
-    createdAt: firebaseUser.metadata.creationTime ?? null,
-    lastLoginAt: firebaseUser.metadata.lastSignInTime ?? null,
+    createdAt: firebaseUser.metadata.creationTime
+      ? new Date(firebaseUser.metadata.creationTime)
+      : null,
+    lastLoginAt: firebaseUser.metadata.lastSignInTime
+      ? new Date(firebaseUser.metadata.lastSignInTime)
+      : null,
   };
 }
 
@@ -87,7 +89,7 @@ class FirebaseAuthService implements AuthRepository {
     }
   }
 
-  async getCurrentUser(): Promise<UserEntity | null | Error> {
+  async getCurrentUser(): Promise<AuthUser | null | Error> {
     try {
       const firebaseUser = firebaseAuthenticationService.getCurrentUser();
       if (!firebaseUser) {
@@ -134,7 +136,7 @@ class FirebaseAuthService implements AuthRepository {
   async updateProfile(data: {
     displayName?: string;
     photoURL?: string;
-  }): Promise<UserEntity | Error> {
+  }): Promise<AuthUser | Error> {
     try {
       const firebaseUser = firebaseAuthenticationService.getCurrentUser();
       if (!firebaseUser) {

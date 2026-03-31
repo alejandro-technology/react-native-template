@@ -1,14 +1,14 @@
+import type { User } from '@modules/users/domain/user.model';
+
 /**
  * Entidad de usuario autenticado
  */
-export interface UserEntity {
-  id: string;
-  email: string;
+export interface AuthUser extends Pick<User, 'id' | 'email'> {
   displayName: string | null;
   photoURL: string | null;
   emailVerified: boolean;
-  createdAt: string | null;
-  lastLoginAt: string | null;
+  createdAt: Date | null;
+  lastLoginAt: Date | null;
 }
 
 /**
@@ -25,7 +25,7 @@ export type AuthStatus =
  */
 export interface AuthState {
   status: AuthStatus;
-  user: UserEntity | null;
+  user: AuthUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
 }
@@ -43,7 +43,7 @@ export interface SignUpPayload {
  * Respuesta de registro
  */
 export interface SignUpResponse {
-  user: UserEntity;
+  user: AuthUser;
 }
 
 /**
@@ -58,13 +58,13 @@ export interface SignInPayload {
  * Respuesta de inicio de sesión
  */
 export interface SignInResponse {
-  user: UserEntity;
+  user: AuthUser;
 }
 
 /**
  * Callback para cambios en el estado de autenticación
  */
-export type AuthStateChangeCallback = (user: UserEntity | null) => void;
+export type AuthStateChangeCallback = (user: AuthUser | null) => void;
 
 /**
  * Función para cancelar la suscripción al estado de autenticación

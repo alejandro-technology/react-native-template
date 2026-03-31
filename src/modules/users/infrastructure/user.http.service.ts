@@ -4,16 +4,16 @@ import { API_ROUTES } from '@config/api.routes';
 import { UserRepository } from '../domain/user.repository';
 import type {
   CreateUserPayload,
-  UserEntity,
+  User,
   UserFilter,
   UpdateUserPayload,
 } from '../domain/user.model';
 
 class UserHttpService implements UserRepository {
-  async getAll(filter?: UserFilter): Promise<UserEntity[] | Error> {
+  async getAll(filter?: UserFilter): Promise<User[] | Error> {
     try {
       const params = filter?.searchText ? { search: filter.searchText } : {};
-      const response = await axiosService.get<UserEntity[]>(API_ROUTES.USERS, {
+      const response = await axiosService.get<User[]>(API_ROUTES.USERS, {
         params,
       });
       return response.data;
@@ -22,9 +22,9 @@ class UserHttpService implements UserRepository {
     }
   }
 
-  async getById(id: string): Promise<UserEntity | Error> {
+  async getById(id: string): Promise<User | Error> {
     try {
-      const response = await axiosService.get<UserEntity>(
+      const response = await axiosService.get<User>(
         `${API_ROUTES.USERS}/${id}`,
       );
       return response.data;
@@ -33,24 +33,18 @@ class UserHttpService implements UserRepository {
     }
   }
 
-  async create(data: CreateUserPayload): Promise<UserEntity | Error> {
+  async create(data: CreateUserPayload): Promise<User | Error> {
     try {
-      const response = await axiosService.post<UserEntity>(
-        API_ROUTES.USERS,
-        data,
-      );
+      const response = await axiosService.post<User>(API_ROUTES.USERS, data);
       return response.data;
     } catch (error) {
       return manageAxiosError(error);
     }
   }
 
-  async update(
-    id: string,
-    data: UpdateUserPayload,
-  ): Promise<UserEntity | Error> {
+  async update(id: string, data: UpdateUserPayload): Promise<User | Error> {
     try {
-      const response = await axiosService.put<UserEntity>(
+      const response = await axiosService.put<User>(
         `${API_ROUTES.USERS}/${id}`,
         data,
       );

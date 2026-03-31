@@ -1,15 +1,14 @@
-import { Timestamp } from '@react-native-firebase/firestore';
 import type {
   CreateUserPayload,
   UpdateUserPayload,
-  UserEntity,
+  User,
 } from '../domain/user.model';
 import type { UserFilter, UserRepository } from '../domain/user.repository';
 
 class UserMockService implements UserRepository {
-  private database: UserEntity[] = [];
+  private database: User[] = [];
 
-  async getAll(filter?: UserFilter): Promise<UserEntity[] | Error> {
+  async getAll(filter?: UserFilter): Promise<User[] | Error> {
     if (!filter?.searchText) {
       return this.database;
     }
@@ -26,7 +25,7 @@ class UserMockService implements UserRepository {
     });
   }
 
-  async getById(id: string): Promise<UserEntity | Error> {
+  async getById(id: string): Promise<User | Error> {
     const user = this.database.find(item => item.id === id);
     if (!user) {
       return new Error('User not found');
@@ -34,35 +33,32 @@ class UserMockService implements UserRepository {
     return user;
   }
 
-  async create(data: CreateUserPayload): Promise<UserEntity | Error> {
+  async create(data: CreateUserPayload): Promise<User | Error> {
     const alreadyExists = this.database.some(item => item.email === data.email);
     if (alreadyExists) {
       return new Error('User already exists');
     }
 
     const now = new Date();
-    const user: UserEntity = {
+    const user: User = {
       id: Math.random().toString(36).substring(2),
       ...data,
-      createdAt: Timestamp.fromDate(now),
-      updatedAt: Timestamp.fromDate(now),
+      createdAt: now,
+      updatedAt: now,
     };
 
     this.database.push(user);
     return user;
   }
 
-  async update(
-    id: string,
-    data: UpdateUserPayload,
-  ): Promise<UserEntity | Error> {
+  async update(id: string, data: UpdateUserPayload): Promise<User | Error> {
     const user = this.database.find(item => item.id === id);
     if (!user) {
       return new Error('User not found');
     }
 
     Object.assign(user, data);
-    user.updatedAt = Timestamp.fromDate(new Date());
+    user.updatedAt = new Date();
     return user;
   }
 

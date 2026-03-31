@@ -6,8 +6,7 @@ import { firestoreCollectionAdapter } from '@modules/firebase/domain/firestore/f
 // Domain
 import type {
   CreateProductPayload,
-  ProductEntity,
-  ProductFirebase,
+  Product,
   ProductFilter,
   UpdateProductPayload,
 } from '../domain/product.model';
@@ -15,17 +14,41 @@ import { ProductRepository } from '../domain/product.repository';
 // Config
 import { COLLECTIONS } from '@config/collections.routes';
 
+interface ProductFirebaseDoc {
+  name: string;
+  description: string;
+  price: number;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+interface ProductFirebaseEntity extends ProductFirebaseDoc {
+  id: string;
+}
+
+function toProduct(entity: ProductFirebaseEntity): Product {
+  return {
+    ...entity,
+    createdAt: new Date(entity.createdAt.seconds * 1000),
+    updatedAt: new Date(entity.updatedAt.seconds * 1000),
+  };
+}
+
 class ProductFirebaseService implements ProductRepository {
-  async getAll(filter?: ProductFilter): Promise<ProductEntity[] | Error> {
+  async getAll(filter?: ProductFilter): Promise<Product[] | Error> {
     try {
-      const result = await firestoreService.list<ProductFirebase>({
+      const result = await firestoreService.list<ProductFirebaseDoc>({
         collection: COLLECTIONS.PRODUCTS,
       });
       if (result instanceof Error) {
         return result;
       }
 
-      const products = firestoreCollectionAdapter<ProductEntity>(result.docs);
+      const entities = firestoreCollectionAdapter<ProductFirebaseDoc>(
+        result.docs,
+      );
+      const products = entities.map(toProduct);
+
       if (filter?.searchText) {
         const searchLower = filter.searchText.toLowerCase();
         return products.filter(
@@ -42,9 +65,9 @@ class ProductFirebaseService implements ProductRepository {
     }
   }
 
-  async getById(id: string): Promise<ProductEntity | Error> {
+  async getById(id: string): Promise<Product | Error> {
     try {
-      const result = await firestoreService.get<ProductFirebase>({
+      const result = await firestoreService.get<ProductFirebaseDoc>({
         collection: COLLECTIONS.PRODUCTS,
         id,
       });
@@ -54,21 +77,17 @@ class ProductFirebaseService implements ProductRepository {
       if (!result.exists || !result.data) {
         return new Error('Producto no encontrado');
       }
-      const productEntity: ProductEntity = {
-        id,
-        ...result.data,
-      };
 
-      return productEntity;
+      return toProduct({ id, ...result.data });
     } catch (error) {
       return manageFirebaseError(error);
     }
   }
 
-  async create(data: CreateProductPayload): Promise<ProductEntity | Error> {
+  async create(data: CreateProductPayload): Promise<Product | Error> {
     try {
       const now = new Date();
-      const result = await firestoreService.create<ProductFirebase>({
+      const result = await firestoreService.create<ProductFirebaseDoc>({
         collection: COLLECTIONS.PRODUCTS,
         data: {
           ...data,
@@ -85,12 +104,7 @@ class ProductFirebaseService implements ProductRepository {
         return new Error('No se pudo crear el producto');
       }
 
-      const productEntity: ProductEntity = {
-        id: result.id,
-        ...result.data,
-      };
-
-      return productEntity;
+      return toProduct({ id: result.id, ...result.data });
     } catch (error) {
       return manageFirebaseError(error);
     }
@@ -99,13 +113,11 @@ class ProductFirebaseService implements ProductRepository {
   async update(
     id: string,
     data: UpdateProductPayload,
-  ): Promise<ProductEntity | Error> {
+  ): Promise<Product | Error> {
     try {
       const now = new Date();
 
-      const updateResult = await firestoreService.update<
-        Omit<ProductEntity, 'id'>
-      >({
+      const updateResult = await firestoreService.update<ProductFirebaseDoc>({
         collection: COLLECTIONS.PRODUCTS,
         id,
         data: {
@@ -117,7 +129,7 @@ class ProductFirebaseService implements ProductRepository {
         return updateResult;
       }
 
-      const result = await firestoreService.get<ProductFirebase>({
+      const result = await firestoreService.get<ProductFirebaseDoc>({
         collection: COLLECTIONS.PRODUCTS,
         id,
       });
@@ -128,11 +140,7 @@ class ProductFirebaseService implements ProductRepository {
         return new Error('Producto no encontrado');
       }
 
-      const productEntity: ProductEntity = {
-        id: result.id,
-        ...result.data,
-      };
-      return productEntity;
+      return toProduct({ id: result.id, ...result.data });
     } catch (error) {
       return manageFirebaseError(error);
     }

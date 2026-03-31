@@ -1,18 +1,15 @@
 import {
   CreateProductPayload,
-  ProductEntity,
+  Product,
   ProductFilter,
   UpdateProductPayload,
 } from './product.model';
 
 export type { ProductFilter };
 export interface ProductRepository {
-  getAll(filter?: ProductFilter): Promise<ProductEntity[] | Error>;
-  getById(id: string): Promise<ProductEntity | Error>;
-  create(data: CreateProductPayload): Promise<ProductEntity | Error>;
-  update(
-    id: string,
-    data: UpdateProductPayload,
-  ): Promise<ProductEntity | Error>;
+  getAll(filter?: ProductFilter): Promise<Product[] | Error>;
+  getById(id: string): Promise<Product | Error>;
+  create(data: CreateProductPayload): Promise<Product | Error>;
+  update(id: string, data: UpdateProductPayload): Promise<Product | Error>;
   delete(id: string): Promise<void | Error>;
 }

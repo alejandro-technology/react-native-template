@@ -5,7 +5,7 @@ export {
   useUserDelete,
 } from './application/user.mutations';
 export type {
-  UserEntity,
+  User,
   CreateUserPayload,
   UpdateUserPayload,
 } from './domain/user.model';

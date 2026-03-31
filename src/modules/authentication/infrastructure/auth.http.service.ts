@@ -5,7 +5,7 @@ import {
   SignInResponse,
   SignUpPayload,
   SignUpResponse,
-  UserEntity,
+  AuthUser,
   AuthStateChangeCallback,
   AuthStateUnsubscribe,
 } from '../domain/auth.model';
@@ -49,13 +49,13 @@ class AuthHttpService implements AuthRepository {
   /**
    * Obtiene el usuario almacenado
    */
-  private getUserFromStorage(): UserEntity | null {
+  private getUserFromStorage(): AuthUser | null {
     const data = storage.getString(STORAGE_KEYS.USER);
     if (!data) {
       return null;
     }
     try {
-      return JSON.parse(data) as UserEntity;
+      return JSON.parse(data) as AuthUser;
     } catch {
       return null;
     }
@@ -64,7 +64,7 @@ class AuthHttpService implements AuthRepository {
   /**
    * Guarda el usuario
    */
-  private setUserInStorage(user: UserEntity | null): void {
+  private setUserInStorage(user: AuthUser | null): void {
     if (user) {
       storage.set(STORAGE_KEYS.USER, JSON.stringify(user));
     } else {
@@ -75,7 +75,7 @@ class AuthHttpService implements AuthRepository {
   /**
    * Notifica a todos los listeners sobre cambio de estado
    */
-  private notifyListeners(user: UserEntity | null): void {
+  private notifyListeners(user: AuthUser | null): void {
     this.listeners.forEach(callback => {
       try {
         callback(user);
@@ -154,7 +154,7 @@ class AuthHttpService implements AuthRepository {
     }
   }
 
-  async getCurrentUser(): Promise<UserEntity | null | Error> {
+  async getCurrentUser(): Promise<AuthUser | null | Error> {
     // Primero intentar obtener del storage local
     const storedUser = this.getUserFromStorage();
     const token = this.getToken();
@@ -165,7 +165,7 @@ class AuthHttpService implements AuthRepository {
 
     // Si hay token, intentar validar con el servidor
     try {
-      const response = await axiosService.get<{ user: UserEntity }>('/auth/me');
+      const response = await axiosService.get<{ user: AuthUser }>('/auth/me');
       const user = response.data.user;
       this.setUserInStorage(user);
       return user;
@@ -209,9 +209,9 @@ class AuthHttpService implements AuthRepository {
   async updateProfile(data: {
     displayName?: string;
     photoURL?: string;
-  }): Promise<UserEntity | Error> {
+  }): Promise<AuthUser | Error> {
     try {
-      const response = await axiosService.put<{ user: UserEntity }>(
+      const response = await axiosService.put<{ user: AuthUser }>(
         '/auth/profile',
         data,
       );

@@ -6,26 +6,47 @@ import { firestoreCollectionAdapter } from '@modules/firebase/domain/firestore/f
 // Domain
 import type {
   CreateUserPayload,
-  UserEntity,
+  User,
   UserFilter,
   UpdateUserPayload,
-  UserFirebase,
 } from '../domain/user.model';
 import { UserRepository } from '../domain/user.repository';
 // Config
 import { COLLECTIONS } from '@config/collections.routes';
 
+interface UserFirebaseDoc {
+  name: string;
+  email: string;
+  phone: string;
+  role: string;
+  createdAt: Timestamp;
+  updatedAt: Timestamp;
+}
+
+interface UserFirebaseEntity extends UserFirebaseDoc {
+  id: string;
+}
+
+function toUser(entity: UserFirebaseEntity): User {
+  return {
+    ...entity,
+    createdAt: new Date(entity.createdAt.seconds * 1000),
+    updatedAt: new Date(entity.updatedAt.seconds * 1000),
+  };
+}
+
 class UserFirebaseService implements UserRepository {
-  async getAll(filter?: UserFilter): Promise<UserEntity[] | Error> {
+  async getAll(filter?: UserFilter): Promise<User[] | Error> {
     try {
-      const result = await firestoreService.list<UserFirebase>({
+      const result = await firestoreService.list<UserFirebaseDoc>({
         collection: COLLECTIONS.USERS,
       });
       if (result instanceof Error) {
         return result;
       }
 
-      const users = firestoreCollectionAdapter<UserEntity>(result.docs);
+      const entities = firestoreCollectionAdapter<UserFirebaseDoc>(result.docs);
+      const users = entities.map(toUser);
 
       if (filter?.searchText) {
         const searchLower = filter.searchText.toLowerCase();
@@ -45,9 +66,9 @@ class UserFirebaseService implements UserRepository {
     }
   }
 
-  async getById(id: string): Promise<UserEntity | Error> {
+  async getById(id: string): Promise<User | Error> {
     try {
-      const result = await firestoreService.get<Omit<UserEntity, 'id'>>({
+      const result = await firestoreService.get<UserFirebaseDoc>({
         collection: COLLECTIONS.USERS,
         id,
       });
@@ -58,20 +79,16 @@ class UserFirebaseService implements UserRepository {
         return new Error('Usuario no encontrado');
       }
 
-      const userEntity: UserEntity = {
-        id,
-        ...result.data,
-      };
-      return userEntity;
+      return toUser({ id, ...result.data });
     } catch (error) {
       return manageFirebaseError(error);
     }
   }
 
-  async create(data: CreateUserPayload): Promise<UserEntity | Error> {
+  async create(data: CreateUserPayload): Promise<User | Error> {
     try {
       const now = new Date();
-      const result = await firestoreService.create<Omit<UserEntity, 'id'>>({
+      const result = await firestoreService.create<UserFirebaseDoc>({
         collection: COLLECTIONS.USERS,
         data: {
           ...data,
@@ -87,25 +104,17 @@ class UserFirebaseService implements UserRepository {
         return new Error('No se pudo crear el usuario');
       }
 
-      return {
-        id: result.id,
-        ...(result.data as Omit<UserEntity, 'id'>),
-      } as UserEntity;
+      return toUser({ id: result.id, ...result.data });
     } catch (error) {
       return manageFirebaseError(error);
     }
   }
 
-  async update(
-    id: string,
-    data: UpdateUserPayload,
-  ): Promise<UserEntity | Error> {
+  async update(id: string, data: UpdateUserPayload): Promise<User | Error> {
     try {
       const now = new Date();
 
-      const updateResult = await firestoreService.update<
-        Omit<UserEntity, 'id'>
-      >({
+      const updateResult = await firestoreService.update<UserFirebaseDoc>({
         collection: COLLECTIONS.USERS,
         id,
         data: {
@@ -117,7 +126,7 @@ class UserFirebaseService implements UserRepository {
         return updateResult;
       }
 
-      const result = await firestoreService.get<Omit<UserEntity, 'id'>>({
+      const result = await firestoreService.get<UserFirebaseDoc>({
         collection: COLLECTIONS.USERS,
         id,
       });
@@ -128,11 +137,7 @@ class UserFirebaseService implements UserRepository {
         return new Error('Usuario no encontrado');
       }
 
-      const userEntity: UserEntity = {
-        id,
-        ...result.data,
-      };
-      return userEntity;
+      return toUser({ id: result.id, ...result.data });
     } catch (error) {
       return manageFirebaseError(error);
     }

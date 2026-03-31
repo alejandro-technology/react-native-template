@@ -3,7 +3,7 @@ import {
   SignInResponse,
   SignUpPayload,
   SignUpResponse,
-  UserEntity,
+  AuthUser,
   AuthStateChangeCallback,
   AuthStateUnsubscribe,
 } from './auth.model';
@@ -34,7 +34,7 @@ export interface AuthRepository {
    * Obtiene el usuario actualmente autenticado
    * Retorna null si no hay usuario autenticado
    */
-  getCurrentUser(): Promise<UserEntity | null | Error>;
+  getCurrentUser(): Promise<AuthUser | null | Error>;
 
   /**
    * Suscribe a cambios en el estado de autenticación
@@ -58,7 +58,7 @@ export interface AuthRepository {
   updateProfile(data: {
     displayName?: string;
     photoURL?: string;
-  }): Promise<UserEntity | Error>;
+  }): Promise<AuthUser | Error>;
 
   /**
    * Elimina la cuenta del usuario actual

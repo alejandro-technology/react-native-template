@@ -6,13 +6,13 @@ import React, {
 } from 'react';
 import authService from '../../infrastructure/auth.service';
 import { useAuthStorage, authSelectors } from '../../application/auth.storage';
-import type { UserEntity, AuthStatus } from '../../domain/auth.model';
+import type { AuthUser, AuthStatus } from '../../domain/auth.model';
 
 /**
  * Contexto de autenticación
  */
 interface AuthContextValue {
-  user: UserEntity | null;
+  user: AuthUser | null;
   status: AuthStatus;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -138,7 +138,7 @@ export function useIsAuthenticated(): boolean {
  * }
  * ```
  */
-export function useCurrentAuthUser(): UserEntity | null {
+export function useCurrentAuthUser(): AuthUser | null {
   const { user } = useAuth();
   return user;
 }

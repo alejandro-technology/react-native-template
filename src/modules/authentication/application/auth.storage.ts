@@ -1,14 +1,14 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
 import { secureMMKVStorage } from '@config/storage';
-import type { UserEntity, AuthStatus } from '../domain/auth.model';
+import type { AuthUser, AuthStatus } from '../domain/auth.model';
 
 /**
  * Estado del store de autenticación
  */
 interface AuthStoreState {
   // Estado
-  user: UserEntity | null;
+  user: AuthUser | null;
   status: AuthStatus;
 
   // Computed
@@ -16,9 +16,9 @@ interface AuthStoreState {
   isLoading: boolean;
 
   // Acciones
-  setUser: (user: UserEntity | null) => void;
+  setUser: (user: AuthUser | null) => void;
   setStatus: (status: AuthStatus) => void;
-  setAuthenticated: (user: UserEntity) => void;
+  setAuthenticated: (user: AuthUser) => void;
   setUnauthenticated: () => void;
   setLoading: () => void;
   reset: () => void;

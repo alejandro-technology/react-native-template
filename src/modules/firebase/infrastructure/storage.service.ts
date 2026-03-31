@@ -16,7 +16,7 @@ import type {
   UploadOptions,
   UploadResult,
 } from '../domain/storage/storage.model';
-import { adaptFirebaseMetadata } from '../domain/storage/storage.adapter';
+import { storageMetadataAdapter } from '../domain/storage/storage.adapter';
 
 class FirebaseStorageService implements StorageRepository {
   private storage = getStorage();
@@ -48,7 +48,7 @@ class FirebaseStorageService implements StorageRepository {
       return {
         path: snapshot.metadata.fullPath,
         url,
-        metadata: adaptFirebaseMetadata(snapshot.metadata),
+        metadata: storageMetadataAdapter(snapshot.metadata),
       };
     } catch (error) {
       return manageFirebaseError(error);
@@ -88,7 +88,7 @@ class FirebaseStorageService implements StorageRepository {
         result.items.map(item => getMetadata(item)),
       );
 
-      return metadata.map(adaptFirebaseMetadata);
+      return metadata.map(storageMetadataAdapter);
     } catch (error) {
       return manageFirebaseError(error);
     }
@@ -97,7 +97,7 @@ class FirebaseStorageService implements StorageRepository {
   async getMetadata(path: string): Promise<FileMetadata | Error> {
     try {
       const metadata = await getMetadata(ref(this.storage, path));
-      return adaptFirebaseMetadata(metadata);
+      return storageMetadataAdapter(metadata);
     } catch (error) {
       return manageFirebaseError(error);
     }

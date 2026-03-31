@@ -1,6 +1,6 @@
 // Domain
 export type {
-  UserEntity,
+  AuthUser,
   AuthStatus,
   AuthState,
   SignUpPayload,
@@ -14,9 +14,9 @@ export type {
 export type { AuthRepository } from './domain/auth.repository';
 
 export {
-  signUpPayloadAdapter,
+  signInFormToPayloadAdapter,
   signUpResponseAdapter,
-  signInPayloadAdapter,
+  signUpFormToPayloadAdapter,
   signInResponseAdapter,
 } from './domain/auth.adapter';
 

@@ -23,6 +23,7 @@
     "opencode": "cp -r .ai/ .opencode",
     "trae": "cp -r .ai/ .trae",
     "droid": "cp -r .ai/ .factory && mv .factory/agents .factory/droids",
+    "ai": "claude --dangerously-skip-permissions",
     "prepare": "husky"
   },
   "lint-staged": {

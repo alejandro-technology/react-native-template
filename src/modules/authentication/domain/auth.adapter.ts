@@ -3,14 +3,16 @@ import {
   SignInResponse,
   SignUpPayload,
   SignUpResponse,
-  UserEntity,
+  AuthUser,
 } from './auth.model';
 import { RegisterFormData, SignInFormData } from './auth.scheme';
 
 /**
  * Convierte datos del formulario de registro a payload de API
  */
-export function signUpPayloadAdapter(form: RegisterFormData): SignUpPayload {
+export function signUpFormToPayloadAdapter(
+  form: RegisterFormData,
+): SignUpPayload {
   return {
     email: form.email,
     password: form.password,
@@ -19,16 +21,18 @@ export function signUpPayloadAdapter(form: RegisterFormData): SignUpPayload {
 }
 
 /**
- * Extrae UserEntity de la respuesta de registro
+ * Extrae AuthUser de la respuesta de registro
  */
-export function signUpResponseAdapter(response: SignUpResponse): UserEntity {
+export function signUpResponseAdapter(response: SignUpResponse): AuthUser {
   return response.user;
 }
 
 /**
  * Convierte datos del formulario de login a payload de API
  */
-export function signInPayloadAdapter(form: SignInFormData): SignInPayload {
+export function signInFormToPayloadAdapter(
+  form: SignInFormData,
+): SignInPayload {
   return {
     email: form.email,
     password: form.password,
@@ -36,8 +40,8 @@ export function signInPayloadAdapter(form: SignInFormData): SignInPayload {
 }
 
 /**
- * Extrae UserEntity de la respuesta de login
+ * Extrae AuthUser de la respuesta de login
  */
-export function signInResponseAdapter(response: SignInResponse): UserEntity {
+export function signInResponseAdapter(response: SignInResponse): AuthUser {
   return response.user;
 }
