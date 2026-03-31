@@ -18,6 +18,7 @@ export const userSchema = yup.object({
     .string()
     .required('El rol es requerido')
     .max(50, 'El rol debe tener máximo 50 caracteres'),
+  avatar: yup.string().nullable().default(null),
 });
 
 export type UserFormData = InferType<typeof userSchema>;

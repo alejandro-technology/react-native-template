@@ -45,13 +45,17 @@ function getPermission(type: PermissionType): Permission | null {
     return iosMap[type] ?? null;
   }
 
+  // Android permissions
+  // For Android 13+ (API 33+), READ_EXTERNAL_STORAGE is deprecated
+  // Use READ_MEDIA_IMAGES for photo library access
   const androidMap: Record<PermissionType, Permission | null> = {
     location: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
     locationWhenInUse: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
     locationAlways: PERMISSIONS.ANDROID.ACCESS_FINE_LOCATION,
     camera: PERMISSIONS.ANDROID.CAMERA,
     microphone: PERMISSIONS.ANDROID.RECORD_AUDIO,
-    photoLibrary: PERMISSIONS.ANDROID.READ_EXTERNAL_STORAGE,
+    // Use READ_MEDIA_IMAGES for Android 13+, fallback to READ_EXTERNAL_STORAGE
+    photoLibrary: PERMISSIONS.ANDROID.READ_MEDIA_IMAGES,
     photoLibraryAdd: PERMISSIONS.ANDROID.WRITE_EXTERNAL_STORAGE,
     contacts: PERMISSIONS.ANDROID.READ_CONTACTS,
     calendar: PERMISSIONS.ANDROID.READ_CALENDAR,

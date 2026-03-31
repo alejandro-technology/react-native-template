@@ -33,6 +33,9 @@ import CardIcon from '../../assets/svg/icons/card.svg';
 import CheckboxIcon from '../../assets/svg/icons/checkbox.svg';
 import ModalIcon from '../../assets/svg/icons/modal.svg';
 import MailboxIcon from '../../assets/svg/icons/mailbox.svg';
+import CameraIcon from '../../assets/svg/icons/camera.svg';
+import CloseIcon from '../../assets/svg/icons/close.svg';
+import ImageIcon from '../../assets/svg/icons/image.svg';
 import { ColorVariant, useTheme } from '@theme/index';
 import { getIconStyle } from '@theme/components/Icon.styles';
 
@@ -69,7 +72,10 @@ export type IconName =
   | 'card'
   | 'checkbox'
   | 'modal'
-  | 'mailbox';
+  | 'mailbox'
+  | 'camera'
+  | 'close'
+  | 'image';
 
 interface IconProps {
   name: IconName;
@@ -112,6 +118,9 @@ const ICON_COMPONENTS: Record<IconName, React.ComponentType<SvgProps>> = {
   checkbox: CheckboxIcon,
   modal: ModalIcon,
   mailbox: MailboxIcon,
+  camera: CameraIcon,
+  close: CloseIcon,
+  image: ImageIcon,
 };
 
 export function Icon({ name, size = 20, color, strokeWidth = 1.8 }: IconProps) {

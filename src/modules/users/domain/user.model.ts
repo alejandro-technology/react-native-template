@@ -4,6 +4,7 @@ export interface User {
   email: string;
   phone: string;
   role: string;
+  avatar?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -13,6 +14,7 @@ export interface CreateUserPayload {
   email: string;
   phone: string;
   role: string;
+  avatar?: string;
 }
 
 export interface UpdateUserPayload {
@@ -20,6 +22,8 @@ export interface UpdateUserPayload {
   email?: string;
   phone?: string;
   role?: string;
+  // null = remove avatar, undefined = don't change, string = set avatar
+  avatar?: string | null;
 }
 
 export interface UserFilter {

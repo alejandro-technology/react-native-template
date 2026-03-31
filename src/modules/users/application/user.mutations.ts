@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 // Domain
-import { userFormToPayloadAdapter } from '../domain/user.adapter';
+import {
+  userFormToPayloadAdapter,
+  userFormToUpdatePayloadAdapter,
+} from '../domain/user.adapter';
 import { UserFormData } from '../domain/user.scheme';
 // Services
 import userService from '../infrastructure/user.service';
@@ -42,7 +45,7 @@ export function useUserUpdate() {
   const { show } = useAppStorage(s => s.toast);
   return useMutation({
     mutationFn: async ({ id, form }: { id: string; form: UserFormData }) => {
-      const payload = userFormToPayloadAdapter(form);
+      const payload = userFormToUpdatePayloadAdapter(form);
       const result = await userService.update(id, payload);
       if (result instanceof Error) {
         throw result;

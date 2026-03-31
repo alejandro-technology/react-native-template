@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
 // Components
-import { Text, Card, Button, Icon } from '@components/core';
+import { Text, Card, Button, Icon, Avatar } from '@components/core';
 import {
   LoadingState,
   ErrorState,
@@ -65,7 +65,15 @@ export function UserDetailView({
     <RootLayout padding="md" title="Detalle de Usuario">
       <View style={styles.content}>
         <Card style={styles.card}>
-          <Text variant="h2">{user.name}</Text>
+          <View style={styles.header}>
+            <Avatar
+              name={user.name}
+              userId={user.id}
+              size="xl"
+              imageUrl={user.avatar}
+            />
+            <Text variant="h2">{user.name}</Text>
+          </View>
 
           <View style={styles.infoRow}>
             <Text variant="caption">Email:</Text>
@@ -131,6 +139,11 @@ const styles = StyleSheet.create({
   },
   card: {
     gap: spacing.xs,
+  },
+  header: {
+    alignItems: 'center',
+    gap: spacing.md,
+    marginBottom: spacing.md,
   },
   infoRow: {
     gap: spacing.xs,

@@ -1,4 +1,4 @@
-import { CreateUserPayload } from './user.model';
+import { CreateUserPayload, UpdateUserPayload } from './user.model';
 import type { UserFormData } from './user.scheme';
 
 export function userFormToPayloadAdapter(
@@ -9,5 +9,21 @@ export function userFormToPayloadAdapter(
     email: form.email,
     phone: form.phone,
     role: form.role,
+    // null means "no avatar", undefined means "not set"
+    avatar: form.avatar === null ? undefined : form.avatar ?? undefined,
+  };
+}
+
+export function userFormToUpdatePayloadAdapter(
+  form: UserFormData,
+): UpdateUserPayload {
+  return {
+    name: form.name,
+    email: form.email,
+    phone: form.phone,
+    role: form.role,
+    // Important: null means "remove avatar", must be passed as null
+    // undefined means "don't change avatar"
+    avatar: form.avatar,
   };
 }

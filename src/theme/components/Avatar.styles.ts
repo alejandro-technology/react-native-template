@@ -4,7 +4,7 @@ import { borderRadius } from '../borders';
 import { hScale } from '../responsive';
 import { ImageStyle } from 'react-native-fast-image';
 
-export type AvatarSize = 'sm' | 'md' | 'lg';
+export type AvatarSize = 'sm' | 'md' | 'lg' | 'xl';
 
 interface AvatarStyleProps {
   size?: AvatarSize;
@@ -39,6 +39,11 @@ function getSizeStyles(size: AvatarSize) {
       return {
         containerSize: hScale(64),
         fontSize: 22,
+      };
+    case 'xl':
+      return {
+        containerSize: hScale(96),
+        fontSize: 32,
       };
   }
 }

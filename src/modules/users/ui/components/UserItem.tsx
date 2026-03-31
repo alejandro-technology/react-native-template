@@ -29,7 +29,12 @@ export const UserItem = React.memo(function UserItem({ user }: UserItemProps) {
     <Card style={styles.card} onPress={handleCardPress}>
       <View style={styles.row}>
         <View style={styles.header}>
-          <Avatar name={user.name} userId={user.id} size="md" />
+          <Avatar
+            name={user.name}
+            userId={user.id}
+            size="md"
+            imageUrl={user.avatar}
+          />
           <View>
             <Text variant="h3">{user.name}</Text>
             <Text variant="bodySmall" color="textSecondary">

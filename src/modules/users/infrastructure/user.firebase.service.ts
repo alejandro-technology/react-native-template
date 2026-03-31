@@ -3,6 +3,7 @@ import { Timestamp } from '@react-native-firebase/firestore';
 import { firestoreService } from '@modules/firebase';
 import { manageFirebaseError } from '@modules/firebase/domain/firebase.error';
 import { firestoreCollectionAdapter } from '@modules/firebase/domain/firestore/firestore.adapter';
+import storageService from '@modules/firebase/infrastructure/storage.service';
 // Domain
 import type {
   CreateUserPayload,
@@ -19,6 +20,7 @@ interface UserFirebaseDoc {
   email: string;
   phone: string;
   role: string;
+  avatar?: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -30,9 +32,47 @@ interface UserFirebaseEntity extends UserFirebaseDoc {
 function toUser(entity: UserFirebaseEntity): User {
   return {
     ...entity,
+    avatar: entity.avatar ?? undefined,
     createdAt: new Date(entity.createdAt.seconds * 1000),
     updatedAt: new Date(entity.updatedAt.seconds * 1000),
   };
+}
+
+async function uploadAvatarIfNeeded(
+  userId: string,
+  avatar: string | undefined | null,
+): Promise<string | undefined> {
+  if (!avatar) {
+    return undefined;
+  }
+
+  // If it's already a remote URL (http/https), return as-is
+  if (avatar.startsWith('http://') || avatar.startsWith('https://')) {
+    return avatar;
+  }
+
+  // Upload local file to Firebase Storage
+  const path = `users/${userId}/avatars/${Date.now()}.jpg`;
+  const result = await storageService.upload(
+    path,
+    { uri: avatar },
+    {
+      contentType: 'image/jpeg',
+      cacheControl: 'public,max-age=31536000',
+      customMetadata: {
+        userId,
+        type: 'avatar',
+        uploadedAt: new Date().toISOString(),
+      },
+    },
+  );
+
+  if (result instanceof Error) {
+    console.warn('Failed to upload avatar:', result.message);
+    return undefined;
+  }
+
+  return result.url;
 }
 
 class UserFirebaseService implements UserRepository {
@@ -93,10 +133,17 @@ class UserFirebaseService implements UserRepository {
   async create(data: CreateUserPayload): Promise<User | Error> {
     try {
       const now = new Date();
-      const result = await firestoreService.create<UserFirebaseDoc>({
+
+      // First create the document to get the ID
+      const result = await firestoreService.create<
+        Omit<UserFirebaseDoc, 'avatar'>
+      >({
         collection: COLLECTIONS.USERS,
         data: {
-          ...data,
+          name: data.name,
+          email: data.email,
+          phone: data.phone,
+          role: data.role,
           createdAt: Timestamp.fromDate(now),
           updatedAt: Timestamp.fromDate(now),
         },
@@ -109,7 +156,37 @@ class UserFirebaseService implements UserRepository {
         return new Error('No se pudo crear el usuario');
       }
 
-      return toUser({ id: result.id, ...result.data });
+      const userId = result.id;
+
+      // Upload avatar if provided
+      if (data.avatar) {
+        const avatarUrl = await uploadAvatarIfNeeded(userId, data.avatar);
+        if (avatarUrl) {
+          // Update document with avatar URL
+          await firestoreService.update<UserFirebaseDoc>({
+            collection: COLLECTIONS.USERS,
+            id: userId,
+            data: {
+              avatar: avatarUrl,
+              updatedAt: Timestamp.fromDate(now),
+            },
+          });
+        }
+      }
+
+      // Fetch the final document
+      const finalResult = await firestoreService.get<UserFirebaseDoc>({
+        collection: COLLECTIONS.USERS,
+        id: userId,
+      });
+      if (finalResult instanceof Error) {
+        return finalResult;
+      }
+      if (!finalResult.exists || !finalResult.data) {
+        return new Error('Usuario no encontrado');
+      }
+
+      return toUser({ id: userId, ...finalResult.data });
     } catch (error) {
       return manageFirebaseError(error);
     }
@@ -119,11 +196,32 @@ class UserFirebaseService implements UserRepository {
     try {
       const now = new Date();
 
+      // Handle avatar update
+      // - undefined: don't change
+      // - null: remove avatar
+      // - string (local/remote): set avatar
+      let avatarUrl: string | null | undefined;
+      if (data.avatar !== undefined) {
+        if (data.avatar === null) {
+          // Explicitly set to null to remove avatar
+          avatarUrl = null;
+        } else {
+          // Upload if local, return as-is if remote
+          avatarUrl = await uploadAvatarIfNeeded(id, data.avatar);
+        }
+      }
+
       const updateResult = await firestoreService.update<UserFirebaseDoc>({
         collection: COLLECTIONS.USERS,
         id,
         data: {
-          ...data,
+          ...(data.name !== undefined && { name: data.name }),
+          ...(data.email !== undefined && { email: data.email }),
+          ...(data.phone !== undefined && { phone: data.phone }),
+          ...(data.role !== undefined && { role: data.role }),
+          ...(avatarUrl !== undefined && {
+            avatar: avatarUrl as string | undefined,
+          }),
           updatedAt: Timestamp.fromDate(now),
         },
       });

@@ -17,6 +17,19 @@ prepare_react_native_project!
 use_frameworks! :linkage => :static
 $RNFirebaseAsStaticFramework = true
 
+# Setup permissions for react-native-permissions
+def setup_permissions
+  # Camera permission
+  permissions_config = {
+    'Camera' => {
+      'Description' => 'Esta app necesita acceso a la cámara para tomar fotos de perfil.'
+    },
+    'PhotoLibrary' => {
+      'Description' => 'Esta app necesita acceso a la galería para seleccionar fotos de perfil.'
+    }
+  }
+end
+
 target 'rncatemplate' do
   config = use_native_modules!
 

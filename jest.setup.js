@@ -171,6 +171,7 @@ jest.mock('react-native-permissions', () => ({
       CAMERA: 'ios.permission.CAMERA',
       MICROPHONE: 'ios.permission.MICROPHONE',
       PHOTO_LIBRARY: 'ios.permission.PHOTO_LIBRARY',
+      PHOTO_LIBRARY_ADD_ONLY: 'ios.permission.PHOTO_LIBRARY_ADD_ONLY',
       LOCATION_WHEN_IN_USE: 'ios.permission.LOCATION_WHEN_IN_USE',
       LOCATION_ALWAYS: 'ios.permission.LOCATION_ALWAYS',
       NOTIFICATIONS: 'ios.permission.NOTIFICATIONS',
@@ -180,12 +181,18 @@ jest.mock('react-native-permissions', () => ({
       MOTION: 'ios.permission.MOTION',
       APP_TRACKING_TRANSPARENCY: 'ios.permission.APP_TRACKING_TRANSPARENCY',
       FACE_ID: 'ios.permission.FACE_ID',
+      SIRI: 'ios.permission.SIRI',
+      SPEECH_RECOGNITION: 'ios.permission.SPEECH_RECOGNITION',
+      MEDIA_LIBRARY: 'ios.permission.MEDIA_LIBRARY',
     },
     ANDROID: {
       CAMERA: 'android.permission.CAMERA',
       RECORD_AUDIO: 'android.permission.RECORD_AUDIO',
       READ_EXTERNAL_STORAGE: 'android.permission.READ_EXTERNAL_STORAGE',
       WRITE_EXTERNAL_STORAGE: 'android.permission.WRITE_EXTERNAL_STORAGE',
+      READ_MEDIA_IMAGES: 'android.permission.READ_MEDIA_IMAGES',
+      READ_MEDIA_VIDEO: 'android.permission.READ_MEDIA_VIDEO',
+      READ_MEDIA_VISUAL_USER_SELECTED: 'android.permission.READ_MEDIA_VISUAL_USER_SELECTED',
       ACCESS_FINE_LOCATION: 'android.permission.ACCESS_FINE_LOCATION',
       ACCESS_COARSE_LOCATION: 'android.permission.ACCESS_COARSE_LOCATION',
       POST_NOTIFICATIONS: 'android.permission.POST_NOTIFICATIONS',
@@ -196,6 +203,22 @@ jest.mock('react-native-permissions', () => ({
       BODY_SENSORS: 'android.permission.BODY_SENSORS',
     },
   },
+}));
+
+// Mock de react-native-image-picker
+jest.mock('react-native-image-picker', () => ({
+  launchCamera: jest.fn(() =>
+    Promise.resolve({
+      didCancel: false,
+      assets: [{ uri: 'mock-camera-uri', type: 'image/jpeg' }],
+    }),
+  ),
+  launchImageLibrary: jest.fn(() =>
+    Promise.resolve({
+      didCancel: false,
+      assets: [{ uri: 'mock-library-uri', type: 'image/jpeg' }],
+    }),
+  ),
 }));
 
 // Silenciar warnings específicos

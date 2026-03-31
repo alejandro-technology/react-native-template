@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // Components
 import { spacing } from '@theme/index';
 import { Button } from '@components/core';
-import { TextInput } from '@components/form';
+import { TextInput, ImagePicker } from '@components/form';
 // Domain
 import type { User } from '../../domain/user.model';
 import { userSchema, UserFormData } from '../../domain/user.scheme';
@@ -32,11 +32,21 @@ export function UserForm({
       email: initialData?.email || '',
       phone: initialData?.phone || '',
       role: initialData?.role || '',
+      avatar: initialData?.avatar ?? null,
     },
   });
 
   return (
     <View style={styles.container}>
+      <ImagePicker
+        control={control}
+        name="avatar"
+        label="Avatar (opcional)"
+        placeholder="Toca para seleccionar foto"
+        displayName={initialData?.name || 'User'}
+        userId={initialData?.id}
+      />
+
       <TextInput
         control={control}
         name="name"

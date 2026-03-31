@@ -28,11 +28,28 @@ class FirebaseStorageService implements StorageRepository {
   ): Promise<UploadResult | Error> {
     try {
       const storageRef = ref(this.storage, path);
-      const task = putFile(storageRef, file.uri, {
-        contentType: options?.contentType,
-        customMetadata: options?.customMetadata,
-        cacheControl: options?.cacheControl,
-      });
+
+      // Build metadata object with only defined values
+      const metadata: {
+        contentType?: string;
+        cacheControl?: string;
+        customMetadata?: Record<string, string>;
+      } = {};
+
+      if (options?.contentType) {
+        metadata.contentType = options.contentType;
+      }
+      if (options?.cacheControl) {
+        metadata.cacheControl = options.cacheControl;
+      }
+      if (
+        options?.customMetadata &&
+        Object.keys(options.customMetadata).length > 0
+      ) {
+        metadata.customMetadata = options.customMetadata;
+      }
+
+      const task = putFile(storageRef, file.uri, metadata);
 
       if (options?.onProgress) {
         task.on('state_changed', snapshot => {
