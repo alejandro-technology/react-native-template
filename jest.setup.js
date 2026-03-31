@@ -85,6 +85,18 @@ jest.mock('jail-monkey', () => ({
   },
 }));
 
+// Mock de react-native-keychain
+jest.mock('react-native-keychain', () => ({
+  getGenericPassword: jest.fn(() =>
+    Promise.resolve({ username: 'encryption-key', password: 'test-key-1234' }),
+  ),
+  setGenericPassword: jest.fn(() => Promise.resolve(true)),
+  resetGenericPassword: jest.fn(() => Promise.resolve(true)),
+  ACCESSIBLE: {
+    WHEN_UNLOCKED_THIS_DEVICE_ONLY: 'WHEN_UNLOCKED_THIS_DEVICE_ONLY',
+  },
+}));
+
 // Mock de react-native-svg
 jest.mock('react-native-svg', () => {
   const React = require('react');

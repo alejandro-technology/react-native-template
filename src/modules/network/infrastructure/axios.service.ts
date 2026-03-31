@@ -9,6 +9,8 @@ import { storage } from '@config/storage';
 const AUTH_TOKEN_KEY = 'auth-token';
 const REFRESH_TOKEN_KEY = 'refresh-token';
 
+type AuthExpiredCallback = (() => void) | null;
+
 class AxiosService {
   axiosInstance: AxiosInstance;
   private isRefreshing = false;
@@ -16,6 +18,7 @@ class AxiosService {
     resolve: (token: string) => void;
     reject: (error: unknown) => void;
   }> = [];
+  private onAuthExpired: AuthExpiredCallback | null = null;
 
   constructor() {
     this.axiosInstance = axios.create({
@@ -28,6 +31,14 @@ class AxiosService {
     });
 
     this.setupInterceptors();
+  }
+
+  /**
+   * Set callback to be called when authentication expires (token refresh fails)
+   * This allows the auth module to be notified without direct coupling
+   */
+  setAuthExpiredCallback(callback: AuthExpiredCallback) {
+    this.onAuthExpired = callback;
   }
 
   private setupInterceptors() {
@@ -109,6 +120,11 @@ class AxiosService {
   private clearAuth() {
     storage.remove(AUTH_TOKEN_KEY);
     storage.remove(REFRESH_TOKEN_KEY);
+
+    // Notify auth module about expired session
+    if (this.onAuthExpired) {
+      this.onAuthExpired();
+    }
   }
 
   get<T>(url: string, config?: AxiosRequestConfig) {

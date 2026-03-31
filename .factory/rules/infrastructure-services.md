@@ -86,3 +86,48 @@ grep -r "firestoreService" src/modules/*/infrastructure/*.firebase.service.ts
 - `src/modules/products/infrastructure/product.http.service.ts`
 - `src/modules/products/infrastructure/product.firebase.service.ts`
 - `src/modules/products/infrastructure/product.mock.service.ts`
+
+---
+
+## SSL Pinning (Opcional para Producción)
+
+Para apps enterprise que requieren seguridad adicional, considere implementar SSL certificate pinning en `AxiosService`.
+
+### Opción 1: Usando `react-native-ssl-pinning`
+
+```bash
+bun add react-native-ssl-pinning
+```
+
+```typescript
+// En axios.service.ts
+import { SSLPinning } from 'react-native-ssl-pinning';
+
+// Configurar en constructor
+SSLPinning.setCertificates({
+  certs: ['cert1', 'cert2'], // hashes SHA-256 de certificados
+});
+```
+
+### Opción 2: Validación manual de certificate
+
+```typescript
+import { fetch } from 'react-native-ssl-pinning';
+
+// Crear instancia custom que use fetch con pinning
+const httpsAgent = new https.Agent({
+  ca: fs.readFileSync('/path/to/cert.pem'),
+});
+```
+
+### Consideraciones
+
+- Mantener certificados actualizados antes de que expiren
+- Tener mecanismo de rotación de certificados
+- Considerar fallback para development/staging
+- Documentar los certificados en el repo (no las private keys)
+
+### Recursos
+
+- [OWASP Certificate Pinning Guide](https://owasp.org/www-community-mobile/Mobile_Top_10_2014-M3)
+- [React Native SSL Pinning](https://github.com/maxs15/react-native-ssl-pinning)

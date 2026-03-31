@@ -67,7 +67,6 @@ export function ProductList({ searchText }: ProductListProps) {
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
-      refreshing={isRefetching}
       refreshControl={
         <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }

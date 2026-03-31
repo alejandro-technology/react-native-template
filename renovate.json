@@ -1,0 +1,33 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:base"
+  ],
+  "packageRules": [
+    {
+      "matchPackagePatterns": ["react", "react-native"],
+      "groupName": "react monorepo"
+    },
+    {
+      "matchPackagePatterns": ["@react-navigation/*"],
+      "groupName": "react-navigation"
+    },
+    {
+      "matchPackagePatterns": ["@react-native-firebase/*"],
+      "groupName": "react-native-firebase"
+    },
+    {
+      "matchPackagePatterns": ["@tanstack/*"],
+      "groupName": "tanstack query"
+    }
+  ],
+  "lockFileMaintenance": {
+    "enabled": true,
+    "schedule": ["before 5am on Monday"]
+  },
+  "schedule": ["before 5am on Monday"],
+  "labels": ["dependencies"],
+  "reviewers": ["team:mobile"],
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 2
+}

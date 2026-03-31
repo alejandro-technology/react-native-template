@@ -1,5 +1,5 @@
 import { StatusBar, View } from 'react-native';
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
   SafeAreaProvider,
@@ -13,6 +13,8 @@ import { AuthProvider } from '@modules/authentication';
 // Components
 import { GlobalDeleteConfirmation, GlobalToast } from '@modules/core/ui';
 import { ErrorBoundary } from '@components/layout/ErrorBoundary';
+// Config
+import { initSecureStorage } from '@config/storage';
 // Styles
 import { useTheme, commonStyles } from '@theme/index';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -48,13 +50,15 @@ export default function AppProvider({ children }: PropsWithChildren) {
           <ThemeProvider>
             <SafeAreaProvider>
               <GestureHandlerProvider>
-                <AuthProvider>
-                  <NavigationProvider>
-                    <SafeAreaView>{children}</SafeAreaView>
-                    <GlobalDeleteConfirmation />
-                    <GlobalToast />
-                  </NavigationProvider>
-                </AuthProvider>
+                <SecureStorageInitializer>
+                  <AuthProvider>
+                    <NavigationProvider>
+                      <SafeAreaView>{children}</SafeAreaView>
+                      <GlobalDeleteConfirmation />
+                      <GlobalToast />
+                    </NavigationProvider>
+                  </AuthProvider>
+                </SecureStorageInitializer>
               </GestureHandlerProvider>
             </SafeAreaProvider>
           </ThemeProvider>
@@ -62,6 +66,26 @@ export default function AppProvider({ children }: PropsWithChildren) {
       </SecureProvider>
     </ErrorBoundary>
   );
+}
+
+function SecureStorageInitializer({ children }: PropsWithChildren) {
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    initSecureStorage()
+      .then(() => setIsReady(true))
+      .catch(error => {
+        console.warn('Failed to initialize secure storage:', error);
+        // Continue anyway - secure storage will use fallback
+        setIsReady(true);
+      });
+  }, []);
+
+  if (!isReady) {
+    return null;
+  }
+
+  return <>{children}</>;
 }
 
 function GestureHandlerProvider({ children }: PropsWithChildren) {

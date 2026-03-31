@@ -35,13 +35,17 @@ export function ProductFormView({
     duration: ANIMATION_DURATION.slow,
   });
 
-  function handleSubmit(form: ProductFormData) {
-    if (isEditing) {
-      updateProduct({ id: product.id, form });
-    } else {
-      createProduct(form);
+  async function handleSubmit(form: ProductFormData) {
+    try {
+      if (isEditing) {
+        await updateProduct({ id: product.id, form });
+      } else {
+        await createProduct(form);
+      }
+      goBack();
+    } catch {
+      // Error is handled by mutation's onError callback (shows toast)
     }
-    goBack();
   }
 
   return (

@@ -11,6 +11,16 @@ interface ErrorBoundaryState {
   error: Error | null;
 }
 
+/**
+ * Error Boundary para capturar errores de renderizado
+ *
+ * Para integrar crash reporting (Sentry, Crashlytics, etc.):
+ * 1. Instalar: bun add @sentry/react-native
+ * 2. Configurar en App.tsx:
+ *    Sentry.init({ dsn: 'YOUR_DSN' });
+ * 3. Agregar en componentDidCatch:
+ *    Sentry.captureException(error, { extra: errorInfo });
+ */
 export class ErrorBoundary extends Component<
   PropsWithChildren,
   ErrorBoundaryState
@@ -28,6 +38,10 @@ export class ErrorBoundary extends Component<
     if (__DEV__) {
       console.error('ErrorBoundary caught:', error, errorInfo);
     }
+
+    // TODO: Integrate crash reporting service here
+    // Example with Sentry:
+    // Sentry.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
   }
 
   handleRetry = () => {

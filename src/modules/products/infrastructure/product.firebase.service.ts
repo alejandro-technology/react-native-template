@@ -37,8 +37,13 @@ function toProduct(entity: ProductFirebaseEntity): Product {
 class ProductFirebaseService implements ProductRepository {
   async getAll(filter?: ProductFilter): Promise<Product[] | Error> {
     try {
+      // NOTE: Firestore doesn't support full-text search or OR queries across multiple fields.
+      // For production apps requiring search, consider integrating Algolia or a similar service.
+      // The current approach uses client-side filtering which works for small datasets.
+      // We apply a limit to prevent downloading excessive data.
       const result = await firestoreService.list<ProductFirebaseDoc>({
         collection: COLLECTIONS.PRODUCTS,
+        limit: 100, // Prevent excessive reads
       });
       if (result instanceof Error) {
         return result;

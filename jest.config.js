@@ -9,7 +9,7 @@ module.exports = {
     '__tests__/App.test.tsx', // App.test.tsx tiene dependencias complejas, usar tests de componentes individuales
   ],
   transformIgnorePatterns: [
-    'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-gesture-handler|react-native-screens|react-native-safe-area-context|@react-native-firebase|react-native-mmkv|jail-monkey|@react-native-community|react-native-config)/)',
+    'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-gesture-handler|react-native-screens|react-native-safe-area-context|@react-native-firebase|react-native-mmkv|jail-monkey|@react-native-community|react-native-config|react-native-keychain)/)',
   ],
   moduleNameMapper: {
     '\\.svg$': '<rootDir>/__mocks__/svgMock.js',
@@ -18,7 +18,6 @@ module.exports = {
     '^@components/(.*)$': '<rootDir>/src/components/$1',
     '^@theme/(.*)$': '<rootDir>/src/theme/$1',
     '^@navigation/(.*)$': '<rootDir>/src/navigation/$1',
-    '^@hooks/(.*)$': '<rootDir>/src/hooks/$1',
     '^@config/(.*)$': '<rootDir>/src/config/$1',
     '^@utils/(.*)$': '<rootDir>/src/utils/$1',
   },
@@ -35,10 +34,10 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      branches: 12,
-      functions: 12,
-      lines: 14,
-      statements: 14,
+      branches: 20,
+      functions: 20,
+      lines: 25,
+      statements: 25,
     },
     // Thresholds específicos para componentes core
     './src/components/core/Button.tsx': {

@@ -30,13 +30,17 @@ export function UserFormView({
     duration: ANIMATION_DURATION.slow,
   });
 
-  function handleSubmit(form: UserFormData) {
-    if (isEditing) {
-      updateUser({ id: user.id, form });
-    } else {
-      createUser(form);
+  async function handleSubmit(form: UserFormData) {
+    try {
+      if (isEditing) {
+        await updateUser({ id: user.id, form });
+      } else {
+        await createUser(form);
+      }
+      goBack();
+    } catch {
+      // Error is handled by mutation's onError callback (shows toast)
     }
-    goBack();
   }
 
   return (

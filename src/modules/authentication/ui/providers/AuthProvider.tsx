@@ -7,6 +7,7 @@ import React, {
 import authService from '../../infrastructure/auth.service';
 import { useAuthStorage, authSelectors } from '../../application/auth.storage';
 import type { AuthUser, AuthStatus } from '../../domain/auth.model';
+import axiosService from '@modules/network/infrastructure/axios.service';
 
 /**
  * Contexto de autenticación
@@ -25,6 +26,9 @@ const AuthContext = createContext<AuthContextValue | null>(null);
  *
  * Inicializa el listener de cambios de estado de autenticación
  * y sincroniza el estado con el store de Zustand.
+ *
+ * También conecta el servicio HTTP para recibir notificaciones
+ * cuando el token expire y forzar logout.
  *
  * Debe envolver la aplicación para que los hooks de autenticación funcionen.
  *
@@ -61,9 +65,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
     });
 
+    // Conectar callback de token expirado del HTTP service
+    axiosService.setAuthExpiredCallback(() => {
+      setUnauthenticated();
+    });
+
     // Limpiar suscripción al desmontar
     return () => {
       unsubscribe();
+      axiosService.setAuthExpiredCallback(null);
     };
   }, [setAuthenticated, setUnauthenticated, setLoading]);
 
