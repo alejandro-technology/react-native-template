@@ -49,7 +49,7 @@ describe('firestore.hooks', () => {
       (firestoreService.create as jest.Mock).mockResolvedValue(mockDoc);
 
       const { mutate } = useCreateDocument();
-      const result = await mutate({ payload: { collection: 'users', data: { name: 'Test' } } });
+      await mutate({ payload: { collection: 'users', data: { name: 'Test' } } });
 
       expect(firestoreService.create).toHaveBeenCalled();
       expect(mockInvalidateQueries).toHaveBeenCalledWith({ queryKey: ['firestore'] });

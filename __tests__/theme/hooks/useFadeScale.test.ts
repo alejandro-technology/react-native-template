@@ -2,18 +2,18 @@ import { renderHook } from '@testing-library/react-native';
 import { Animated } from 'react-native';
 import { useFadeScale } from '../../../src/theme/hooks/useFadeScale';
 
-// Mock Animated methods
-jest.spyOn(Animated, 'timing').mockReturnValue({
+// Mock Animated methods with proper CompositeAnimation interface
+const mockAnimation = {
   start: jest.fn(),
-} as any);
+  stop: jest.fn(),
+  reset: jest.fn(),
+};
 
-jest.spyOn(Animated, 'spring').mockReturnValue({
-  start: jest.fn(),
-} as any);
+jest.spyOn(Animated, 'timing').mockReturnValue(mockAnimation as any);
 
-jest.spyOn(Animated, 'parallel').mockImplementation((animations: any) => ({
-  start: jest.fn(),
-}));
+jest.spyOn(Animated, 'spring').mockReturnValue(mockAnimation as any);
+
+jest.spyOn(Animated, 'parallel').mockReturnValue(mockAnimation as any);
 
 describe('useFadeScale', () => {
   beforeEach(() => {

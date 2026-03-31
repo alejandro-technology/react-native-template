@@ -2,26 +2,18 @@ import { renderHook, act } from '@testing-library/react-native';
 import { Animated } from 'react-native';
 import { useFadeSlide } from '../../../src/theme/hooks/useFadeSlide';
 
-// Mock Animated methods
+// Mock Animated methods with proper CompositeAnimation interface
 const mockStart = jest.fn((callback?: () => void) => callback?.());
-const mockSetValue = jest.fn();
 
-jest.spyOn(Animated, 'timing').mockImplementation(
-  () =>
-    ({
-      start: mockStart,
-    }) as any,
-);
-
-jest.spyOn(Animated, 'parallel').mockImplementation((animations: any) => ({
+const mockAnimation = {
   start: mockStart,
-}));
+  stop: jest.fn(),
+  reset: jest.fn(),
+};
 
-// Mock Animated.Value
-jest.spyOn(Animated, 'Value').mockImplementation(() => ({
-  setValue: mockSetValue,
-  interpolate: jest.fn(),
-}));
+jest.spyOn(Animated, 'timing').mockReturnValue(mockAnimation as any);
+
+jest.spyOn(Animated, 'parallel').mockReturnValue(mockAnimation as any);
 
 describe('useFadeSlide', () => {
   beforeEach(() => {

@@ -10,7 +10,6 @@ jest.mock('@react-native-firebase/storage', () => ({
 
 import {
   getStorage,
-  ref,
   putFile,
   getDownloadURL,
   deleteObject,

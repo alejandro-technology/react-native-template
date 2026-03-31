@@ -58,14 +58,14 @@ describe('product.queries', () => {
     });
 
     it('should call productService.getAll in queryFn', async () => {
-      const mockProducts = [{ id: '1', name: 'Product 1' }];
+      const mockProducts = [{ id: '1', name: 'Product 1', description: 'Desc', price: 100, createdAt: new Date(), updatedAt: new Date() }];
       mockProductService.getAll.mockResolvedValue(mockProducts);
       mockUseQuery.mockImplementation(async ({ queryFn }) => {
-        const data = await queryFn();
-        return { data, isLoading: false };
+        await queryFn();
+        return { data: mockProducts, isLoading: false };
       });
 
-      const result = useProducts();
+      useProducts();
 
       expect(mockProductService.getAll).toHaveBeenCalled();
     });
@@ -114,7 +114,7 @@ describe('product.queries', () => {
     });
 
     it('should call productService.getById in queryFn', async () => {
-      const mockProduct = { id: '1', name: 'Product 1' };
+      const mockProduct = { id: '1', name: 'Product 1', description: 'Desc', price: 100, createdAt: new Date(), updatedAt: new Date() };
       mockProductService.getById.mockResolvedValue(mockProduct);
       mockUseQuery.mockImplementation(async ({ queryFn }) => {
         const data = await queryFn();

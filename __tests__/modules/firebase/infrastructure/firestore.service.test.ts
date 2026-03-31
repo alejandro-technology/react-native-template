@@ -17,15 +17,12 @@ jest.mock('@react-native-firebase/firestore', () => ({
 
 import {
   getFirestore,
-  collection,
-  doc,
   addDoc,
   setDoc,
   getDoc,
   getDocs,
   updateDoc,
   deleteDoc,
-  query,
   where,
   orderBy,
   limit,
@@ -244,7 +241,10 @@ describe('FirebaseFirestoreService', () => {
       });
 
       expect(where).toHaveBeenCalledWith('status', '==', 'active');
-      expect(result!.docs).toHaveLength(1);
+      expect(result).not.toBeInstanceOf(Error);
+      if (result && !(result instanceof Error)) {
+        expect(result.docs).toHaveLength(1);
+      }
     });
 
     it('should list documents with orderBy', async () => {

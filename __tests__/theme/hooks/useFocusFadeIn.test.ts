@@ -10,25 +10,16 @@ jest.mock('@react-navigation/native', () => ({
   }),
 }));
 
-// Mock Animated methods
-const mockStart = jest.fn();
+// Mock Animated methods with proper CompositeAnimation interface
+const mockAnimation = {
+  start: jest.fn(),
+  stop: jest.fn(),
+  reset: jest.fn(),
+};
 
-jest.spyOn(Animated, 'timing').mockImplementation(
-  () =>
-    ({
-      start: mockStart,
-    }) as any,
-);
+jest.spyOn(Animated, 'timing').mockReturnValue(mockAnimation as any);
 
-jest.spyOn(Animated, 'parallel').mockImplementation((animations: any) => ({
-  start: mockStart,
-}));
-
-// Mock Animated.Value
-jest.spyOn(Animated, 'Value').mockImplementation(() => ({
-  setValue: jest.fn(),
-  interpolate: jest.fn(),
-}));
+jest.spyOn(Animated, 'parallel').mockReturnValue(mockAnimation as any);
 
 describe('useFocusFadeIn', () => {
   beforeEach(() => {

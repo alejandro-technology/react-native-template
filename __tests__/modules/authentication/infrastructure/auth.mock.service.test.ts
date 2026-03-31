@@ -170,7 +170,7 @@ describe('AuthMockService', () => {
 
     it('should call callback with null when no user', async () => {
       const callback = jest.fn();
-      const unsubscribe = authMockService.onAuthStateChanged(callback);
+      authMockService.onAuthStateChanged(callback);
 
       expect(callback).toHaveBeenCalledWith(null);
     });

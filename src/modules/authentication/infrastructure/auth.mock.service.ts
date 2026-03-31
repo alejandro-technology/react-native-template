@@ -286,7 +286,6 @@ class AuthMockService implements AuthRepository {
     }
 
     // En mock, solo simulamos el envío
-    console.log(`[Mock] Email de recuperación enviado a: ${email}`);
     return;
   }
 

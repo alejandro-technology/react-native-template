@@ -2,21 +2,18 @@ import { renderHook } from '@testing-library/react-native';
 import { Animated } from 'react-native';
 import { useAnimatedLoop } from '../../../src/theme/hooks/useAnimatedLoop';
 
-// Mock Animated methods
-jest.spyOn(Animated, 'timing').mockReturnValue({
+// Mock Animated methods with proper CompositeAnimation interface
+const mockAnimation = {
   start: jest.fn(),
   stop: jest.fn(),
-} as any);
+  reset: jest.fn(),
+};
 
-jest.spyOn(Animated, 'loop').mockImplementation((animation: any) => ({
-  start: jest.fn(),
-  stop: jest.fn(),
-}));
+jest.spyOn(Animated, 'timing').mockReturnValue(mockAnimation as any);
 
-jest.spyOn(Animated, 'sequence').mockImplementation((animations: any) => ({
-  start: jest.fn(),
-  stop: jest.fn(),
-}));
+jest.spyOn(Animated, 'loop').mockReturnValue(mockAnimation as any);
+
+jest.spyOn(Animated, 'sequence').mockReturnValue(mockAnimation as any);
 
 describe('useAnimatedLoop', () => {
   beforeEach(() => {

@@ -14,7 +14,7 @@ jest.mock('@modules/products/domain/product.adapter', () => ({
 }));
 
 jest.mock('@modules/core/application/app.storage', () => ({
-  useAppStorage: jest.fn((selector) => ({
+  useAppStorage: jest.fn((_selector) => ({
     show: jest.fn(),
   })),
 }));
@@ -33,7 +33,6 @@ const mockUseQueryClient = useQueryClient as jest.Mock;
 const mockProductService = productService as jest.Mocked<typeof productService>;
 
 describe('product.mutations', () => {
-  const mockShow = jest.fn();
   const mockInvalidateQueries = jest.fn();
 
   beforeEach(() => {
@@ -57,11 +56,11 @@ describe('product.mutations', () => {
 
   describe('useProductCreate', () => {
     it('should create product and invalidate queries on success', async () => {
-      const mockProduct = { id: '1', name: 'New Product' };
+      const mockProduct = { id: '1', name: 'New Product', description: 'Desc', price: 100, createdAt: new Date(), updatedAt: new Date() };
       mockProductService.create.mockResolvedValue(mockProduct);
 
       const { mutate } = useProductCreate();
-      await mutate({ name: 'New Product', price: 100 });
+      await mutate({ name: 'New Product', description: 'Desc', price: 100 });
 
       expect(mockProductService.create).toHaveBeenCalled();
       expect(mockInvalidateQueries).toHaveBeenCalledWith({
@@ -70,11 +69,11 @@ describe('product.mutations', () => {
     });
 
     it('should show success toast on create', async () => {
-      const mockProduct = { id: '1', name: 'New Product' };
+      const mockProduct = { id: '1', name: 'New Product', description: 'Desc', price: 100, createdAt: new Date(), updatedAt: new Date() };
       mockProductService.create.mockResolvedValue(mockProduct);
 
       const { mutate } = useProductCreate();
-      await mutate({ name: 'New Product', price: 100 });
+      await mutate({ name: 'New Product', description: 'Desc', price: 100 });
 
       // Toast is called via useAppStorage mock
     });
@@ -86,17 +85,17 @@ describe('product.mutations', () => {
       const { mutate } = useProductCreate();
 
       // The mutation will throw because the service returns an Error
-      await expect(mutate({ name: 'Test', price: 100 })).rejects.toThrow();
+      await expect(mutate({ name: 'Test', description: 'Desc', price: 100 })).rejects.toThrow();
     });
   });
 
   describe('useProductUpdate', () => {
     it('should update product and invalidate queries on success', async () => {
-      const mockProduct = { id: '1', name: 'Updated Product' };
+      const mockProduct = { id: '1', name: 'Updated Product', description: 'Desc', price: 200, createdAt: new Date(), updatedAt: new Date() };
       mockProductService.update.mockResolvedValue(mockProduct);
 
       const { mutate } = useProductUpdate();
-      await mutate({ id: '1', form: { name: 'Updated Product', price: 200 } });
+      await mutate({ id: '1', form: { name: 'Updated Product', description: 'Desc', price: 200 } });
 
       expect(mockProductService.update).toHaveBeenCalledWith('1', expect.any(Object));
       expect(mockInvalidateQueries).toHaveBeenCalledWith({
@@ -114,7 +113,7 @@ describe('product.mutations', () => {
       const { mutate } = useProductUpdate();
 
       await expect(
-        mutate({ id: '1', form: { name: 'Test', price: 100 } }),
+        mutate({ id: '1', form: { name: 'Test', description: 'Desc', price: 100 } }),
       ).rejects.toThrow();
     });
   });
