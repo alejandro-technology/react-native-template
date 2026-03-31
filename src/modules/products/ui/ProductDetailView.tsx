@@ -59,7 +59,6 @@ export function ProductDetailView({
       />
     );
   }
-  console.log('Product: ', product);
 
   return (
     <RootLayout padding="md" title="Detalle de Producto">

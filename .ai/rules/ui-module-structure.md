@@ -33,6 +33,17 @@ src/modules/{feature}/ui/
 - `*View.tsx`: composición de layout, navegación, hooks de application y wiring de eventos.
 - `components/*.tsx`: piezas visuales del módulo (listas, ítems, formularios, secciones UI).
 
+### Límites de importación en UI
+
+- UI puede importar desde `application` y `domain` (tipos).
+- UI **NO** debe importar desde `infrastructure`.
+- Los `FormView` reciben `FormData` y lo pasan a la mutation; la adaptación a payload ocurre en `application`.
+
+### Principio de screen delgada
+
+- `*View.tsx` debe orquestar la screen, no contener árboles visuales grandes.
+- Si una lista, formulario o sección empieza a crecer, debe extraerse a `ui/components/`.
+
 **Referencia**: `src/modules/products/ui/` (ejemplo base del template).
 
 ---
@@ -50,6 +61,20 @@ Se permite un segundo componente en el mismo archivo **solo si**:
 3. No se reutiliza desde otros archivos.
 
 Si el componente crece o empieza a reutilizarse, debe moverse a su propio archivo dentro de `ui/components/`.
+
+---
+
+## Relación con la skill `create-screen`
+
+Esta regla define el contrato estructural de la capa `ui/`.
+
+La skill `.ai/skills/generation/create-screen/SKILL.md` debe usar esta regla para:
+
+- generar `*View.tsx` en la raíz de `ui/`
+- generar listas/forms/items en `ui/components/`
+- mantener screens delgadas
+- evitar imports desde `infrastructure`
+- delegar la adaptación de formularios a `application`
 
 ---
 
@@ -103,8 +128,8 @@ import {
   ItemSeparatorComponent,
   LoadingState,
 } from '@components/layout';
-  import { Icon } from '@components/core';
-  import { ProductItem } from './ProductItem';
+import { Icon } from '@components/core';
+import { ProductItem } from './ProductItem';
 // Hooks
 import { useProducts } from '@modules/products/application/product.queries';
 // Types
