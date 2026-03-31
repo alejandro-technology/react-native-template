@@ -31,7 +31,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
       launchOptions: launchOptions
     )
 
-    FirebaseApp.configure()
+    // Only configure Firebase if GoogleService-Info.plist exists
+    if let googleServicesPath = Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist"),
+       FileManager.default.fileExists(atPath: googleServicesPath) {
+      FirebaseApp.configure()
+    }
 
     return true
   }
