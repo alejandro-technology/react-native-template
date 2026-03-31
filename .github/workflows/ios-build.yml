@@ -42,6 +42,13 @@ jobs:
           cd ios
           pod install
 
+      - name: Setup Firebase config for CI
+        run: |
+          # Use dummy GoogleService-Info.plist if real one doesn't exist
+          if [ ! -f ios/GoogleService-Info.plist ]; then
+            cp ios/GoogleService-Info-Dummy.plist ios/GoogleService-Info.plist
+          fi
+
       - name: Build iOS (simulator only)
         run: |
           xcodebuild \
