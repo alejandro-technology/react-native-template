@@ -1,7 +1,7 @@
 ---
 category: forms
 priority: high
-tags: [forms, react-hook-form, yup, formdata]
+tags: [forms, react-hook-form, yup, formdata, async]
 enforcedBy: [AGENTS.md, CLAUDE.md]
 ---
 
@@ -43,19 +43,55 @@ export type ProductFormData = InferType<typeof productSchema>;
 - `{Feature}FormView.tsx` decide create/edit, prepara `initialData` y llama a la mutation
 
 ```typescript
-function handleSubmit(form: ProductFormData) {
-  if (isEditing) {
-    updateProduct({ id: product.id, form });
-  } else {
-    createProduct(form);
+async function handleSubmit(form: ProductFormData) {
+  try {
+    if (isEditing) {
+      await updateProduct({ id: product.id, form });
+    } else {
+      await createProduct(form);
+    }
+    goBack();
+  } catch {
+    // Error is handled by mutation's onError callback (shows toast)
   }
 }
 ```
+
+**IMPORTANTE**: `goBack()` debe llamarse **DESPUÉS** de `await` la mutation, no antes. Esto previene race conditions donde el usuario vuelve antes de saber si la operación fue exitosa.
 
 **NUNCA**:
 
 - construir payloads en `FormView`
 - meter lógica grande de formulario dentro de `*View.tsx`
+- llamar `goBack()` sin esperar el resultado de la mutation
+
+---
+
+## Regla 3: La mutation maneja errores con toast
+
+**SIEMPRE**: la mutation define `onError` que muestra un toast con el mensaje de error.
+
+```typescript
+export function useProductCreate() {
+  const { show } = useAppStorage(s => s.toast);
+
+  return useMutation({
+    mutationFn: async (form: ProductFormData) => {
+      const payload = productFormToPayloadAdapter(form);
+      const result = await productService.create(payload);
+      if (result instanceof Error) throw result;
+      return result;
+    },
+    onSuccess: () => {
+      show({ message: 'Producto creado exitosamente', type: 'success' });
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PRODUCTS() });
+    },
+    onError: (error: Error) => {
+      show({ message: error.message, type: 'error' });
+    },
+  });
+}
+```
 
 ### Cómo verificar
 
@@ -63,11 +99,12 @@ function handleSubmit(form: ProductFormData) {
 # Los forms deben usar react-hook-form + yupResolver
 grep -r "useForm<\\|yupResolver" src/modules/*/ui/components/*.tsx
 
-# Las FormView deben pasar FormData a la mutation
-grep -r "form }\\|create.*(form)\\|update.*form" src/modules/*/ui/*FormView.tsx
+# Las FormView deben pasar FormData a la mutation y usar await
+grep -r "await.*Product\\|await.*User" src/modules/*/ui/*FormView.tsx
 ```
 
 **Referencias**:
 - `src/modules/products/domain/product.scheme.ts`
 - `src/modules/products/ui/components/ProductForm.tsx`
 - `src/modules/products/ui/ProductFormView.tsx`
+- `src/modules/products/application/product.mutations.ts`

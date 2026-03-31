@@ -1,7 +1,7 @@
 ---
 category: infrastructure
 priority: high
-tags: [services, providers, http, firebase, mock]
+tags: [services, providers, http, firebase, mock, keychain, security]
 enforcedBy: [AGENTS.md, CLAUDE.md]
 ---
 
@@ -55,21 +55,49 @@ function createProductService(): ProductRepository {
 - usa `axiosService`
 - usa `API_ROUTES`
 - maneja errores con `manageAxiosError`
+- soporta callback `setAuthExpiredCallback` para notificar logout
 
 ### Firebase
 
 - usa wrappers compartidos como `firestoreService`
 - usa `manageFirebaseError`
 - no usa SDK raw en módulos feature si ya existe wrapper compartido
+- **IMPORTANTE**: Firestore no soporta búsqueda full-text ni OR queries. Para datasets grandes:
+  - Usar `limit` para evitar reads excesivos
+  - Considerar Algolia/Elasticsearch para búsqueda avanzada
 
 ### Mock
 
 - implementa el mismo contrato del repositorio
 - respeta exactamente el shape del dominio, especialmente `Date`
+- **NUNCA**: almacenar passwords en plaintext en producción
 
 ### Regla transversal
 
 **SIEMPRE**: los métodos async retornan `Promise<T | Error>` o `Promise<void | Error>`, nunca lanzan excepciones.
+
+---
+
+## Regla 3: Seguridad en storage
+
+**SIEMPRE**: datos sensibles deben usar almacenamiento seguro.
+
+### MMKV con encriptación
+
+```typescript
+// Inicializar al inicio de la app (en AppProvider)
+await initSecureStorage();
+
+// Obtener instancia segura
+const secureStorage = getSecureStorage();
+```
+
+### Keychain/Keystore
+
+- `react-native-keychain` para almacenar la encryption key de MMKV
+- La key se genera aleatoriamente y se almacena en el keychain del OS
+- En iOS: `ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY`
+- Fallback para development donde Keychain no está disponible
 
 ### Cómo verificar
 
@@ -79,13 +107,35 @@ grep "throw" src/modules/*/infrastructure/*.service.ts
 
 # Servicios Firebase de features usan wrappers compartidos
 grep -r "firestoreService" src/modules/*/infrastructure/*.firebase.service.ts
+
+# Storage seguro se inicializa
+grep -r "initSecureStorage" src/providers/AppProvider.tsx
 ```
 
-**Referencias**:
-- `src/modules/products/infrastructure/product.service.ts`
-- `src/modules/products/infrastructure/product.http.service.ts`
-- `src/modules/products/infrastructure/product.firebase.service.ts`
-- `src/modules/products/infrastructure/product.mock.service.ts`
+---
+
+## Regla 4: Token refresh con logout sync
+
+**SIEMPRE**: cuando el token refresh falla, el `AxiosService` notifica al auth store.
+
+### Patrón
+
+```typescript
+// En axios.service.ts
+setAuthExpiredCallback(() => {
+  // Notificar al auth store que la sesión expiró
+});
+
+// En AuthProvider.tsx
+useEffect(() => {
+  axiosService.setAuthExpiredCallback(() => {
+    setUnauthenticated();
+  });
+  return () => {
+    axiosService.setAuthExpiredCallback(null);
+  };
+}, []);
+```
 
 ---
 
@@ -109,17 +159,6 @@ SSLPinning.setCertificates({
 });
 ```
 
-### Opción 2: Validación manual de certificate
-
-```typescript
-import { fetch } from 'react-native-ssl-pinning';
-
-// Crear instancia custom que use fetch con pinning
-const httpsAgent = new https.Agent({
-  ca: fs.readFileSync('/path/to/cert.pem'),
-});
-```
-
 ### Consideraciones
 
 - Mantener certificados actualizados antes de que expiren
@@ -131,3 +170,11 @@ const httpsAgent = new https.Agent({
 
 - [OWASP Certificate Pinning Guide](https://owasp.org/www-community-mobile/Mobile_Top_10_2014-M3)
 - [React Native SSL Pinning](https://github.com/maxs15/react-native-ssl-pinning)
+
+**Referencias**:
+- `src/modules/products/infrastructure/product.service.ts`
+- `src/modules/products/infrastructure/product.http.service.ts`
+- `src/modules/products/infrastructure/product.firebase.service.ts`
+- `src/modules/products/infrastructure/product.mock.service.ts`
+- `src/modules/network/infrastructure/axios.service.ts`
+- `src/config/storage.ts`

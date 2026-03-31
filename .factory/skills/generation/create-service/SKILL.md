@@ -10,6 +10,8 @@ tags:
   - axios
   - firebase
   - multi-provider
+  - keychain
+  - security
 triggers:
   - 'Creating API service'
   - 'Creating storage service'
@@ -169,6 +171,8 @@ export default create{Feature}HttpService();
 - Use `manageAxiosError`
 - Return the domain shape expected by the repository
 - Prefer `API_ROUTES` constants when the route exists in config
+- **Token refresh**: `axiosService` handles 401 + token refresh automatically
+- **Auth expired callback**: When token refresh fails, `axiosService.setAuthExpiredCallback()` is invoked
 
 ## Step 3: Firebase Service
 
@@ -184,7 +188,21 @@ import { {Feature}Repository } from '../domain/{feature}.repository';
 import { COLLECTIONS } from '@config/collections.routes';
 
 class {Feature}FirebaseService implements {Feature}Repository {
-  // CRUD methods using firestoreService.list/get/create/update/delete
+  async getAll(filter?: {Feature}Filter): Promise<{Feature}[] | Error> {
+    try {
+      // IMPORTANT: Firestore doesn't support full-text search or OR queries.
+      // For production apps requiring search, consider Algolia.
+      // Always use limit to prevent excessive reads.
+      const result = await firestoreService.list<{Feature}FirebaseDoc>({
+        collection: COLLECTIONS.{FEATURES},
+        limit: 100, // Prevent excessive reads
+      });
+      // ... rest of implementation
+    } catch (error) {
+      return manageFirebaseError(error);
+    }
+  }
+  // ... other CRUD methods
 }
 
 function create{Feature}FirebaseService(): {Feature}Repository {
@@ -193,6 +211,15 @@ function create{Feature}FirebaseService(): {Feature}Repository {
 
 export default create{Feature}FirebaseService();
 ```
+
+### Firebase rules
+
+- **Always use `limit`** in `list()` calls to avoid downloading entire collections
+- Use `firestoreService` wrapper, not raw Firestore SDK
+- Use `Timestamp` from `@react-native-firebase/firestore` for date fields
+- Use `firestoreCollectionAdapter` to normalize document data
+- Firestore doesn't support full-text search - implement client-side filtering for small datasets only
+- For search in production, consider Algolia or similar service
 
 For authentication services, follow the auth-specific Firebase pattern in `.ai/skills/generation/create-firebase-service/SKILL.md` and use `firebaseAuthenticationService`.
 
@@ -260,6 +287,7 @@ export default create{Feature}MockService();
 - Match the domain model exactly (`Date` vs `string`, optional fields, etc.)
 - Keep state in an in-memory array unless the module convention requires local persistence
 - Authentication mock services are stateful and can use storage/listeners when the repository contract requires it
+- **NEVER store passwords in plaintext** - mock services should simulate auth without exposing credentials
 
 ## Step 5: Service Factory
 
@@ -307,6 +335,12 @@ export default create{Feature}Service();
    {FEATURES}: '{features}',
    ```
 
+3. **Environment Variables** — Add to `.env.example` if needed:
+   ```
+   API_URL=https://api.example.com
+   SERVICE_PROVIDER=mock
+   ```
+
 ## Error Handling
 
 | Provider | Error Handler | Import |
@@ -323,18 +357,53 @@ async someMethod(): Promise<T | Error>
 
 The application layer is responsible for converting `Error` results into `throw` inside React Query mutations.
 
+## Security Considerations
+
+### Secure Storage
+
+For services that store sensitive data (tokens, credentials), use the secure storage system:
+
+```typescript
+import { initSecureStorage, getSecureStorage } from '@config/storage';
+
+// Initialize at app startup (in AppProvider)
+await initSecureStorage();
+
+// Use for sensitive data
+const secureStorage = getSecureStorage();
+secureStorage.set('sensitive-key', 'sensitive-value');
+```
+
+### Keychain Integration
+
+- `react-native-keychain` stores the MMKV encryption key in OS keychain
+- On iOS: `ACCESSIBLE.WHEN_UNLOCKED_THIS_DEVICE_ONLY`
+- Fallback for development where Keychain may not be available
+
+### Auth Token Expiration
+
+The `AxiosService` notifies the auth system when tokens expire:
+
+```typescript
+// In AuthProvider.tsx
+axiosService.setAuthExpiredCallback(() => {
+  setUnauthenticated();
+});
+```
+
 ## Checklist
 
 1. Define or confirm the repository contract in `domain/`
 2. Implement the HTTP provider with `axiosService` + `manageAxiosError`
-3. Implement the Firebase provider using the shared Firebase wrappers
+3. Implement the Firebase provider using the shared Firebase wrappers with `limit`
 4. Implement the mock provider matching the domain model shape
 5. Create the factory in `{feature}.service.ts` using `CONFIG.SERVICE_PROVIDER`
 6. Register API routes and collections only if the module needs them
 7. Ensure every provider matches the repository contract exactly
 8. Ensure async service methods return `Promise<T | Error>` and do not throw
 9. Keep payload adaptation in `application`, not inside UI
-10. Run lint, typecheck, and tests after generation
+10. Use secure storage for sensitive data
+11. Run lint, typecheck, and tests after generation
 
 ## References
 
@@ -345,6 +414,8 @@ The application layer is responsible for converting `Error` results into `throw`
 - Auth factory: `src/modules/authentication/infrastructure/auth.service.ts`
 - Auth Firebase provider: `src/modules/authentication/infrastructure/firebase-auth.service.ts`
 - Shared Firestore wrapper: `src/modules/firebase/infrastructure/firestore.service.ts`
+- Axios service with token refresh: `src/modules/network/infrastructure/axios.service.ts`
+- Secure storage: `src/config/storage.ts`
 - Axios error handler: `src/modules/network/domain/network.error.ts`
 - Firebase error handler: `src/modules/firebase/domain/firebase.error.ts`
 - Create Firebase Service skill: `.ai/skills/generation/create-firebase-service/SKILL.md`
