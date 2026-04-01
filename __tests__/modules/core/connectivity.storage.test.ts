@@ -97,7 +97,7 @@ describe('connectivity.storage - Zustand Store', () => {
     });
 
     it('debe suscribirse solo a isConnected', () => {
-      const { result, rerender } = renderHook(() => useIsConnected());
+      const { result } = renderHook(() => useIsConnected());
 
       // Cambiar conectividad
       act(() => {
@@ -111,7 +111,6 @@ describe('connectivity.storage - Zustand Store', () => {
         useConnectivityStore.getState().setConnected(true);
       });
 
-      rerender();
       expect(result.current).toBe(true);
     });
   });

@@ -4,22 +4,7 @@ This guide covers what you need to do after cloning this template for a new proj
 
 ## Quick Start Checklist
 
-### 1. Project Identity
-
-- [ ] Update `package.json`:
-  - Change `name` to your app's bundle identifier (e.g., `com.yourcompany.yourapp`)
-  - Update `version` to `1.0.0`
-- [ ] Update `app.json`:
-  - Change `name` to your app's display name
-  - Change `displayName` to your app's display name
-- [ ] Android: Update `android/app/build.gradle`:
-  - `applicationId` to your bundle identifier
-  - Update version numbers
-- [ ] iOS: Update `ios/rncatemplate.xcodeproj`:
-  - Change bundle identifier in project settings
-  - Rename scheme if needed
-
-### 2. Environment Configuration
+### 1. Environment Configuration
 
 - [ ] Copy `.env.example` to `.env`
 - [ ] Update values:
@@ -27,20 +12,20 @@ This guide covers what you need to do after cloning this template for a new proj
   - `SERVICE_PROVIDER`: `http`, `firebase`, or `mock`
   - `ROOT_USERNAME`/`ROOT_PASSWORD`: Remove or change for mock auth
 
-### 3. Firebase (if using Firebase provider)
+### 2. Firebase (if using Firebase provider)
 
 - [ ] Create Firebase project at [Firebase Console](https://console.firebase.google.com)
 - [ ] Download `google-services.json` → `android/app/`
 - [ ] Download `GoogleService-Info.plist` → `ios/`
 - [ ] Both files are gitignored - add them locally
 
-### 4. Security
+### 3. Security
 
 - [ ] The MMKV encryption key is now managed via Keychain/Keystore
 - [ ] For production, ensure `initSecureStorage()` is called before auth
 - [ ] Review `ROOT_CREDENTIALS` - they should be removed for production
 
-### 5. Clean Up
+### 4. Clean Up
 
 - [ ] Remove example modules if not needed:
   - `src/modules/examples/`
@@ -94,10 +79,10 @@ src/modules/{module}/
 ## Component Library
 
 ### Core Components (`@components/core`)
-`AnimatedPressable`, `Avatar`, `Badge`, `Button`, `Card`, `Checkbox`, `DatePicker`, `Modal`, `Select`, `Text`, `TextInput`, `Toast`
+`AnimatedPressable`, `Avatar`, `Badge`, `Button`, `Card`, `Checkbox`, `DatePicker`, `Icon`, `ImagePicker`, `Modal`, `Select`, `Text`, `TextInput`, `Toast`
 
 ### Layout Components (`@components/layout`)
-`DeleteConfirmationSheet`, `EmptyState`, `ErrorBoundary`, `ErrorState`, `Header`, `ItemSeparatorComponent`, `LoadingState`, `RootLayout`, `Toolbar`
+`DeleteConfirmationSheet`, `EmptyState`, `ErrorBoundary`, `ErrorState`, `Header`, `ItemSeparatorComponent`, `LoadingState`, `OfflineBanner`, `RootLayout`, `Toolbar`
 
 ### Form Components (`@components/form`)
 Wrappers around core components with `react-hook-form` integration.

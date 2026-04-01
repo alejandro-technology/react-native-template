@@ -14,7 +14,6 @@ jest.mock('@components/layout/DeleteConfirmationSheet', () => ({
     entityName,
     entityType,
   }: any) => {
-    const React = require('react');
     const { View, Text, TouchableOpacity } = require('react-native');
 
     if (!visible) return null;
@@ -151,7 +150,7 @@ describe('GlobalDeleteConfirmation Component', () => {
       useAppStorage.getState().modal.open({
         entityName: 'Test',
         entityType: 'item',
-        onConfirm: null,
+        onConfirm: async () => {},
       });
     });
 

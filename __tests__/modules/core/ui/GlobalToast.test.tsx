@@ -7,7 +7,6 @@ import { act } from '@testing-library/react-native';
 // Mock del componente Toast
 jest.mock('@components/core/Toast', () => ({
   Toast: ({ message, visible, type }: any) => {
-    const React = require('react');
     const { Text, View } = require('react-native');
     if (!visible) return null;
     return (

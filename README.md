@@ -3,11 +3,13 @@
 ![React Native](https://img.shields.io/badge/react--native-0.83.4-blue)
 ![TypeScript](https://img.shields.io/badge/typescript-5.8.3-blue)
 ![License](https://img.shields.io/badge/license-MIT-green)
-![Node](https://img.shields.io/badge/node-%3E%3D22-brightgreen)
-![Platform](https://img.shields.io/badge/platform-ios%20%7C%20android-lightgrey)
+
 [![Unit Tests](https://github.com/alejandro-technology/react-native-template/actions/workflows/unit-test.yml/badge.svg?branch=main)](https://github.com/alejandro-technology/react-native-template/actions/workflows/unit-test.yml)
 [![APK Build](https://github.com/alejandro-technology/react-native-template/actions/workflows/android-apk.yml/badge.svg?branch=main)](https://github.com/alejandro-technology/react-native-template/actions/workflows/android-apk.yml)
+[![iOS Build](https://github.com/alejandro-technology/react-native-template/actions/workflows/ios-build.yml/badge.svg?branch=main)](https://github.com/alejandro-technology/react-native-template/actions/workflows/ios-build.yml)
 
+[![platform - android](https://img.shields.io/badge/platform-Android-3ddc84.svg?logo=android&style=for-the-badge)](https://www.android.com)
+[![platform - ios](https://img.shields.io/badge/platform-iOS-000.svg?logo=apple&style=for-the-badge)](https://developer.apple.com/ios)
 
 A **production-ready React Native starter** built with **Clean Architecture**, **TypeScript**, and **AI-First principles**.
 
@@ -29,11 +31,16 @@ Perfect for:
 ## ✨ Features
 
 - 🧱 Clean Architecture modular structure
-- 🔒 Authentication module (Firebase ready)
+- 🔒 Authentication module (Firebase ready, Http)
 - 🗂 Feature-based folder architecture
 - ⚡ Zustand + React Query state management
+- 💾 Data caching
+- 📄 Forms with validations
+- 🧰 Svg, Permissions, Image Picker 
+- ⚙️ Environment variables
+- 🔐 Security storage (Secrets, Keychain)
 - 🎨 Design System with theme tokens
-- 🧩 Reusable UI components
+- 🧩 Reusable UI components (Button, Input, Select, Date, Checkbox, etc...)
 - 🔄 Example CRUD module
 - 🧪 Jest testing setup
 - 🧹 ESLint + Prettier
@@ -121,15 +128,17 @@ The project follows a **Modular Architecture**. Each feature is a self-contained
 
 ```
 src/
-├── components/       # Shared UI components (Core & Form)
-├── config/           # App-wide configuration (API, Storage)
-├── modules/          # Feature Modules
-│   ├── authentication/
-│   ├── products/     # Example CRUD module
-│   └── examples/     # UI Component Showcase
-├── navigation/       # Root navigation configuration
-├── providers/        # App-wide providers (Theme, Auth, QueryClient)
-└── theme/            # Design tokens (Colors, Typography, Spacing)
+├── assets/               # Shared UI assets (Core & Form)
+├── components/           # Shared UI components (Core & Form)
+├── config/               # App-wide configuration (API, Storage)
+├── modules/              # Feature Modules
+│   ├── authentication/   # Auth module
+│   ├── products/         # Example CRUD module
+│   └── examples/         # UI Component Showcase
+├── navigation/           # Root navigation configuration
+├── providers/            # App-wide providers (Theme, Auth, QueryClient)
+├── theme/                # Design tokens (Colors, Typography, Spacing)
+└── utils/                # Utilities for testing
 ```
 
 ## 🧠 Module Anatomy (Clean Architecture)

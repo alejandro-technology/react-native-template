@@ -356,7 +356,7 @@ describe('PermissionsService', () => {
       mockCheckMultiple.mockResolvedValue({
         [PERMISSIONS.IOS.CAMERA]: RESULTS.GRANTED,
         [PERMISSIONS.IOS.PHOTO_LIBRARY]: RESULTS.DENIED,
-      });
+      } as any);
 
       const result = await permissionsService.checkMultiple([
         'camera',
@@ -412,7 +412,7 @@ describe('PermissionsService', () => {
       mockRequestMultiple.mockResolvedValue({
         [PERMISSIONS.IOS.CAMERA]: RESULTS.GRANTED,
         [PERMISSIONS.IOS.PHOTO_LIBRARY]: RESULTS.DENIED,
-      });
+      } as any);
 
       const result = await permissionsService.requestMultiple([
         'camera',

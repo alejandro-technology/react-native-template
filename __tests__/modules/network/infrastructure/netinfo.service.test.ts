@@ -17,7 +17,7 @@ describe('NetInfoService', () => {
 
   describe('getState', () => {
     it('debe retornar el estado de red mapeado correctamente para WiFi', async () => {
-      const mockRNState: RNNetInfoState = {
+      const mockRNState = {
         type: 'wifi',
         isConnected: true,
         isInternetReachable: true,
@@ -31,7 +31,7 @@ describe('NetInfoService', () => {
           subnet: '255.255.255.0',
           frequency: 2400,
         },
-      };
+      } as RNNetInfoState;
 
       mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
@@ -54,16 +54,18 @@ describe('NetInfoService', () => {
     });
 
     it('debe retornar el estado de red mapeado para conexión celular', async () => {
-      const mockRNState: RNNetInfoState = {
+      const mockRNState = {
         type: 'cellular',
         isConnected: true,
         isInternetReachable: true,
         isWifiEnabled: false,
         isConnectionExpensive: true,
         details: {
+          isConnectionExpensive: true,
           cellularGeneration: '4g',
+          carrier: null,
         },
-      };
+      } as RNNetInfoState;
 
       mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
@@ -80,13 +82,13 @@ describe('NetInfoService', () => {
     });
 
     it('debe manejar estado sin conexión', async () => {
-      const mockRNState: RNNetInfoState = {
+      const mockRNState = {
         type: 'none',
         isConnected: false,
         isInternetReachable: false,
-        isWifiEnabled: null,
+        isWifiEnabled: undefined,
         details: null,
-      };
+      } as RNNetInfoState;
 
       mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
@@ -105,7 +107,7 @@ describe('NetInfoService', () => {
         type: 'invalid-type' as any,
         isConnected: true,
         isInternetReachable: true,
-        isWifiEnabled: null,
+        isWifiEnabled: undefined,
         details: null,
       };
 
@@ -123,15 +125,17 @@ describe('NetInfoService', () => {
       const generations = ['2g', '3g', '4g', '5g'] as const;
 
       for (const gen of generations) {
-        const mockRNState: RNNetInfoState = {
+        const mockRNState = {
           type: 'cellular',
           isConnected: true,
           isInternetReachable: true,
           isWifiEnabled: false,
           details: {
+            isConnectionExpensive: false,
             cellularGeneration: gen,
+            carrier: null,
           },
-        };
+        } as RNNetInfoState;
 
         mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
@@ -145,15 +149,17 @@ describe('NetInfoService', () => {
     });
 
     it('debe mapear generaciones celulares inválidas a unknown', async () => {
-      const mockRNState: RNNetInfoState = {
+      const mockRNState = {
         type: 'cellular',
         isConnected: true,
         isInternetReachable: true,
         isWifiEnabled: false,
         details: {
+          isConnectionExpensive: false,
           cellularGeneration: '6g' as any,
+          carrier: null,
         },
-      };
+      } as RNNetInfoState;
 
       mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
@@ -166,12 +172,13 @@ describe('NetInfoService', () => {
     });
 
     it('debe convertir valores null a undefined en detalles WiFi', async () => {
-      const mockRNState: RNNetInfoState = {
+      const mockRNState = {
         type: 'wifi',
         isConnected: true,
         isInternetReachable: true,
         isWifiEnabled: true,
         details: {
+          isConnectionExpensive: false,
           ssid: null,
           bssid: null,
           strength: null,
@@ -179,7 +186,7 @@ describe('NetInfoService', () => {
           subnet: null,
           frequency: null,
         },
-      };
+      } as RNNetInfoState;
 
       mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
@@ -243,17 +250,23 @@ describe('NetInfoService', () => {
       const callback = jest.fn();
       netInfoService.addListener(callback);
 
-      const mockRNState: RNNetInfoState = {
+      const mockRNState = {
         type: 'wifi',
         isConnected: true,
         isInternetReachable: true,
         isWifiEnabled: true,
         details: {
+          isConnectionExpensive: false,
           ssid: 'TestNet',
+          bssid: null,
+          strength: null,
+          ipAddress: null,
+          subnet: null,
+          frequency: null,
         },
-      };
+      } as RNNetInfoState;
 
-      eventCallback?.(mockRNState);
+      eventCallback!(mockRNState);
 
       expect(callback).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -278,39 +291,51 @@ describe('NetInfoService', () => {
       netInfoService.addListener(callback);
 
       // WiFi
-      eventCallback?.({
+      eventCallback!({
         type: 'wifi',
         isConnected: true,
         isInternetReachable: true,
         isWifiEnabled: true,
-        details: { ssid: 'WiFi' },
-      });
+        details: {
+          isConnectionExpensive: false,
+          ssid: 'WiFi',
+          bssid: null,
+          strength: null,
+          ipAddress: null,
+          subnet: null,
+          frequency: null,
+        },
+      } as RNNetInfoState);
 
       expect(callback).toHaveBeenLastCalledWith(
         expect.objectContaining({ type: 'wifi' }),
       );
 
       // Cellular
-      eventCallback?.({
+      eventCallback!({
         type: 'cellular',
         isConnected: true,
         isInternetReachable: true,
         isWifiEnabled: false,
-        details: { cellularGeneration: '4g' },
-      });
+        details: {
+          isConnectionExpensive: false,
+          cellularGeneration: '4g',
+          carrier: null,
+        },
+      } as RNNetInfoState);
 
       expect(callback).toHaveBeenLastCalledWith(
         expect.objectContaining({ type: 'cellular' }),
       );
 
       // None
-      eventCallback?.({
+      eventCallback!({
         type: 'none',
         isConnected: false,
         isInternetReachable: false,
-        isWifiEnabled: null,
+        isWifiEnabled: undefined,
         details: null,
-      });
+      } as RNNetInfoState);
 
       expect(callback).toHaveBeenLastCalledWith(
         expect.objectContaining({ type: 'none' }),
@@ -320,13 +345,13 @@ describe('NetInfoService', () => {
 
   describe('isConnected', () => {
     it('debe retornar true cuando hay conexión', async () => {
-      const mockRNState: RNNetInfoState = {
+      const mockRNState = {
         type: 'wifi',
         isConnected: true,
         isInternetReachable: true,
         isWifiEnabled: true,
         details: null,
-      };
+      } as any;
 
       mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
@@ -336,13 +361,13 @@ describe('NetInfoService', () => {
     });
 
     it('debe retornar false cuando no hay conexión', async () => {
-      const mockRNState: RNNetInfoState = {
+      const mockRNState = {
         type: 'none',
         isConnected: false,
         isInternetReachable: false,
-        isWifiEnabled: null,
+        isWifiEnabled: undefined,
         details: null,
-      };
+      } as RNNetInfoState;
 
       mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
@@ -352,13 +377,13 @@ describe('NetInfoService', () => {
     });
 
     it('debe retornar false cuando isConnected es null', async () => {
-      const mockRNState: RNNetInfoState = {
+      const mockRNState = {
         type: 'unknown',
         isConnected: null,
         isInternetReachable: null,
-        isWifiEnabled: null,
+        isWifiEnabled: undefined,
         details: null,
-      };
+      } as RNNetInfoState;
 
       mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
@@ -399,13 +424,13 @@ describe('NetInfoService', () => {
 
     it('debe mapear todos los tipos válidos correctamente', async () => {
       for (const type of validTypes) {
-        const mockRNState: RNNetInfoState = {
-          type,
+        const mockRNState = {
+          type: type,
           isConnected: true,
           isInternetReachable: true,
-          isWifiEnabled: null,
+          isWifiEnabled: undefined,
           details: null,
-        };
+        } as RNNetInfoState;
 
         mockNetInfo.fetch.mockResolvedValue(mockRNState);
 
