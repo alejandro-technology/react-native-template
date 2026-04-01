@@ -13,6 +13,7 @@ triggers:
 description: Assists with dependency upgrades, library migrations, and breaking change resolution for React Native projects.
 mode: subagent
 temperature: 0.2
+model: gpt-5.4
 tools:
   write: true
   edit: true

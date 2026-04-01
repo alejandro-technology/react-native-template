@@ -11,6 +11,7 @@ triggers:
 description: Generates the complete structure of a new feature module (domain, application, infrastructure, and ui).
 mode: subagent
 temperature: 0.2
+model: gpt-5.3-codex
 tools:
   write: true
   edit: true
@@ -41,11 +42,10 @@ src/modules/<feature>/
 ├── infrastructure/
 │   └── <feature>.service.ts      # Class implementing repository, factory export
 └── ui/
-    ├── views/
-    │   └── <Feature>ListView.tsx  # Main view with useQuery
+    ├── <Feature>ListScreen.tsx   # Screen container (thin)
+    ├── <Feature>ListView.tsx     # View with composition and guards
     └── components/
-        └── <Feature>List/
-            └── <Feature>Item.tsx  # List item component
+        └── <Feature>ListItem.tsx # One component per file
 ```
 
 ## Mandatory rules
@@ -53,7 +53,7 @@ src/modules/<feature>/
 - Import with aliases: `@modules`, `@components`, `@theme`, `@config`.
 - Use `useTheme()` for colors, never hardcoded. Never import `colors.light` directly.
 - Services return `Promise<T | Error>`, never use `throw`. Use `manageAxiosError`.
-- Adapters transform snake_case from API to camelCase for domain models.
+- Create adapters only when there is a real shape mismatch between form/API and domain models.
 - Mutations invalidate queries on success using `queryClient.invalidateQueries`.
-- `StyleSheet.create` at the end of files for styles.
+- UI must follow `Screen -> View -> ui/components` and keep one component per file in `ui/components`.
 - Reuse components in `src/components/core/` (Button, Text, TextInput) instead of pure React Native components.

@@ -18,6 +18,7 @@ triggers:
 description: Diagnoses React Native build failures, Metro bundler issues, CocoaPods errors, Gradle problems, and New Architecture incompatibilities. Produces structured reports with root cause analysis and solutions.
 mode: subagent
 temperature: 0.2
+model: claude-sonnet-4-6
 tools:
   write: false
   edit: false

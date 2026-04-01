@@ -11,6 +11,7 @@ triggers:
 description: Audits code looking for hardcoded colors, spacing, or typography (static values instead of theme tokens).
 mode: subagent
 temperature: 0.1
+model: claude-haiku-4-5-20251001
 tools:
   write: true
   edit: true
