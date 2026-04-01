@@ -128,6 +128,7 @@ export function ImagePicker({
         <Pressable
           onPress={() => setShowOptions(true)}
           style={styles.avatarContainer}
+          testID="imagepicker-avatar"
         >
           <Avatar
             name={displayName}
@@ -145,7 +146,11 @@ export function ImagePicker({
             {placeholder}
           </Text>
           {value && (
-            <Pressable onPress={handleRemove} style={styles.removeButton}>
+            <Pressable
+              onPress={handleRemove}
+              style={styles.removeButton}
+              testID="imagepicker-remove"
+            >
               <Icon name="close" size={14} color="error" />
               <Text variant="caption" style={{ color: theme.colors.error }}>
                 Eliminar
@@ -172,6 +177,7 @@ export function ImagePicker({
           <AnimatedPressable
             onPress={handleOpenCamera}
             style={styles.optionButton}
+            testID="imagepicker-option-camera"
           >
             <Icon name="camera" size={24} color="text" />
             <Text variant="body" style={styles.optionText}>
@@ -182,6 +188,7 @@ export function ImagePicker({
           <AnimatedPressable
             onPress={handleOpenGallery}
             style={styles.optionButton}
+            testID="imagepicker-option-gallery"
           >
             <Icon name="image" size={24} color="text" />
             <Text variant="body" style={styles.optionText}>

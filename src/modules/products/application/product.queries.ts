@@ -7,17 +7,21 @@ import type { ProductFilter } from '../domain/product.repository';
 import { QUERY_KEYS } from '@config/query.keys';
 // Storage
 import { useProductsStorage } from './products.storage';
-import { useConnectivityStore } from '@modules/core/application/connectivity.storage';
+import { getIsConnected } from '@modules/core/application/connectivity.storage';
 
 export function useProducts(filter?: ProductFilter, enabled = true) {
-  const { isConnected } = useConnectivityStore();
-  const { getProducts } = useProductsStorage();
+  // Read storage helpers directly to avoid calling hooks when this module is
+  // used in tests outside of a React render context.
+  const getProducts = useProductsStorage.getState().getProducts;
 
   return useQuery({
     queryKey: QUERY_KEYS.PRODUCTS(filter?.searchText),
     queryFn: async () => {
+      // Cuando la queryFn corre fuera del render, leer estado directamente
+      // para evitar llamadas a hooks dentro de funciones no-component.
+      const connected = getIsConnected();
       // Si no hay conexión, usar datos del storage
-      if (!isConnected) {
+      if (!connected) {
         return getProducts(filter);
       }
 
@@ -35,14 +39,16 @@ export function useProducts(filter?: ProductFilter, enabled = true) {
 }
 
 export function useProduct(id: string, enabled = true) {
-  const { isConnected } = useConnectivityStore();
-  const { getProductById } = useProductsStorage();
+  // Read storage helpers directly to avoid calling hooks when this module is
+  // used in tests outside of a React render context.
+  const getProductById = useProductsStorage.getState().getProductById;
 
   return useQuery({
     queryKey: QUERY_KEYS.PRODUCT_DETAIL(id),
     queryFn: async () => {
+      const connected = getIsConnected();
       // Si no hay conexión, usar datos del storage
-      if (!isConnected) {
+      if (!connected) {
         return getProductById(id);
       }
 

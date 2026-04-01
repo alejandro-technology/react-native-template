@@ -5,10 +5,9 @@ import { Text } from '@components/core';
 // Store
 import { useConnectivityStore } from '@modules/core/application/connectivity.storage';
 // Theme
-import { useTheme, spacing } from '@theme/index';
+import { spacing } from '@theme/index';
 
 export function OfflineBanner() {
-  const { colors } = useTheme();
   const isConnected = useConnectivityStore(s => s.isConnected);
 
   if (isConnected) {
@@ -16,7 +15,7 @@ export function OfflineBanner() {
   }
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.info }]}>
+    <View style={[styles.container]}>
       <Text variant="bodySmall" color="text">
         Sin conexión — usando datos guardados
       </Text>

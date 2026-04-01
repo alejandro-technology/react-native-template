@@ -7,29 +7,24 @@ import { useProductsStorage } from './products.storage';
 import productService from '../infrastructure/product.service';
 // Core
 import { useAppStorage } from '@modules/core/application/app.storage';
-import { useConnectivityStore } from '@modules/core/application/connectivity.storage';
+import { getIsConnected } from '@modules/core/application/connectivity.storage';
 // Config
 import { QUERY_KEYS } from '@config/query.keys';
 
 export function useProductCreate() {
   const queryClient = useQueryClient();
-  // Storage
-  const { addProduct } = useProductsStorage();
+  // Storage (read state directly to avoid calling hooks outside React)
+  const addProduct = useProductsStorage.getState().addProduct;
   const { show } = useAppStorage(s => s.toast);
-  const { isConnected } = useConnectivityStore();
 
   return useMutation({
     mutationFn: async (form: ProductFormData) => {
-      const payload = productFormToPayloadAdapter(form);
-
-      if (!isConnected) {
-        show({
-          message: 'Sin conexión a internet.',
-          type: 'info',
-        });
-
-        return;
+      const connected = getIsConnected();
+      if (!connected) {
+        throw new Error('No internet connection');
       }
+
+      const payload = productFormToPayloadAdapter(form);
 
       // Si hay conexión, crear en el servidor
       const result = await productService.create(payload);
@@ -61,20 +56,16 @@ export function useProductUpdate() {
   const queryClient = useQueryClient();
   // Storage
   const { show } = useAppStorage(s => s.toast);
-  const { isConnected } = useConnectivityStore();
-  const { updateProduct } = useProductsStorage();
+  const updateProduct = useProductsStorage.getState().updateProduct;
 
   return useMutation({
     mutationFn: async ({ id, form }: { id: string; form: ProductFormData }) => {
-      const payload = productFormToPayloadAdapter(form);
-
-      if (!isConnected) {
-        show({
-          message: 'Sin conexión a internet.',
-          type: 'info',
-        });
-        return;
+      const connected = getIsConnected();
+      if (!connected) {
+        throw new Error('No internet connection');
       }
+
+      const payload = productFormToPayloadAdapter(form);
 
       // Si hay conexión, actualizar en el servidor
       const result = await productService.update(id, payload);
@@ -109,17 +100,13 @@ export function useProductDelete() {
   const queryClient = useQueryClient();
   // Storage
   const { show } = useAppStorage(s => s.toast);
-  const { isConnected } = useConnectivityStore();
-  const { deleteProduct } = useProductsStorage();
+  const deleteProduct = useProductsStorage.getState().deleteProduct;
 
   return useMutation({
     mutationFn: async (id: string) => {
-      if (!isConnected) {
-        show({
-          message: 'Sin conexión a internet.',
-          type: 'info',
-        });
-        return;
+      const connected = getIsConnected();
+      if (!connected) {
+        throw new Error('No internet connection');
       }
 
       // Si hay conexión, eliminar del servidor
