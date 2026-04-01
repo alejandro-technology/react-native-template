@@ -9,9 +9,11 @@ import {
   ErrorState,
   ItemSeparatorComponent,
   LoadingState,
+  OfflineBanner,
 } from '@components/layout';
-// Hooks
+// Modules
 import { useProducts } from '@modules/products/application/product.queries';
+import { useIsConnected } from '@modules/core/application/connectivity.storage';
 // Types
 import type { Product } from '../../domain/product.model';
 // Theme
@@ -34,6 +36,8 @@ export function ProductList({ searchText }: ProductListProps) {
     error,
     refetch,
   } = useProducts({ searchText });
+  const isConnected = useIsConnected();
+
   if (isLoading) {
     return <LoadingState message="Cargando productos..." />;
   }
@@ -70,6 +74,7 @@ export function ProductList({ searchText }: ProductListProps) {
       refreshControl={
         <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
+      ListHeaderComponent={!isConnected ? <OfflineBanner /> : <></>}
     />
   );
 }

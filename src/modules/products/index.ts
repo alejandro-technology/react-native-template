@@ -4,6 +4,7 @@ export {
   useProductUpdate,
   useProductDelete,
 } from './application/product.mutations';
+export { useProductsStorage } from './application/products.storage';
 export type {
   Product,
   CreateProductPayload,

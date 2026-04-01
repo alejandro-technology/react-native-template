@@ -1,12 +1,22 @@
 import React, { PropsWithChildren, useEffect, useRef } from 'react';
 import { useNetInfo } from '@modules/network';
 import { useAppStorage } from '@modules/core';
+import { useConnectivityStore } from '@modules/core/application/connectivity.storage';
 
 export default function NetworkProvider({ children }: PropsWithChildren) {
   const { isConnected, isLoading } = useNetInfo();
+
   const { show, hide } = useAppStorage(state => state.toast);
-  const previousConnectedRef = useRef<boolean | null>(null);
+  const setConnected = useConnectivityStore(s => s.setConnected);
+
   const toastShownRef = useRef(false);
+  const previousConnectedRef = useRef<boolean | null>(null);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setConnected(isConnected);
+    }
+  }, [isConnected, isLoading, setConnected]);
 
   useEffect(() => {
     if (isLoading) {
