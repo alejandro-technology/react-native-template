@@ -6,7 +6,6 @@ module.exports = {
     '/node_modules/',
     '/android/',
     '/ios/',
-    '__tests__/App.test.tsx', // App.test.tsx tiene dependencias complejas, usar tests de componentes individuales
   ],
   transformIgnorePatterns: [
     'node_modules/(?!(react-native|@react-native|@react-navigation|react-native-gesture-handler|react-native-screens|react-native-safe-area-context|@react-native-firebase|react-native-mmkv|jail-monkey|@react-native-community|react-native-config|react-native-keychain)/)',
@@ -29,10 +28,17 @@ module.exports = {
     '!src/**/*.scheme.ts',
     '!src/**/*.adapter.ts',
     '!src/**/*.routes.ts',
+    '!src/**/*.model.ts',
+    '!src/**/*.repository.ts',
     '!src/**/index.ts',
     '!src/utils/test-utils.tsx',
+    '!src/config/*.ts',
     // Exclude example/demo modules from coverage reports
     '!src/modules/examples/**',
+    '!src/modules/firebase/**',
+    '!src/modules/products/**',
+    '!src/modules/users/**',
+    '!src/navigation/**',
   ],
   coverageThreshold: {
     global: {

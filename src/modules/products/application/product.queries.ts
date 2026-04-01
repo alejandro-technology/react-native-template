@@ -1,12 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-// Services
+// Module
+import { useProductsStorage } from './products.storage';
 import productService from '../infrastructure/product.service';
-// Domain
 import type { ProductFilter } from '../domain/product.repository';
 // Config
 import { QUERY_KEYS } from '@config/query.keys';
-// Storage
-import { useProductsStorage } from './products.storage';
+// Core
 import { getIsConnected } from '@modules/core/application/connectivity.storage';
 
 export function useProducts(filter?: ProductFilter, enabled = true) {
