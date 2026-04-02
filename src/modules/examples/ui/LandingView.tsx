@@ -2,14 +2,14 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, View, ScrollView, Animated } from 'react-native';
 
-import ComponentCard from './ComponentCard';
+import ComponentCard from './components/ComponentCard';
 import { Text, Icon } from '@components/core';
 
 import { spacing } from '@theme/index';
 import { useTheme } from '@theme/index';
 import { borderRadius } from '@theme/borders';
 
-import { COMPONENTS_CONFIG } from './componentsConfig';
+import { COMPONENTS_CONFIG } from './components/componentsConfig';
 import { useHeroAnimation } from '../hooks/useHeroAnimation';
 import { PublicRoutes } from '@navigation/routes/public.routes';
 import { AuthenticationRoutes, ExamplesRoutes } from '@navigation/routes';

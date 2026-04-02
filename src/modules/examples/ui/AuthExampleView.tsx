@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, View, ScrollView, Animated } from 'react-native';
 
-import ComponentCard from './ComponentCard';
+import ComponentCard from './components/ComponentCard';
 import { Text, Icon, Button } from '@components/core';
 import { useSignoutMutation } from '@modules/authentication/application/auth.mutations';
 
@@ -10,7 +10,7 @@ import { spacing } from '@theme/index';
 import { useTheme } from '@theme/index';
 import { borderRadius } from '@theme/borders';
 
-import { COMPONENTS_CONFIG } from './componentsConfig';
+import { COMPONENTS_CONFIG } from './components/componentsConfig';
 import { useHeroAnimation } from '../hooks/useHeroAnimation';
 import { PrivateRoutes, ProductsRoutes, UsersRoutes } from '@navigation/routes';
 
