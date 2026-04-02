@@ -4,6 +4,7 @@ export {
   useUserUpdate,
   useUserDelete,
 } from './application/user.mutations';
+export { useUsersStorage } from './application/users.storage';
 export type {
   User,
   CreateUserPayload,

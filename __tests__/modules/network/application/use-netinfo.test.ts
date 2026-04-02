@@ -1,5 +1,8 @@
 import { renderHook, waitFor, act } from '@testing-library/react-native';
-import { useNetInfo, useIsConnected } from '@modules/network/application/use-netinfo';
+import {
+  useNetInfo,
+  useIsConnected,
+} from '@modules/network/application/use-netinfo';
 import netInfoService from '@modules/network/infrastructure/netinfo.service';
 import type { NetInfoState } from '@modules/network/domain/netinfo.model';
 
@@ -41,12 +44,18 @@ describe('useNetInfo Hook', () => {
 
   describe('Estado inicial', () => {
     it('debe iniciar con valores por defecto', () => {
-      const { result } = renderHook(() => useNetInfo());
+      mockNetInfoService.getState.mockImplementation(
+        () => new Promise(() => {}),
+      );
+
+      const { result, unmount } = renderHook(() => useNetInfo());
 
       expect(result.current.type).toBe('unknown');
       expect(result.current.isLoading).toBe(true);
       expect(result.current.isConnected).toBe(false);
       expect(result.current.isInternetReachable).toBe(false);
+
+      unmount();
     });
 
     it('debe cargar el estado inicial del servicio', async () => {
@@ -166,8 +175,7 @@ describe('useNetInfo Hook', () => {
       });
 
       mockNetInfoService.getState.mockImplementation(
-        () =>
-          new Promise(resolve => setTimeout(() => resolve(mockState), 100)),
+        () => new Promise(resolve => setTimeout(() => resolve(mockState), 100)),
       );
 
       act(() => {
@@ -240,9 +248,7 @@ describe('useNetInfo Hook', () => {
     it('no debe actualizar estado si el componente se desmonta antes de resolver', async () => {
       mockNetInfoService.getState.mockImplementation(
         () =>
-          new Promise(resolve =>
-            setTimeout(() => resolve(mockState), 1000),
-          ),
+          new Promise(resolve => setTimeout(() => resolve(mockState), 1000)),
       );
 
       const { unmount } = renderHook(() => useNetInfo());
@@ -268,8 +274,15 @@ describe('useIsConnected Hook (simplificado)', () => {
 
   describe('Estado inicial', () => {
     it('debe iniciar con null', () => {
-      const { result } = renderHook(() => useIsConnected());
+      mockNetInfoService.isConnected.mockImplementation(
+        () => new Promise(() => {}),
+      );
+
+      const { result, unmount } = renderHook(() => useIsConnected());
+
       expect(result.current).toBe(null);
+
+      unmount();
     });
 
     it('debe cargar el estado de conexión inicial', async () => {

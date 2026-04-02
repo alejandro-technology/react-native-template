@@ -95,7 +95,9 @@ describe('GlobalDeleteConfirmation Component', () => {
 
     const { getByTestId } = render(<GlobalDeleteConfirmation />);
 
-    fireEvent.press(getByTestId('confirm-button'));
+    await act(async () => {
+      fireEvent.press(getByTestId('confirm-button'));
+    });
 
     await waitFor(() => {
       expect(onConfirm).toHaveBeenCalledTimes(1);
@@ -135,7 +137,7 @@ describe('GlobalDeleteConfirmation Component', () => {
     });
 
     // Resolver la promesa
-    act(() => {
+    await act(async () => {
       resolveConfirm!();
     });
 
@@ -147,11 +149,15 @@ describe('GlobalDeleteConfirmation Component', () => {
 
   it('no debe ejecutar onConfirm si es null', () => {
     act(() => {
-      useAppStorage.getState().modal.open({
-        entityName: 'Test',
-        entityType: 'item',
-        onConfirm: async () => {},
-      });
+      useAppStorage.setState(state => ({
+        modal: {
+          ...state.modal,
+          visible: true,
+          entityName: 'Test',
+          entityType: 'item',
+          onConfirm: null,
+        },
+      }));
     });
 
     const { getByTestId } = render(<GlobalDeleteConfirmation />);
@@ -202,7 +208,7 @@ describe('GlobalDeleteConfirmation Component', () => {
 
     const { getByTestId } = render(<GlobalDeleteConfirmation />);
 
-    act(() => {
+    await act(async () => {
       fireEvent.press(getByTestId('confirm-button'));
     });
 
