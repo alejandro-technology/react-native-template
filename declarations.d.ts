@@ -11,6 +11,7 @@ declare module 'react-native-config' {
     SERVICE_PROVIDER?: string;
     ROOT_USERNAME?: string;
     ROOT_PASSWORD?: string;
+    RAWG_API_KEY?: string;
   }
 
   export const Config: NativeConfig;
