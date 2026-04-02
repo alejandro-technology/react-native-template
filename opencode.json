@@ -30,14 +30,22 @@
   },
   "mcp": {
     "notion": {
-      "enabled": true,
+      "enabled": false,
       "type": "remote",
       "url": "https://mcp.notion.com/mcp"
     },
     "context7": {
-      "enabled": true,
+      "enabled": false,
       "type": "remote",
       "url": "https://mcp.context7.com/mcp"
+    },
+    "stitch": {
+      "enabled": false,
+      "type": "remote",
+      "url": "https://stitch.googleapis.com/mcp",
+      "headers": {
+        "X-Goog-Api-Key": ""
+      }
     }
   }
 }
