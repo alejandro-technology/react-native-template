@@ -10,11 +10,16 @@ jest.mock('@config/storage', () => ({
   },
 }));
 
-jest.mock('@modules/network/infrastructure/axios.service', () => ({
-  get: jest.fn(),
-  post: jest.fn(),
-  put: jest.fn(),
-  delete: jest.fn(),
+jest.mock('@modules/network/infrastructure/axios-client.service', () => ({
+  __esModule: true,
+  default: {
+    get: jest.fn(),
+    post: jest.fn(),
+    put: jest.fn(),
+    patch: jest.fn(),
+    delete: jest.fn(),
+    setAuthExpiredCallback: jest.fn(),
+  },
 }));
 
 jest.mock('@modules/network/domain/network.error', () => ({
@@ -47,7 +52,9 @@ describe('AuthHttpService', () => {
         user: mockUser,
         token: 'jwt-token-123',
       };
-      (axiosService.post as jest.Mock).mockResolvedValue({ data: mockResponse });
+      (axiosService.post as jest.Mock).mockResolvedValue({
+        data: mockResponse,
+      });
 
       const result = await authHttpService.signin({
         email: 'test@example.com',
@@ -58,7 +65,10 @@ describe('AuthHttpService', () => {
         email: 'test@example.com',
         password: 'password123',
       });
-      expect(storage.set).toHaveBeenCalledWith('http-auth-token', 'jwt-token-123');
+      expect(storage.set).toHaveBeenCalledWith(
+        'http-auth-token',
+        'jwt-token-123',
+      );
       expect(result).toEqual({ user: mockUser });
     });
 
@@ -82,7 +92,9 @@ describe('AuthHttpService', () => {
         user: mockUser,
         token: 'jwt-token-123',
       };
-      (axiosService.post as jest.Mock).mockResolvedValue({ data: mockResponse });
+      (axiosService.post as jest.Mock).mockResolvedValue({
+        data: mockResponse,
+      });
 
       const result = await authHttpService.signup({
         email: 'test@example.com',
@@ -126,7 +138,9 @@ describe('AuthHttpService', () => {
 
     it('should clear storage even if signout endpoint fails', async () => {
       (storage.getString as jest.Mock).mockReturnValue('jwt-token-123');
-      (axiosService.post as jest.Mock).mockRejectedValue(new Error('Network error'));
+      (axiosService.post as jest.Mock).mockRejectedValue(
+        new Error('Network error'),
+      );
 
       const result = await authHttpService.signout();
 
@@ -147,7 +161,9 @@ describe('AuthHttpService', () => {
 
     it('should return user from server when token exists', async () => {
       (storage.getString as jest.Mock).mockReturnValue('jwt-token-123');
-      (axiosService.get as jest.Mock).mockResolvedValue({ data: { user: mockUser } });
+      (axiosService.get as jest.Mock).mockResolvedValue({
+        data: { user: mockUser },
+      });
 
       const result = await authHttpService.getCurrentUser();
 
@@ -168,14 +184,18 @@ describe('AuthHttpService', () => {
         }
         return undefined;
       });
-      (axiosService.get as jest.Mock).mockRejectedValue(new Error('Network error'));
+      (axiosService.get as jest.Mock).mockRejectedValue(
+        new Error('Network error'),
+      );
 
       const result = await authHttpService.getCurrentUser();
 
-      expect(result).toEqual(expect.objectContaining({
-        id: 'user-123',
-        email: 'test@example.com',
-      }));
+      expect(result).toEqual(
+        expect.objectContaining({
+          id: 'user-123',
+          email: 'test@example.com',
+        }),
+      );
     });
   });
 
@@ -191,10 +211,12 @@ describe('AuthHttpService', () => {
 
       const unsubscribe = authHttpService.onAuthStateChanged(callback);
 
-      expect(callback).toHaveBeenCalledWith(expect.objectContaining({
-        id: 'user-123',
-        email: 'test@example.com',
-      }));
+      expect(callback).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: 'user-123',
+          email: 'test@example.com',
+        }),
+      );
       expect(typeof unsubscribe).toBe('function');
     });
 
@@ -216,7 +238,9 @@ describe('AuthHttpService', () => {
 
       const result = await authHttpService.sendEmailVerification();
 
-      expect(axiosService.post).toHaveBeenCalledWith('/auth/send-verification-email');
+      expect(axiosService.post).toHaveBeenCalledWith(
+        '/auth/send-verification-email',
+      );
       expect(result).toBeUndefined();
     });
 
@@ -235,7 +259,9 @@ describe('AuthHttpService', () => {
     it('should send password reset email', async () => {
       (axiosService.post as jest.Mock).mockResolvedValue({});
 
-      const result = await authHttpService.sendPasswordResetEmail('test@example.com');
+      const result = await authHttpService.sendPasswordResetEmail(
+        'test@example.com',
+      );
 
       expect(axiosService.post).toHaveBeenCalledWith('/auth/forgot-password', {
         email: 'test@example.com',
@@ -247,7 +273,9 @@ describe('AuthHttpService', () => {
   describe('updateProfile', () => {
     it('should update user profile', async () => {
       const updatedUser = { ...mockUser, displayName: 'Updated Name' };
-      (axiosService.put as jest.Mock).mockResolvedValue({ data: { user: updatedUser } });
+      (axiosService.put as jest.Mock).mockResolvedValue({
+        data: { user: updatedUser },
+      });
 
       const result = await authHttpService.updateProfile({
         displayName: 'Updated Name',
@@ -256,7 +284,10 @@ describe('AuthHttpService', () => {
       expect(axiosService.put).toHaveBeenCalledWith('/auth/profile', {
         displayName: 'Updated Name',
       });
-      expect(storage.set).toHaveBeenCalledWith('http-auth-user', JSON.stringify(updatedUser));
+      expect(storage.set).toHaveBeenCalledWith(
+        'http-auth-user',
+        JSON.stringify(updatedUser),
+      );
       expect(result).toEqual(updatedUser);
     });
   });

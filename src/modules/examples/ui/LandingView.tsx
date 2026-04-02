@@ -25,6 +25,10 @@ function LandingView() {
     transform: [{ translateY: translateYAnim }],
   };
 
+  const publicExamplesCount = COMPONENTS_CONFIG.filter(
+    component => !component.auth,
+  ).length;
+
   return (
     <ScrollView
       contentContainerStyle={styles.landingContainer}
@@ -54,10 +58,10 @@ function LandingView() {
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
           <Text variant="h3" color="primary">
-            9
+            {publicExamplesCount}
           </Text>
           <Text variant="caption" color="textSecondary">
-            Components
+            Demos
           </Text>
         </View>
         <View style={styles.statDivider} />
@@ -66,7 +70,7 @@ function LandingView() {
             20+
           </Text>
           <Text variant="caption" color="textSecondary">
-            Variants
+            Variantes
           </Text>
         </View>
         <View style={styles.statDivider} />

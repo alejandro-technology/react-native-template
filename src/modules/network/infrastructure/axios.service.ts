@@ -4,7 +4,9 @@ import { API_ROUTES } from '@config/api.routes';
 /**
  * createAxiosInstance: Creates an Axios instance with optional configuration.
  */
-function createAxiosInstance(options: CreateAxiosDefaults = {}): AxiosInstance {
+export function createAxiosInstance(
+  options: CreateAxiosDefaults = {},
+): AxiosInstance {
   const instance = axios.create({
     baseURL: options.baseURL,
     timeout: options.timeout || 10000,

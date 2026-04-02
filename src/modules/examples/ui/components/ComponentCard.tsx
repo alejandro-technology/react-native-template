@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { StyleSheet, View, Animated } from 'react-native';
-import { useCardAnimation } from '../hooks/useCardAnimation';
+import { useCardAnimation } from '../../hooks/useCardAnimation';
 import { Text, Card, Icon, IconName } from '@components/core';
 import { ColorVariant, spacing } from '@theme/index';
 import { borderRadius } from '@theme/borders';

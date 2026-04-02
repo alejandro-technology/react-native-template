@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 // Stacks
+import type { ExamplesStackParamList } from '../routes/examples.routes';
 import type { ProductsStackParamList } from '../routes/products.routes';
 import type { UsersStackParamList } from '../routes/users.routes';
 import type { AuthenticationStackParamList } from '../routes/authentication.routes';
@@ -21,6 +22,10 @@ export const useNavigationUsers = useNavigation<
 
 export const useNavigationPublic = useNavigation<
   NativeStackNavigationProp<PublicStackParamList>
+>;
+
+export const useNavigationExamples = useNavigation<
+  NativeStackNavigationProp<ExamplesStackParamList>
 >;
 
 export const useNavigationAuthentication = useNavigation<

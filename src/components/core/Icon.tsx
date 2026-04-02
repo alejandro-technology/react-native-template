@@ -36,6 +36,7 @@ import MailboxIcon from '../../assets/svg/icons/mailbox.svg';
 import CameraIcon from '../../assets/svg/icons/camera.svg';
 import CloseIcon from '../../assets/svg/icons/close.svg';
 import ImageIcon from '../../assets/svg/icons/image.svg';
+import FilterIcon from '../../assets/svg/icons/filter.svg';
 import { ColorVariant, useTheme } from '@theme/index';
 import { getIconStyle } from '@theme/components/Icon.styles';
 
@@ -75,7 +76,8 @@ export type IconName =
   | 'mailbox'
   | 'camera'
   | 'close'
-  | 'image';
+  | 'image'
+  | 'filter';
 
 interface IconProps {
   name: IconName;
@@ -121,6 +123,7 @@ const ICON_COMPONENTS: Record<IconName, React.ComponentType<SvgProps>> = {
   camera: CameraIcon,
   close: CloseIcon,
   image: ImageIcon,
+  filter: FilterIcon,
 };
 
 export function Icon({ name, size = 20, color, strokeWidth = 1.8 }: IconProps) {

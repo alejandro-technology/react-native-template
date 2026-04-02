@@ -8,6 +8,7 @@ interface Config {
     USERNAME: string;
     PASSWORD: string;
   };
+  RAWG_API_KEY: string;
 }
 
 const SERVICE_PROVIDER = Config.SERVICE_PROVIDER as ServiceProvider;
@@ -19,4 +20,5 @@ export const CONFIG: Config = {
     USERNAME: Config.ROOT_USERNAME || 'user@example.com',
     PASSWORD: Config.ROOT_PASSWORD || 'example123',
   },
+  RAWG_API_KEY: Config.RAWG_API_KEY || '',
 };

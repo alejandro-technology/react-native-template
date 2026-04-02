@@ -82,6 +82,27 @@ export const COMPONENTS_CONFIG: ComponentConfig[] = [
     screen: ExamplesRoutes.Toasts,
   },
   {
+    title: 'Simpsons ListView',
+    description: 'Listado paginado de personajes de Springfield',
+    icon: 'users',
+    color: '#F97316',
+    screen: ExamplesRoutes.SimpsonsList,
+  },
+  {
+    title: 'Rick and Morty ListView',
+    description: 'Listado con búsqueda y filtros por personaje',
+    icon: 'rocket',
+    color: '#22C55E',
+    screen: ExamplesRoutes.RickAndMortyList,
+  },
+  {
+    title: 'Dynamic ListView',
+    description: 'Cambiar data source al vuelo',
+    icon: 'sparkles',
+    color: '#8B5CF6',
+    screen: ExamplesRoutes.DynamicList,
+  },
+  {
     title: 'SignIn Form',
     description: 'Registration form with react-hook-form & Yup validation',
     icon: 'lock',

@@ -91,9 +91,8 @@ function AuthExampleView() {
       </View>
 
       <View style={styles.cardsContainer}>
-        {COMPONENTS_CONFIG.filter(component => component.auth)
-          .slice(-2)
-          .map(component => (
+        {COMPONENTS_CONFIG.filter(component => component.auth).map(
+          component => (
             <ComponentCard
               key={component.title}
               title={component.title}
@@ -116,7 +115,8 @@ function AuthExampleView() {
                 }
               }}
             />
-          ))}
+          ),
+        )}
       </View>
 
       <View style={styles.logoutContainer}>

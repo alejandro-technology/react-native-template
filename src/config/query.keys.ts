@@ -5,4 +5,12 @@ export const QUERY_KEYS = {
   // Users
   USERS: (search = '') => ['users', 'search', search],
   USER_DETAIL: (id: string) => ['users', 'detail', id],
+  // Examples
+  EXAMPLE_SOURCES: ['examples', 'sources'],
+  EXAMPLE_LIST: (source: string, filtersFingerprint = '') => [
+    'examples',
+    'list',
+    source,
+    filtersFingerprint,
+  ],
 };

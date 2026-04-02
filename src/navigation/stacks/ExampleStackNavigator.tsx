@@ -3,6 +3,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 // Screens
 import LandingView from '@modules/examples/ui/LandingView';
 import AnimationExampleView from '@modules/examples/ui/AnimationExampleView';
+import SimpsonsListView from '@modules/examples/ui/SimpsonsListView';
+import RickAndMortyListView from '@modules/examples/ui/RickAndMortyListView';
+import DynamicListView from '@modules/examples/ui/DynamicListView';
 import TextsView from '@modules/examples/ui/TextsView';
 import ButtonsView from '@modules/examples/ui/ButtonsView';
 import TextInputsView from '@modules/examples/ui/TextInputsView';
@@ -31,6 +34,18 @@ export default function ExamplesNavigator() {
       }}
     >
       <Stack.Screen name={ExamplesRoutes.Landing} component={LandingView} />
+      <Stack.Screen
+        name={ExamplesRoutes.SimpsonsList}
+        component={SimpsonsListView}
+      />
+      <Stack.Screen
+        name={ExamplesRoutes.RickAndMortyList}
+        component={RickAndMortyListView}
+      />
+      <Stack.Screen
+        name={ExamplesRoutes.DynamicList}
+        component={DynamicListView}
+      />
       <Stack.Screen name={ExamplesRoutes.Texts} component={TextsView} />
       <Stack.Screen name={ExamplesRoutes.Buttons} component={ButtonsView} />
       <Stack.Screen
