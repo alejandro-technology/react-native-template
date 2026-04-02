@@ -95,6 +95,7 @@ export function UserDetail({ userId }: UserDetailProps) {
           style={styles.button}
           onPress={() =>
             open({
+              type: 'delete',
               entityName: user.name,
               entityType: 'usuario',
               onConfirm: async () => {

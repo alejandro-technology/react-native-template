@@ -3,7 +3,7 @@ import { StyleSheet, View } from 'react-native';
 // Components
 import { Text } from '@components/core';
 // Store
-import { useConnectivityStore } from '@modules/core/application/connectivity.storage';
+import { useConnectivityStore } from '@modules/network/application/connectivity.storage';
 // Theme
 import { spacing } from '@theme/index';
 

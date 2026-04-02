@@ -78,6 +78,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           style={styles.button}
           onPress={() =>
             open({
+              type: 'delete',
               entityName: product.name,
               entityType: 'producto',
               onConfirm: async () => {

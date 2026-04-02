@@ -41,6 +41,7 @@ jest.mock('@components/layout/ErrorBoundary', () => ({
 jest.mock('@modules/core/ui', () => ({
   __esModule: true,
   GlobalDeleteConfirmation: () => null,
+  GlobalModal: () => null,
   GlobalToast: () => null,
 }));
 

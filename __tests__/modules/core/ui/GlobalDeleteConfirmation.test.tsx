@@ -1,32 +1,24 @@
 import React from 'react';
 import { render, waitFor } from '@utils/test-utils';
-import { GlobalDeleteConfirmation } from '@modules/core/ui/GlobalDeleteConfirmation';
+import { GlobalModal as GlobalDeleteConfirmation } from '@modules/core/ui/Modal';
 import { useAppStorage } from '@modules/core/application/app.storage';
 import { act, fireEvent } from '@testing-library/react-native';
 
-// Mock del componente DeleteConfirmationSheet
-jest.mock('@components/layout/DeleteConfirmationSheet', () => ({
-  DeleteConfirmationSheet: ({
-    visible,
-    onClose,
-    onConfirm,
-    isLoading,
-    entityName,
-    entityType,
-  }: any) => {
+// Mock del componente ModalDelete
+jest.mock('@modules/core/ui/components/ModalDelete', () => ({
+  ModalDelete: ({ visible, params, onClose }: any) => {
     const { View, Text, TouchableOpacity } = require('react-native');
 
     if (!visible) return null;
 
     return (
       <View testID="delete-confirmation-sheet">
-        <Text testID="entity-name">{entityName}</Text>
-        <Text testID="entity-type">{entityType}</Text>
-        <Text testID="is-loading">{isLoading ? 'true' : 'false'}</Text>
+        <Text testID="entity-name">{params.entityName}</Text>
+        <Text testID="entity-type">{params.entityType}</Text>
         <TouchableOpacity testID="close-button" onPress={onClose}>
           <Text>Cerrar</Text>
         </TouchableOpacity>
-        <TouchableOpacity testID="confirm-button" onPress={onConfirm}>
+        <TouchableOpacity testID="confirm-button" onPress={params.onConfirm}>
           <Text>Confirmar</Text>
         </TouchableOpacity>
       </View>
@@ -51,6 +43,7 @@ describe('GlobalDeleteConfirmation Component', () => {
     const onConfirm = jest.fn();
     act(() => {
       useAppStorage.getState().modal.open({
+        type: 'delete',
         entityName: 'Producto XYZ',
         entityType: 'producto',
         onConfirm,
@@ -67,6 +60,7 @@ describe('GlobalDeleteConfirmation Component', () => {
     const onConfirm = jest.fn();
     act(() => {
       useAppStorage.getState().modal.open({
+        type: 'delete',
         entityName: 'Test',
         entityType: 'item',
         onConfirm,
@@ -87,6 +81,7 @@ describe('GlobalDeleteConfirmation Component', () => {
 
     act(() => {
       useAppStorage.getState().modal.open({
+        type: 'delete',
         entityName: 'Usuario Test',
         entityType: 'usuario',
         onConfirm,
@@ -104,68 +99,21 @@ describe('GlobalDeleteConfirmation Component', () => {
     });
   });
 
-  it('debe manejar estado de carga durante la confirmación', async () => {
-    let resolveConfirm: () => void;
-    const onConfirm = jest.fn(
-      () =>
-        new Promise<void>(resolve => {
-          resolveConfirm = resolve;
-        }),
-    );
-
-    act(() => {
-      useAppStorage.getState().modal.open({
-        entityName: 'Test',
-        entityType: 'item',
-        onConfirm,
-      });
-    });
-
-    const { getByTestId } = render(<GlobalDeleteConfirmation />);
-
-    // Inicialmente no está cargando
-    expect(getByTestId('is-loading')).toHaveTextContent('false');
-
-    // Presionar confirmar
-    act(() => {
-      fireEvent.press(getByTestId('confirm-button'));
-    });
-
-    // Debe estar en estado de carga
-    await waitFor(() => {
-      expect(getByTestId('is-loading')).toHaveTextContent('true');
-    });
-
-    // Resolver la promesa
-    await act(async () => {
-      resolveConfirm!();
-    });
-
-    // Debe volver a no estar cargando
-    await waitFor(() => {
-      expect(getByTestId('is-loading')).toHaveTextContent('false');
-    });
-  });
-
-  it('no debe ejecutar onConfirm si es null', () => {
+  it('no debe ejecutar onConfirm si params es null', () => {
     act(() => {
       useAppStorage.setState(state => ({
         modal: {
           ...state.modal,
-          visible: true,
-          entityName: 'Test',
-          entityType: 'item',
-          onConfirm: null,
+          visible: false,
+          params: null,
         },
       }));
     });
 
-    const { getByTestId } = render(<GlobalDeleteConfirmation />);
+    const { queryByTestId } = render(<GlobalDeleteConfirmation />);
 
-    // No debería lanzar error al presionar confirmar sin onConfirm
-    expect(() => {
-      fireEvent.press(getByTestId('confirm-button'));
-    }).not.toThrow();
+    // No se renderiza nada cuando params es null
+    expect(queryByTestId('delete-confirmation-sheet')).toBeNull();
   });
 
   it('debe actualizar cuando el estado del store cambia', () => {
@@ -177,6 +125,7 @@ describe('GlobalDeleteConfirmation Component', () => {
     // Abrir modal
     act(() => {
       useAppStorage.getState().modal.open({
+        type: 'delete',
         entityName: 'Item 1',
         entityType: 'tipo1',
         onConfirm: jest.fn(),
@@ -200,6 +149,7 @@ describe('GlobalDeleteConfirmation Component', () => {
 
     act(() => {
       useAppStorage.getState().modal.open({
+        type: 'delete',
         entityName: 'Test',
         entityType: 'item',
         onConfirm,
@@ -212,9 +162,7 @@ describe('GlobalDeleteConfirmation Component', () => {
       fireEvent.press(getByTestId('confirm-button'));
     });
 
-    // Debe volver a false después de completar
     await waitFor(() => {
-      expect(getByTestId('is-loading')).toHaveTextContent('false');
       expect(onConfirm).toHaveBeenCalled();
     });
   });

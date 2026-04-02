@@ -11,7 +11,7 @@ import { UsersRoutes } from '@navigation/routes';
 import { useNavigationUsers } from '@navigation/hooks';
 // Helpers
 import { getRoleVariant } from '@modules/users/domain/user.utils';
-import { formatJoinDate } from '@modules/core/domain/date.utils';
+import { formatJoinDate } from '@modules/core/domain/utils/date.utils';
 
 interface UserItemProps {
   user: User;

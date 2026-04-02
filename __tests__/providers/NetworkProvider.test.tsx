@@ -13,7 +13,7 @@ jest.mock('@modules/core', () => ({
   }),
 }));
 
-jest.mock('@modules/core/application/connectivity.storage', () => ({
+jest.mock('@modules/network/application/connectivity.storage', () => ({
   useConnectivityStore: (selector: any) => {
     const store = { setConnected: jest.fn() };
     return selector ? selector(store) : store;

@@ -15,7 +15,7 @@ import SecureStorageProvider from './SecureStorageProvider';
 import GestureHandlerProvider from './GestureHandlerProvider';
 // Components
 import { ErrorBoundary } from '@components/layout/ErrorBoundary';
-import { GlobalDeleteConfirmation, GlobalToast } from '@modules/core/ui';
+import { GlobalModal, GlobalToast } from '@modules/core/ui';
 // Styles
 import { commonStyles } from '@theme/index';
 
@@ -55,7 +55,7 @@ export default function AppProvider({ children }: PropsWithChildren) {
                     <AuthProvider>
                       <NavigationProvider>
                         <SafeAreaView>{children}</SafeAreaView>
-                        <GlobalDeleteConfirmation />
+                        <GlobalModal />
                         <GlobalToast />
                       </NavigationProvider>
                     </AuthProvider>

@@ -17,7 +17,7 @@ import type {
   PermissionStatus,
   PermissionResult,
   PermissionsRepository,
-} from '../domain/permissions.model';
+} from '../domain/permissions/permissions.model';
 
 // Map our permission types to react-native-permissions Permission type
 function getPermission(type: PermissionType): Permission | null {

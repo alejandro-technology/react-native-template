@@ -13,7 +13,7 @@ import {
 } from '@components/layout';
 // Modules
 import { useProducts } from '@modules/products/application/product.queries';
-import { useIsConnected } from '@modules/core/application/connectivity.storage';
+import { useIsConnected } from '@modules/network/application/connectivity.storage';
 // Types
 import type { Product } from '../../domain/product.model';
 // Theme

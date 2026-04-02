@@ -1,6 +1,6 @@
 import React from 'react';
 import { render } from '@utils/test-utils';
-import { GlobalToast } from '@modules/core/ui/GlobalToast';
+import { GlobalToast } from '@modules/core/ui/Toast';
 import { useAppStorage } from '@modules/core/application/app.storage';
 import { act } from '@testing-library/react-native';
 

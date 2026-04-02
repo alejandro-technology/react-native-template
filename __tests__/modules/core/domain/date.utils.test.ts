@@ -1,4 +1,4 @@
-import { formatJoinDate } from '../../../../src/modules/core/domain/date.utils';
+import { formatJoinDate } from '../../../../src/modules/core/domain/utils/date.utils';
 
 describe('date.utils', () => {
   describe('formatJoinDate', () => {

@@ -6,7 +6,7 @@ import type { UserFilter } from '../domain/user.repository';
 // Config
 import { QUERY_KEYS } from '@config/query.keys';
 // Core
-import { getIsConnected } from '@modules/core/application/connectivity.storage';
+import { getIsConnected } from '@modules/network/application/connectivity.storage';
 
 export function useUsers(filter?: UserFilter, enabled = true) {
   // Read storage helpers directly to avoid calling hooks when this module is

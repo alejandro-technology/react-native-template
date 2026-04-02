@@ -1,7 +1,7 @@
 import React, { PropsWithChildren, useEffect, useRef } from 'react';
 import { useNetInfo } from '@modules/network';
 import { useAppStorage } from '@modules/core';
-import { useConnectivityStore } from '@modules/core/application/connectivity.storage';
+import { useConnectivityStore } from '@modules/network/application/connectivity.storage';
 
 export default function NetworkProvider({ children }: PropsWithChildren) {
   const { isConnected, isLoading } = useNetInfo();

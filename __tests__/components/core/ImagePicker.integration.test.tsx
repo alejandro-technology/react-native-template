@@ -3,7 +3,7 @@ import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { ImagePicker } from '../../../src/components/core/ImagePicker';
 
 // Mocks
-jest.mock('../../../src/modules/core/application/use-permissions', () => ({
+jest.mock('../../../src/modules/core/application/permissions/use-permissions', () => ({
   usePermission: () => ({
     checkAndRequest: jest.fn(async () => ({
       status: 'granted',

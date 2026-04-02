@@ -2,7 +2,7 @@ import {
   useConnectivityStore,
   getIsConnected,
   useIsConnected,
-} from '@modules/core/application/connectivity.storage';
+} from '@modules/network/application/connectivity.storage';
 import { act, renderHook } from '@testing-library/react-native';
 
 describe('connectivity.storage - Zustand Store', () => {

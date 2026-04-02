@@ -7,7 +7,7 @@ import { useProductsStorage } from './products.storage';
 import productService from '../infrastructure/product.service';
 // Core
 import { useAppStorage } from '@modules/core/application/app.storage';
-import { getIsConnected } from '@modules/core/application/connectivity.storage';
+import { getIsConnected } from '@modules/network/application/connectivity.storage';
 // Config
 import { QUERY_KEYS } from '@config/query.keys';
 

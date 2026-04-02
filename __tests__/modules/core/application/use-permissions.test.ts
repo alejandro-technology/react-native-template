@@ -1,5 +1,5 @@
 import { renderHook, waitFor, act } from '@testing-library/react-native';
-import { usePermission, usePermissions } from '@modules/core/application/use-permissions';
+import { usePermission, usePermissions } from '@modules/core/application/permissions/use-permissions';
 import permissionsService from '@modules/core/infrastructure/permissions.service';
 
 // Mock del servicio de permisos

@@ -9,9 +9,7 @@ import type {
 interface State {
   modal: {
     visible: boolean;
-    entityName: string;
-    entityType: string;
-    onConfirm: (() => Promise<void>) | null;
+    params: ModalOpenParams | null;
     open: (params: ModalOpenParams) => void;
     close: () => void;
   };
@@ -29,9 +27,7 @@ interface State {
 const initialState: State = {
   modal: {
     visible: false,
-    entityName: '',
-    entityType: '',
-    onConfirm: null,
+    params: null,
     open: () => {},
     close: () => {},
   },
@@ -55,19 +51,15 @@ export const useAppStorage = create<State>()(set => ({
         modal: {
           ...state.modal,
           visible: false,
-          entityName: '',
-          entityType: '',
-          onConfirm: null,
+          params: null,
         },
       })),
-    open: ({ entityName, entityType, onConfirm }: ModalOpenParams) =>
+    open: (params: ModalOpenParams) =>
       set(state => ({
         modal: {
           ...state.modal,
           visible: true,
-          entityName,
-          entityType,
-          onConfirm,
+          params,
         },
       })),
   },

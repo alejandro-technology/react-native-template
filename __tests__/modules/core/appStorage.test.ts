@@ -15,15 +15,14 @@ describe('useAppStorage - Zustand Store', () => {
     it('debe iniciar con modal oculto', () => {
       const { modal } = useAppStorage.getState();
       expect(modal.visible).toBe(false);
-      expect(modal.entityName).toBe('');
-      expect(modal.entityType).toBe('');
-      expect(modal.onConfirm).toBeNull();
+      expect(modal.params).toBeNull();
     });
 
-    it('debe abrir modal con los parámetros correctos', () => {
+    it('debe abrir modal delete con los parámetros correctos', () => {
       const onConfirm = jest.fn();
       act(() => {
         useAppStorage.getState().modal.open({
+          type: 'delete',
           entityName: 'Laptop HP',
           entityType: 'producto',
           onConfirm,
@@ -32,15 +31,58 @@ describe('useAppStorage - Zustand Store', () => {
 
       const { modal } = useAppStorage.getState();
       expect(modal.visible).toBe(true);
-      expect(modal.entityName).toBe('Laptop HP');
-      expect(modal.entityType).toBe('producto');
-      expect(modal.onConfirm).toBe(onConfirm);
+      expect(modal.params).not.toBeNull();
+      expect(modal.params?.type).toBe('delete');
+      if (modal.params?.type === 'delete') {
+        expect(modal.params.entityName).toBe('Laptop HP');
+        expect(modal.params.entityType).toBe('producto');
+        expect(modal.params.onConfirm).toBe(onConfirm);
+      }
+    });
+
+    it('debe abrir modal success con los parámetros correctos', () => {
+      act(() => {
+        useAppStorage.getState().modal.open({
+          type: 'success',
+          title: 'Operación exitosa',
+          message: 'El producto fue creado correctamente',
+        });
+      });
+
+      const { modal } = useAppStorage.getState();
+      expect(modal.visible).toBe(true);
+      expect(modal.params?.type).toBe('success');
+      if (modal.params?.type === 'success') {
+        expect(modal.params.title).toBe('Operación exitosa');
+        expect(modal.params.message).toBe(
+          'El producto fue creado correctamente',
+        );
+      }
+    });
+
+    it('debe abrir modal information con los parámetros correctos', () => {
+      act(() => {
+        useAppStorage.getState().modal.open({
+          type: 'information',
+          title: 'Información',
+          message: 'Este campo es requerido',
+        });
+      });
+
+      const { modal } = useAppStorage.getState();
+      expect(modal.visible).toBe(true);
+      expect(modal.params?.type).toBe('information');
+      if (modal.params?.type === 'information') {
+        expect(modal.params.title).toBe('Información');
+        expect(modal.params.message).toBe('Este campo es requerido');
+      }
     });
 
     it('debe cerrar modal y limpiar estado', () => {
       const onConfirm = jest.fn();
       act(() => {
         useAppStorage.getState().modal.open({
+          type: 'delete',
           entityName: 'Test',
           entityType: 'item',
           onConfirm,
@@ -53,9 +95,7 @@ describe('useAppStorage - Zustand Store', () => {
 
       const { modal } = useAppStorage.getState();
       expect(modal.visible).toBe(false);
-      expect(modal.entityName).toBe('');
-      expect(modal.entityType).toBe('');
-      expect(modal.onConfirm).toBeNull();
+      expect(modal.params).toBeNull();
     });
   });
 
@@ -124,7 +164,11 @@ describe('useAppStorage - Zustand Store', () => {
     });
 
     it('debe soportar los tres tipos de toast', () => {
-      const types: Array<'success' | 'error' | 'info'> = ['success', 'error', 'info'];
+      const types: Array<'success' | 'error' | 'info'> = [
+        'success',
+        'error',
+        'info',
+      ];
       types.forEach(type => {
         act(() => {
           useAppStorage.getState().toast.show({ message: 'Test', type });

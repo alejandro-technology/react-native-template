@@ -1,2 +1,2 @@
-export * from './GlobalDeleteConfirmation';
-export * from './GlobalToast';
+export * from './Modal';
+export * from './Toast';
