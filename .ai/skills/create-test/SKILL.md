@@ -240,7 +240,7 @@ jest.mock('@modules/network/infrastructure/axios.service', () => ({
   },
 }));
 
-import axiosService from '@modules/network/infrastructure/axios.service';
+import axiosService from '@modules/network/infrastructure/axios-client.service';
 import { productHttpService } from '@modules/products/infrastructure/product.http.service';
 
 describe('productHttpService', () => {

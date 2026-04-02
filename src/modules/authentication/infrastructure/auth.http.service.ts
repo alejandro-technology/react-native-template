@@ -1,4 +1,4 @@
-import axiosService from '@modules/network/infrastructure/axios.service';
+import axiosService from '@modules/network/infrastructure/axios-client.service';
 import { storage } from '@config/storage';
 import {
   SignInPayload,

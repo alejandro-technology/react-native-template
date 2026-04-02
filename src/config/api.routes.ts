@@ -6,4 +6,6 @@ export const API_ROUTES = {
   USERS: '/users',
   SIGNIN: '/auth/signin',
   SIGNUP: '/auth/signup',
+  AUTH_REFRESH: '/auth/refresh',
+  AUTH_LOGOUT: '/auth/logout',
 };

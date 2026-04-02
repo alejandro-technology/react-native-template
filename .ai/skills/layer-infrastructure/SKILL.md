@@ -51,7 +51,7 @@ export default create{Entity}Service();
 ## Step 2: `{entity}.http.service.ts`
 
 ```typescript
-import axiosService from '@modules/network/infrastructure/axios.service';
+import axiosService from '@modules/network/infrastructure/axios-client.service';
 import { manageAxiosError } from '@modules/network/domain/network.error';
 import { API_ROUTES } from '@config/api.routes';
 import { {Entity}Repository } from '../domain/{entity}.repository';

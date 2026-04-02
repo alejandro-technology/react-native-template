@@ -22,7 +22,7 @@ jest.mock('@modules/network/domain/network.error', () => ({
 }));
 
 import { storage } from '@config/storage';
-import axiosService from '@modules/network/infrastructure/axios.service';
+import axiosService from '@modules/network/infrastructure/axios-client.service';
 import { manageAxiosError } from '@modules/network/domain/network.error';
 import authHttpService from '../../../../src/modules/authentication/infrastructure/auth.http.service';
 

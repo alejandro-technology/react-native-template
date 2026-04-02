@@ -39,7 +39,7 @@ jest.mock('@config/storage', () => ({
 import axios from 'axios';
 import { API_ROUTES } from '@config/api.routes';
 import { storage } from '@config/storage';
-import axiosService from '../../../../src/modules/network/infrastructure/axios.service';
+import axiosService from '../../../../src/modules/network/infrastructure/axios-client.service';
 
 const mockedAxios = axios as any;
 const mockAxiosInstance = mockedAxios.__mockAxiosInstance;

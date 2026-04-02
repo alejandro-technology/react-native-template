@@ -1,4 +1,4 @@
-import axiosService from '@modules/network/infrastructure/axios.service';
+import axiosService from '@modules/network/infrastructure/axios-client.service';
 import { manageAxiosError } from '@modules/network/domain/network.error';
 import { API_ROUTES } from '@config/api.routes';
 import { ProductRepository } from '../domain/product.repository';

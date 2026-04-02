@@ -7,7 +7,7 @@ import React, {
 import authService from '../../infrastructure/auth.service';
 import { useAuthStorage, authSelectors } from '../../application/auth.storage';
 import type { AuthUser, AuthStatus } from '../../domain/auth.model';
-import axiosService from '@modules/network/infrastructure/axios.service';
+import axiosService from '@modules/network/infrastructure/axios-client.service';
 
 /**
  * Contexto de autenticación
