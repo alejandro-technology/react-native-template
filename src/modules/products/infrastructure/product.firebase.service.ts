@@ -18,6 +18,7 @@ interface ProductFirebaseDoc {
   name: string;
   description: string;
   price: number;
+  type: string;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -29,6 +30,7 @@ interface ProductFirebaseEntity extends ProductFirebaseDoc {
 function toProduct(entity: ProductFirebaseEntity): Product {
   return {
     ...entity,
+    type: entity.type as Product['type'],
     createdAt: new Date(entity.createdAt.seconds * 1000),
     updatedAt: new Date(entity.updatedAt.seconds * 1000),
   };

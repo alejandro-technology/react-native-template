@@ -21,6 +21,7 @@ interface UserFirebaseDoc {
   phone: string;
   role: string;
   avatar?: string;
+  termsAccepted: boolean;
   createdAt: Timestamp;
   updatedAt: Timestamp;
 }
@@ -33,6 +34,7 @@ function toUser(entity: UserFirebaseEntity): User {
   return {
     ...entity,
     avatar: entity.avatar ?? undefined,
+    termsAccepted: entity.termsAccepted ?? false,
     createdAt: new Date(entity.createdAt.seconds * 1000),
     updatedAt: new Date(entity.updatedAt.seconds * 1000),
   };
@@ -144,6 +146,7 @@ class UserFirebaseService implements UserRepository {
           email: data.email,
           phone: data.phone,
           role: data.role,
+          termsAccepted: data.termsAccepted,
           createdAt: Timestamp.fromDate(now),
           updatedAt: Timestamp.fromDate(now),
         },
