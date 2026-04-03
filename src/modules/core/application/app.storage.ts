@@ -6,7 +6,7 @@ import type {
   ToastType,
 } from '../domain/app.model';
 
-export type Searchbar = 'users' | 'products' | '';
+export type SearchbarStorage = 'users' | 'products' | '';
 
 interface State {
   modal: {
@@ -25,7 +25,7 @@ interface State {
     hide: () => void;
   };
   searchbar: {
-    [key in Searchbar]: {
+    [key in SearchbarStorage]: {
       searchText: string;
       setSearchText: (text: string) => void;
     };

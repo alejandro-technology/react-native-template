@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { RootLayout } from '@components/layout';
 
@@ -18,7 +18,10 @@ export default function SimpsonsListView() {
     hasNextPage,
   } = useExampleListInfinite({ source: 'simpsons' });
 
-  const items = data?.pages.flatMap(page => page.items);
+  const items = useMemo(
+    () => data?.pages.flatMap(page => page.items) ?? [],
+    [data?.pages],
+  );
 
   return (
     <RootLayout scroll={false} toolbar={false}>

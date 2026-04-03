@@ -39,12 +39,29 @@ export function ProductDetail({ productId }: ProductDetailProps) {
     );
   }
 
+  if (!product) {
+    return <ProductDetailEmpty onBack={goBack} />;
+  }
+
   function handleEdit() {
     product && navigate(ProductsRoutes.ProductForm, { product });
   }
 
-  if (!product) {
-    return <ProductDetailEmpty onBack={goBack} />;
+  function handleDelete() {
+    if (product?.name) {
+      open({
+        type: 'delete',
+        entityName: product.name,
+        entityType: 'producto',
+        onConfirm: onDeleteConfirm,
+      });
+    }
+  }
+
+  async function onDeleteConfirm() {
+    await deleteProductAsync(productId);
+    close();
+    goBack();
   }
 
   return (
@@ -58,7 +75,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
 
         <Text variant="h3">${product.price.toFixed(2)}</Text>
 
-        <Text variant="caption" color="muted">
+        <Text variant="caption" color="textSecondary">
           Tipo: {product.type}
         </Text>
       </Card>
@@ -77,22 +94,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         <Button variant="secondary" onPress={handleEdit} style={styles.button}>
           Editar Producto
         </Button>
-        <Button
-          variant="primary"
-          style={styles.button}
-          onPress={() =>
-            open({
-              type: 'delete',
-              entityName: product.name,
-              entityType: 'producto',
-              onConfirm: async () => {
-                await deleteProductAsync(productId);
-                close();
-                goBack();
-              },
-            })
-          }
-        >
+        <Button variant="primary" style={styles.button} onPress={handleDelete}>
           Eliminar Producto
         </Button>
       </View>

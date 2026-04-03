@@ -17,7 +17,6 @@ export default function AuthenticationNavigator() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
-        animationDuration: 2500,
       }}
     >
       <Stack.Screen name={AuthenticationRoutes.SignIn} component={SignInView} />

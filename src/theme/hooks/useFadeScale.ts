@@ -23,7 +23,7 @@ export function useFadeScale(config?: FadeScaleConfig) {
   const scale = useRef(new Animated.Value(initialScale)).current;
 
   useEffect(() => {
-    Animated.parallel([
+    const animation = Animated.parallel([
       Animated.timing(opacity, {
         toValue: 1,
         duration,
@@ -36,7 +36,12 @@ export function useFadeScale(config?: FadeScaleConfig) {
         tension: springConfig.tension,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]);
+    animation.start();
+
+    return () => {
+      animation.stop();
+    };
   }, [opacity, scale, duration, springConfig.friction, springConfig.tension]);
 
   return { opacity, scale };

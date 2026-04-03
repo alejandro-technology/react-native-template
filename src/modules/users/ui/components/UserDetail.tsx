@@ -24,10 +24,6 @@ export function UserDetail({ userId }: UserDetailProps) {
   const { mutateAsync: deleteUserAsync } = useUserDelete();
   const { open, close } = useAppStorage(state => state.modal);
 
-  function handleEdit() {
-    user && navigate(UsersRoutes.UserForm, { user });
-  }
-
   if (isLoading) {
     return <LoadingState message="Cargando usuario..." />;
   }
@@ -47,6 +43,26 @@ export function UserDetail({ userId }: UserDetailProps) {
     return <UserDetailEmpty onBack={goBack} />;
   }
 
+  function handleEdit() {
+    user && navigate(UsersRoutes.UserForm, { user });
+  }
+
+  function handleDelete() {
+    if (user?.name) {
+      open({
+        type: 'delete',
+        entityName: user.name,
+        entityType: 'usuario',
+        onConfirm: onDeleteConfirm,
+      });
+    }
+  }
+
+  async function onDeleteConfirm() {
+    await deleteUserAsync(userId);
+    close();
+    goBack();
+  }
   return (
     <View style={styles.content}>
       <Card style={styles.card}>
@@ -99,22 +115,7 @@ export function UserDetail({ userId }: UserDetailProps) {
         <Button variant="secondary" onPress={handleEdit} style={styles.button}>
           Editar Usuario
         </Button>
-        <Button
-          variant="primary"
-          style={styles.button}
-          onPress={() =>
-            open({
-              type: 'delete',
-              entityName: user.name,
-              entityType: 'usuario',
-              onConfirm: async () => {
-                await deleteUserAsync(userId);
-                close();
-                goBack();
-              },
-            })
-          }
-        >
+        <Button variant="primary" style={styles.button} onPress={handleDelete}>
           Eliminar Usuario
         </Button>
       </View>

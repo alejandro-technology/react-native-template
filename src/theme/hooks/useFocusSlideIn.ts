@@ -26,7 +26,7 @@ export function useFocusSlideIn({
       opacity.setValue(0);
       translateX.setValue(startOffset);
 
-      Animated.parallel([
+      const animation = Animated.parallel([
         Animated.timing(opacity, {
           toValue: 1,
           duration,
@@ -39,7 +39,12 @@ export function useFocusSlideIn({
           delay,
           useNativeDriver: true,
         }),
-      ]).start();
+      ]);
+      animation.start();
+
+      return () => {
+        animation.stop();
+      };
     }, [opacity, translateX, duration, delay, startOffset]),
   );
 

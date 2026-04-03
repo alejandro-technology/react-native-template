@@ -22,7 +22,7 @@ export function useFocusFadeIn({
       opacity.setValue(0);
       translateY.setValue(offset);
 
-      Animated.parallel([
+      const animation = Animated.parallel([
         Animated.timing(opacity, {
           toValue: 1,
           duration,
@@ -35,7 +35,12 @@ export function useFocusFadeIn({
           delay,
           useNativeDriver: true,
         }),
-      ]).start();
+      ]);
+      animation.start();
+
+      return () => {
+        animation.stop();
+      };
     }, [opacity, translateY, duration, delay, offset]),
   );
 

@@ -62,6 +62,7 @@ export function RootLayout({
       <View style={styles.wrapper}>
         <Animated.ScrollView
           keyboardShouldPersistTaps="handled"
+          contentInsetAdjustmentBehavior="automatic"
           style={contentStyle}
         >
           {toolbar && (

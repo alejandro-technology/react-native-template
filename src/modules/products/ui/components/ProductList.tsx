@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { RefreshControl, StyleSheet } from 'react-native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { Icon } from '@components/core';
@@ -40,6 +40,11 @@ export function ProductList() {
   } = useProducts({ searchText: debouncedSearch });
   const isConnected = useIsConnected();
 
+  const headerComponent = useMemo(
+    () => (!isConnected ? <OfflineBanner /> : null),
+    [isConnected],
+  );
+
   if (isLoading) {
     return <LoadingState message="Cargando productos..." />;
   }
@@ -76,7 +81,7 @@ export function ProductList() {
       refreshControl={
         <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
-      ListHeaderComponent={!isConnected ? <OfflineBanner /> : <></>}
+      ListHeaderComponent={headerComponent}
     />
   );
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { StyleSheet, View } from 'react-native';
 // Components
 import {
@@ -12,13 +12,44 @@ import {
 // Theme
 import { useTheme, spacing } from '@theme/index';
 import { useAppStorage } from '@modules/core';
-import { Searchbar } from '@modules/core/application/app.storage';
+import { SearchbarStorage } from '@modules/core/application/app.storage';
+
+interface SearchBarProps {
+  searchbar: SearchbarStorage;
+  onPressFilter?: () => void;
+}
+
+function SearchBar({ searchbar = '', onPressFilter }: SearchBarProps) {
+  const { searchText, setSearchText } = useAppStorage(
+    state => state.searchbar[searchbar] || {},
+  );
+
+  return (
+    <View style={styles.searchbar}>
+      <TextInput
+        value={searchText}
+        onChangeText={setSearchText}
+        placeholder="Buscar usuarios..."
+        containerStyle={styles.searchInput}
+      />
+      {onPressFilter && (
+        <Button
+          onPress={onPressFilter}
+          style={styles.filter}
+          variant="outlined"
+        >
+          <Icon name="filter" size={spacing.base} />
+        </Button>
+      )}
+    </View>
+  );
+}
 
 interface HeaderProps {
   title: string;
   onPress?: () => void;
   pressIcon?: IconName;
-  searchbar?: Searchbar;
+  searchbar?: SearchbarStorage;
   onPressFilter?: () => void;
 }
 
@@ -28,17 +59,17 @@ export function Header(props: HeaderProps) {
   const {
     colors: { surface, border },
   } = useTheme();
-  const { searchText, setSearchText } = useAppStorage(
-    state => state.searchbar[searchbar] || {},
+
+  const dynamicStyles = useMemo(
+    () => [
+      styles.root,
+      { backgroundColor: surface, borderBottomColor: border },
+    ],
+    [surface, border],
   );
 
   return (
-    <View
-      style={[
-        styles.root,
-        { backgroundColor: surface, borderBottomColor: border },
-      ]}
-    >
+    <View style={dynamicStyles}>
       <View style={styles.header}>
         <Text variant="h1">{title}</Text>
         {onPress && (
@@ -48,23 +79,7 @@ export function Header(props: HeaderProps) {
         )}
       </View>
 
-      <View style={styles.searchbar}>
-        <TextInput
-          value={searchText}
-          onChangeText={setSearchText}
-          placeholder="Buscar usuarios..."
-          containerStyle={styles.searchInput}
-        />
-        {onPressFilter && (
-          <Button
-            onPress={onPressFilter}
-            style={styles.filter}
-            variant="outlined"
-          >
-            <Icon name="filter" size={spacing.base} />
-          </Button>
-        )}
-      </View>
+      <SearchBar searchbar={searchbar} onPressFilter={onPressFilter} />
     </View>
   );
 }

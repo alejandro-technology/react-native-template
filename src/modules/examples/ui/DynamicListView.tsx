@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { RootLayout } from '@components/layout';
 
@@ -31,7 +31,10 @@ export default function DynamicListView() {
     hasNextPage,
   } = useExampleListInfinite({ source: selectedSource, filters: queryFilters });
 
-  const items = data?.pages.flatMap(page => page.items);
+  const items = useMemo(
+    () => data?.pages.flatMap(page => page.items) ?? [],
+    [data?.pages],
+  );
 
   return (
     <RootLayout scroll={false} toolbar={false}>

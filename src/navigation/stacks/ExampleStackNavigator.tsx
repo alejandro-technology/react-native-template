@@ -29,7 +29,6 @@ export default function ExamplesNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerShown: false,
-        animationDuration: 2000,
         animation: 'slide_from_right',
       }}
     >

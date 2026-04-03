@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { RootLayout } from '@components/layout';
 
@@ -24,7 +24,10 @@ export default function RickAndMortyListView() {
     hasNextPage,
   } = useExampleListInfinite({ source: 'rickAndMorty', filters: queryFilters });
 
-  const items = data?.pages.flatMap(page => page.items);
+  const items = useMemo(
+    () => data?.pages.flatMap(page => page.items) ?? [],
+    [data?.pages],
+  );
   const capabilities = getExampleSourceDefinition('rickAndMorty')?.capabilities;
 
   return (

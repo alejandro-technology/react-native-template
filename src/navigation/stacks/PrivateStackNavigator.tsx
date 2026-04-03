@@ -15,7 +15,6 @@ export default function PrivateNavigator() {
       screenOptions={{
         headerShown: false,
         animation: 'slide_from_right',
-        animationDuration: 2500,
       }}
     >
       <Stack.Screen name={PrivateRoutes.Example} component={AuthExampleView} />
