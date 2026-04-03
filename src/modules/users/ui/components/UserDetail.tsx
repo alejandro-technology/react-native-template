@@ -74,6 +74,15 @@ export function UserDetail({ userId }: UserDetailProps) {
           <Text variant="caption">Rol:</Text>
           <Text variant="body">{user.role}</Text>
         </View>
+
+        {user.birthDate && (
+          <View style={styles.infoRow}>
+            <Text variant="caption">Fecha de nacimiento:</Text>
+            <Text variant="body">
+              {new Date(user.birthDate).toLocaleDateString()}
+            </Text>
+          </View>
+        )}
       </Card>
 
       <Card style={styles.card}>

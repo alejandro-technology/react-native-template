@@ -12,6 +12,8 @@ import {
 } from '@components/layout';
 // Hooks
 import { useUsers } from '@modules/users/application/user.queries';
+import { useDebounce } from '@modules/core/application/core.hooks';
+import { useAppStorage } from '@modules/core/application/app.storage';
 // Types
 import type { User } from '../../domain/user.model';
 // Theme
@@ -21,12 +23,16 @@ const renderUserItem: ListRenderItem<User> = ({ item, index }) => (
   <UserItem user={item} index={index} />
 );
 
-interface UserListProps {
-  searchText: string;
-}
-
-export function UserList({ searchText }: UserListProps) {
-  const { data: users, isLoading, isError, error } = useUsers({ searchText });
+export function UserList() {
+  const searchbar = useAppStorage(state => state.searchbar);
+  const { searchText } = searchbar.users || {};
+  const debouncedSearch = useDebounce(searchText, 500);
+  const {
+    data: users,
+    isLoading,
+    isError,
+    error,
+  } = useUsers({ searchText: debouncedSearch });
 
   if (isLoading) {
     return <LoadingState message="Cargando usuarios..." />;

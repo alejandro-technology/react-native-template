@@ -5,10 +5,17 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // Components
 import { spacing } from '@theme/index';
 import { Button } from '@components/core';
-import { TextInput } from '@components/form';
+import type { SelectOption } from '@components/core/Select';
+import { TextInput, Select } from '@components/form';
 // Domain
 import type { Product } from '../../domain/product.model';
 import { productSchema, ProductFormData } from '../../domain/product.scheme';
+
+const PRODUCT_TYPE_OPTIONS: SelectOption[] = [
+  { label: 'Comida', value: 'comida' },
+  { label: 'Bebidas', value: 'bebidas' },
+  { label: 'Otros', value: 'otros' },
+];
 
 interface ProductFormProps {
   onSubmit: (data: ProductFormData) => void;
@@ -31,6 +38,10 @@ export function ProductForm({
       name: initialData?.name || '',
       description: initialData?.description || '',
       price: initialData?.price || 0,
+      type: initialData
+        ? PRODUCT_TYPE_OPTIONS.find(o => o.value === initialData.type) ??
+          undefined
+        : undefined,
     },
   });
 
@@ -61,6 +72,15 @@ export function ProductForm({
         placeholder="0.00"
         keyboardType="decimal-pad"
         error={errors.price?.message}
+      />
+
+      <Select
+        control={control}
+        name="type"
+        label="Tipo"
+        placeholder="Selecciona un tipo"
+        options={PRODUCT_TYPE_OPTIONS}
+        error={errors.type?.message}
       />
 
       <Button

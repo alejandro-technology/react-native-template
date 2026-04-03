@@ -37,6 +37,10 @@ import CameraIcon from '../../assets/svg/icons/camera.svg';
 import CloseIcon from '../../assets/svg/icons/close.svg';
 import ImageIcon from '../../assets/svg/icons/image.svg';
 import FilterIcon from '../../assets/svg/icons/filter.svg';
+import PlusIcon from '../../assets/svg/icons/plus.svg';
+import SaveIcon from '../../assets/svg/icons/save.svg';
+import HelpIcon from '../../assets/svg/icons/help.svg';
+import MenuIcon from '../../assets/svg/icons/menu.svg';
 import { ColorVariant, useTheme } from '@theme/index';
 import { getIconStyle } from '@theme/components/Icon.styles';
 
@@ -77,7 +81,11 @@ export type IconName =
   | 'camera'
   | 'close'
   | 'image'
-  | 'filter';
+  | 'filter'
+  | 'plus'
+  | 'save'
+  | 'help'
+  | 'menu';
 
 interface IconProps {
   name: IconName;
@@ -124,6 +132,10 @@ const ICON_COMPONENTS: Record<IconName, React.ComponentType<SvgProps>> = {
   close: CloseIcon,
   image: ImageIcon,
   filter: FilterIcon,
+  plus: PlusIcon,
+  save: SaveIcon,
+  help: HelpIcon,
+  menu: MenuIcon,
 };
 
 export function Icon({ name, size = 20, color, strokeWidth = 1.8 }: IconProps) {

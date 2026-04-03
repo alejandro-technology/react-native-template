@@ -1,18 +1,11 @@
-import { useState } from 'react';
 // Componentes
 import { UserList } from './components/UserList';
-// Hooks
-import { useDebounce } from '@modules/core/application/core.hooks';
-// Routes
+import { Header, RootLayout } from '@components/layout';
+// Navigation
 import { UsersRoutes } from '@navigation/routes';
 import { useNavigationUsers } from '@navigation/hooks';
-// Theme
-import { Header, RootLayout } from '@components/layout';
 
 export function UsersListView() {
-  const [searchText, setSearchText] = useState('');
-  const debouncedSearch = useDebounce(searchText, 500);
-
   const { navigate } = useNavigationUsers();
   const onAddUser = () => navigate(UsersRoutes.UserForm);
 
@@ -21,11 +14,10 @@ export function UsersListView() {
       <Header
         title="Usuarios"
         onPress={onAddUser}
-        searchText={searchText}
-        setSearchText={setSearchText}
+        pressIcon="plus"
+        searchbar="users"
       />
-
-      <UserList searchText={debouncedSearch} />
+      <UserList />
     </RootLayout>
   );
 }

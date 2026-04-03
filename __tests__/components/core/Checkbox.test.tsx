@@ -9,13 +9,13 @@ describe('Checkbox Component', () => {
   });
 
   it('debe mostrar el check cuando está marcado', () => {
-    const { getByText } = render(<Checkbox checked={true} />);
-    expect(getByText('✓')).toBeTruthy();
+    const { getByTestId } = render(<Checkbox checked={true} />);
+    expect(getByTestId('checkbox-check')).toBeTruthy();
   });
 
   it('no debe mostrar el check cuando no está marcado', () => {
-    const { queryByText } = render(<Checkbox checked={false} />);
-    expect(queryByText('✓')).toBeNull();
+    const { queryByTestId } = render(<Checkbox checked={false} />);
+    expect(queryByTestId('checkbox-check')).toBeNull();
   });
 
   it('debe ejecutar onChange al presionar', () => {

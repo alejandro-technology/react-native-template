@@ -11,6 +11,7 @@ import { useTheme } from '@theme/index';
 // Components
 import { Text } from './Text';
 import { AnimatedPressable } from './AnimatedPressable';
+import { Icon } from './Icon';
 
 interface CheckboxProps extends Omit<PressableProps, 'style'> {
   checked?: boolean;
@@ -72,7 +73,11 @@ export function Checkbox(props: CheckboxProps) {
       {...pressableProps}
     >
       <View style={styles.box}>
-        {checked && <Text style={styles.checkmark}>✓</Text>}
+        {checked && (
+          <View testID="checkbox-check">
+            <Icon name="check" />
+          </View>
+        )}
       </View>
 
       {label && (

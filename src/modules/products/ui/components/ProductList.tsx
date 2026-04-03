@@ -12,6 +12,8 @@ import {
   OfflineBanner,
 } from '@components/layout';
 // Modules
+import { useAppStorage } from '@modules/core';
+import { useDebounce } from '@modules/core/application/core.hooks';
 import { useProducts } from '@modules/products/application/product.queries';
 import { useIsConnected } from '@modules/network/application/connectivity.storage';
 // Types
@@ -23,11 +25,11 @@ const renderProductItem: ListRenderItem<Product> = ({ item, index }) => (
   <ProductItem product={item} index={index} />
 );
 
-interface ProductListProps {
-  searchText: string;
-}
+export function ProductList() {
+  const searchbar = useAppStorage(state => state.searchbar);
+  const { searchText } = searchbar.products || {};
+  const debouncedSearch = useDebounce(searchText, 500);
 
-export function ProductList({ searchText }: ProductListProps) {
   const {
     data: products,
     isLoading,
@@ -35,7 +37,7 @@ export function ProductList({ searchText }: ProductListProps) {
     isError,
     error,
     refetch,
-  } = useProducts({ searchText });
+  } = useProducts({ searchText: debouncedSearch });
   const isConnected = useIsConnected();
 
   if (isLoading) {

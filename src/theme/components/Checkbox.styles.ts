@@ -22,21 +22,18 @@ function getSizeStyles(size: CheckboxSize) {
     case 'sm':
       return {
         boxSize: hScale(16),
-        checkmarkSize: typography.bodySmall?.fontSize ?? 10,
         padding: spacing.xs,
         labelSize: typography.bodySmall?.fontSize ?? 12,
       };
     case 'md':
       return {
         boxSize: hScale(20),
-        checkmarkSize: typography.body?.fontSize ?? 14,
         padding: spacing.sm,
         labelSize: typography.body?.fontSize ?? 14,
       };
     case 'lg':
       return {
         boxSize: hScale(24),
-        checkmarkSize: 18,
         padding: spacing.md,
         labelSize: 16,
       };
@@ -51,7 +48,6 @@ function getVariantStyles(
 ): {
   container: ViewStyle;
   box: ViewStyle;
-  checkmark: TextStyle;
   label: TextStyle;
 } {
   const opacity = disabled ? 0.5 : 1;
@@ -71,9 +67,6 @@ function getVariantStyles(
       opacity,
     },
     box: boxBase,
-    checkmark: {
-      color: themeColors.background, // Checkmark usually white or background color
-    },
     label: {
       color: variant === 'error' ? themeColors.error : themeColors.text,
     },
@@ -111,12 +104,6 @@ export function getCheckboxStyle({
       justifyContent: 'center' as const,
       marginRight: spacing.sm,
       ...variantStyles.box,
-    },
-    checkmark: {
-      fontSize: sizeConfig.checkmarkSize,
-      fontWeight: 'bold' as const,
-      textAlign: 'center' as const,
-      ...variantStyles.checkmark,
     },
     label: {
       fontSize: sizeConfig.labelSize,

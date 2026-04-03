@@ -1,5 +1,6 @@
 import * as yup from 'yup';
 import type { InferType } from 'yup';
+import type { SelectOption } from '@components/core/Select';
 
 export const productSchema = yup.object({
   name: yup
@@ -18,6 +19,7 @@ export const productSchema = yup.object({
     .typeError('El precio debe ser mayor a 0')
     .min(1, 'El precio debe ser mayor a 0')
     .required('El precio debe ser mayor a 0'),
+  type: yup.mixed<SelectOption>().required('El tipo es requerido'),
 });
 
 export type ProductFormData = InferType<typeof productSchema>;

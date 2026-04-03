@@ -6,6 +6,8 @@ import type {
   ToastType,
 } from '../domain/app.model';
 
+export type Searchbar = 'users' | 'products' | '';
+
 interface State {
   modal: {
     visible: boolean;
@@ -21,6 +23,12 @@ interface State {
     position: ToastPosition;
     show: (params: ToastShowParams) => void;
     hide: () => void;
+  };
+  searchbar: {
+    [key in Searchbar]: {
+      searchText: string;
+      setSearchText: (text: string) => void;
+    };
   };
 }
 
@@ -39,6 +47,20 @@ const initialState: State = {
     position: 'bottom',
     show: () => {},
     hide: () => {},
+  },
+  searchbar: {
+    '': {
+      searchText: '',
+      setSearchText: () => {},
+    },
+    users: {
+      searchText: '',
+      setSearchText: () => {},
+    },
+    products: {
+      searchText: '',
+      setSearchText: () => {},
+    },
   },
 };
 

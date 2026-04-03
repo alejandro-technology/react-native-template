@@ -12,3 +12,8 @@ export { Badge } from './Badge';
 export { Toast } from './Toast';
 export * from './Icon';
 export { ImagePicker } from './ImagePicker';
+export { FloatingActionButton } from './FloatingActionButton';
+export type {
+  FABSize,
+  FABPosition,
+} from '@theme/components/FloatingActionButton.styles';

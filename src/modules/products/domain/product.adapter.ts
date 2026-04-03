@@ -1,4 +1,4 @@
-import { CreateProductPayload } from './product.model';
+import { CreateProductPayload, ProductType } from './product.model';
 import type { ProductFormData } from './product.scheme';
 
 export function productFormToPayloadAdapter(
@@ -8,5 +8,6 @@ export function productFormToPayloadAdapter(
     name: form.name,
     description: form.description,
     price: form.price,
+    type: form.type.value as ProductType,
   };
 }

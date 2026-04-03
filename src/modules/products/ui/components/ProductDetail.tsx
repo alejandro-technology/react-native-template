@@ -57,6 +57,10 @@ export function ProductDetail({ productId }: ProductDetailProps) {
         )}
 
         <Text variant="h3">${product.price.toFixed(2)}</Text>
+
+        <Text variant="caption" color="muted">
+          Tipo: {product.type}
+        </Text>
       </Card>
 
       <Card style={styles.card}>

@@ -34,6 +34,9 @@ export const ProductItem = React.memo(function ProductItem({
         <Text variant="caption" color="primary">
           ${product.price.toFixed(2)}
         </Text>
+        <Text variant="caption" color="muted">
+          {product.type}
+        </Text>
       </View>
     </Card>
   );

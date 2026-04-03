@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 // Components
 import { spacing } from '@theme/index';
 import { Button } from '@components/core';
-import { TextInput, ImagePicker } from '@components/form';
+import { TextInput, ImagePicker, DatePicker, Checkbox } from '@components/form';
 // Domain
 import type { User } from '../../domain/user.model';
 import { userSchema, UserFormData } from '../../domain/user.scheme';
@@ -33,6 +33,8 @@ export function UserForm({
       phone: initialData?.phone || '',
       role: initialData?.role || '',
       avatar: initialData?.avatar ?? null,
+      birthDate: initialData?.birthDate ?? undefined,
+      termsAccepted: false,
     },
   });
 
@@ -80,6 +82,20 @@ export function UserForm({
         label="Rol"
         placeholder="Ej: Administrador, Usuario, etc."
         error={errors.role?.message}
+      />
+
+      <DatePicker
+        control={control}
+        name="birthDate"
+        label="Fecha de nacimiento"
+        placeholder="Selecciona una fecha"
+      />
+
+      <Checkbox
+        control={control}
+        name="termsAccepted"
+        label="Acepto los términos y condiciones"
+        error={errors.termsAccepted?.message}
       />
 
       <Button

@@ -5,6 +5,8 @@ export interface User {
   phone: string;
   role: string;
   avatar?: string;
+  birthDate?: Date;
+  termsAccepted: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +17,8 @@ export interface CreateUserPayload {
   phone: string;
   role: string;
   avatar?: string;
+  birthDate?: Date;
+  termsAccepted: boolean;
 }
 
 export interface UpdateUserPayload {
@@ -24,6 +28,7 @@ export interface UpdateUserPayload {
   role?: string;
   // null = remove avatar, undefined = don't change, string = set avatar
   avatar?: string | null;
+  birthDate?: Date;
 }
 
 export interface UserFilter {
