@@ -129,7 +129,7 @@ export function sanitize{Entity}Filters(
 
 ## Step 3 — Application: Zustand Storage
 
-Persist filter state per entity (or per source) with MMKV.
+Persist filter state per entity (or per source) with MMKV. Shared UI search state (e.g. for cross-screen search persistence) should live in `@modules/core/application/app.storage.ts`.
 
 **`src/modules/{module}/application/{entities}.storage.ts`**
 

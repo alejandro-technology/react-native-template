@@ -32,7 +32,7 @@ If a change knows about a specific entity, screen, or feature use case, it proba
 
 ## Current Structure
 
-- `infrastructure/axios.service.ts`: shared axios instance, auth header injection, refresh queue, and auth-expired callback
+- `infrastructure/axios-client.service.ts`: shared axios instance, auth header injection, refresh queue, and auth-expired callback
 - `infrastructure/netinfo.service.ts`: adapter over `@react-native-community/netinfo`
 - `application/connectivity.storage.ts`: connectivity source for non-React code
 - `application/use-netinfo.ts`: React hooks for connectivity state
@@ -47,7 +47,7 @@ If a change knows about a specific entity, screen, or feature use case, it proba
 
 ## Working Rules
 
-1. Keep `axios.service.ts` low-level and generic. Do not add feature URLs, toast calls, or business rules.
+1. Keep `axios-client.service.ts` low-level and generic. Do not add feature URLs, toast calls, or business rules.
 2. Extend `manageAxiosError` and `AXIOS_MESSAGES` centrally instead of scattering Axios parsing across features.
 3. Preserve the callback-based decoupling for auth expiration; do not import auth module internals here.
 4. Use `getIsConnected()` for non-React consumers and hooks or store subscriptions for React consumers.
@@ -65,7 +65,7 @@ If a change knows about a specific entity, screen, or feature use case, it proba
 
 ### Change token refresh behavior
 
-1. Keep the refresh flow inside `infrastructure/axios.service.ts`.
+1. Keep the refresh flow inside `infrastructure/axios-client.service.ts`.
 2. Preserve queue behavior for concurrent 401 requests.
 3. Keep auth expiration decoupled through `setAuthExpiredCallback()`.
 4. Avoid coupling refresh logic to feature hooks, screens, or providers.

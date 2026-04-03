@@ -24,7 +24,7 @@ Handle this task in `src/modules/core/`: $ARGUMENTS
 
 `core` exists for app-wide capabilities that many features can depend on safely:
 
-- global transient UX state like modal and toast orchestration
+- global transient UX state like modal, toast, and searchbar orchestration
 - shared React hooks with no feature ownership
 - pure utility helpers reused across modules
 - permission contracts and permission access helpers
@@ -33,10 +33,10 @@ If the change introduces product-specific copy, entity semantics, API knowledge,
 
 ## Current Structure
 
-- `application/app.storage.ts`: global modal and toast Zustand state
+- `application/app.storage.ts`: global modal, toast, and searchbar Zustand state
 - `application/core.hooks.ts`: shared React hooks like `useDebounce`
 - `application/permissions/use-permissions.ts`: React permission hooks
-- `domain/app.model.ts`: modal and toast contracts
+- `domain/app.model.ts`: modal, toast, and searchbar contracts
 - `domain/utils/*`: pure format, date, and currency helpers
 - `infrastructure/permissions.service.ts`: platform permission mapping and service implementation
 - `ui/Modal.tsx` and `ui/Toast.tsx`: thin global wrappers
@@ -50,7 +50,7 @@ If the change introduces product-specific copy, entity semantics, API knowledge,
 
 ## Working Rules
 
-1. Model new modal or toast contracts in `domain/app.model.ts` first.
+1. Model new modal, toast, or searchbar contracts in `domain/app.model.ts` first.
 2. Keep `useAppStorage` focused on app-wide ephemeral UX state. Do not move feature state here.
 3. Keep utilities in `domain/utils` pure and framework-free.
 4. Permission changes must preserve the layered split:

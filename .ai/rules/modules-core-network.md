@@ -12,7 +12,7 @@
 
 ## Core Module
 
-- `application/app.storage.ts` is the app-wide transient UI store for `modal` and `toast`. Keep it focused on global UX orchestration, not feature state or persisted data.
+- `application/app.storage.ts` is the app-wide transient UI store for `modal`, `toast`, and `searchbar`. Keep it focused on global UX orchestration, not feature state or persisted data.
 - `ui/Modal.tsx` and `ui/Toast.tsx` are thin adapters over `useAppStorage`. New modal/toast variants should be modeled first in `domain/app.model.ts`, then wired through the store and global wrapper.
 - `domain/utils/*` are pure shared utilities. Keep them framework-free and reusable.
 - Permissions follow `domain -> infrastructure -> application`: define types and contracts in `domain/permissions`, platform mapping in `infrastructure/permissions.service.ts`, and React hooks in `application/permissions/use-permissions.ts`.
@@ -20,11 +20,11 @@
 
 ## Network Module
 
-- `infrastructure/axios.service.ts` is the shared low-level HTTP client. Keep it focused on transport concerns, auth headers, refresh flow, and retry queueing; feature-specific API calls stay in feature infrastructure services.
+- `infrastructure/axios-client.service.ts` is the shared low-level HTTP client (using Axios interceptors for auth refresh). Keep it focused on transport concerns, auth headers, refresh flow, and retry queueing; feature-specific API calls stay in feature infrastructure services.
 - `domain/network.error.ts` and `domain/network.messages.ts` are the single place for shared Axios error translation. Add new mappings there instead of duplicating Axios parsing in feature modules.
 - Connectivity is split intentionally: `application/connectivity.storage.ts` is the source of truth for non-React consumers via `getIsConnected()`, and hooks/services subscribe for React usage.
 - `application/use-netinfo.ts` should expose safe fallback values when connectivity cannot be read.
-- Keep the auth-expired integration decoupled through the callback in `axios.service.ts`; do not import auth module internals into `network`.
+- Keep the auth-expired integration decoupled through the callback in `axios-client.service.ts`; do not import auth module internals into `network`.
 
 ## Verification
 
