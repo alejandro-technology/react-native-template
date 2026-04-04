@@ -26,7 +26,18 @@ Perfect for:
 
 ## 🎥 Demo
 
-> Screenshots / GIFs coming soon
+<p align="center">
+  <!-- Fila de imágenes -->
+  <img src="./assets/rnkit_preview_android.png" width="45%" />
+  <img src="./assets/rnkit_preview_ios.png" width="45%" />
+</p>
+
+<p align="center">
+  <!-- "Video" (thumbnail clickeable) -->
+  <a href="./assets/rnkit_review.mp4">
+    <video src="./assets/rnkit_review.mp4" controls width="92%"></video>
+  </a>
+</p>
 
 ## ✨ Features
 
