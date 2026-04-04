@@ -25,18 +25,8 @@ Perfect for:
 ---
 
 ## 🎥 Demo
-
 <p align="center">
-  <!-- Fila de imágenes -->
-  <img src="./assets/rnkit_preview_android.png" width="45%" />
-  <img src="./assets/rnkit_preview_ios.png" width="45%" />
-</p>
-
-<p align="center">
-  <!-- "Video" (thumbnail clickeable) -->
-  <a href="./assets/rnkit_review.mp4">
-    <video src="./assets/rnkit_review.mp4" controls width="92%"></video>
-  </a>
+  <img src="./assets/rnkit_review.gif" width="45%" />
 </p>
 
 ## ✨ Features
@@ -173,6 +163,11 @@ Each module (e.g., `src/modules/products/`) is divided into:
 - **Products:** A full CRUD example demonstrating the 4-layer architecture with listing, details, and creation forms.
 - **Users:** A module for user profile management.
 - **Examples:** A gallery of UI components to visualize the design system.
+
+<p align="center">
+  <img src="./assets/rnkit_preview_android.png" width="45%" />
+  <img src="./assets/rnkit_preview_ios.png" width="45%" />
+</p>
 
 # 🤝 Contributing
 
