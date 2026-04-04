@@ -1044,7 +1044,7 @@ import { RootLayout } from '@components/layout';
 
 ### Header
 
-List screen header with title, "Agregar" button, and search input.
+List screen header with title, action icon, and integrated app searchbar state.
 
 ```typescript
 import { Header } from '@components/layout';
@@ -1052,8 +1052,8 @@ import { Header } from '@components/layout';
 <Header
   title="Productos"
   onPress={() => navigate(ProductsRoutes.ProductForm)}
-  searchText={searchText}
-  setSearchText={setSearchText}
+  pressIcon="plus"
+  searchbar="products"
 />;
 ```
 
@@ -1061,9 +1061,10 @@ import { Header } from '@components/layout';
 | Prop | Type | Description |
 |---|---|---|
 | `title` | `string` | Screen title (`h1` variant) |
-| `onPress` | `() => void` | "Agregar" button handler |
-| `searchText` | `string` | Controlled search input value |
-| `setSearchText` | `(text: string) => void` | Search input handler |
+| `onPress` | `() => void` | Header action handler |
+| `pressIcon` | `IconName` | Optional action icon (`'menu'` by default) |
+| `searchbar` | `SearchbarStorage` | Search storage key (`'products'`, `'users'`, etc.) |
+| `onPressFilter` | `() => void` | Optional filter action handler |
 
 ---
 
@@ -1322,53 +1323,25 @@ No props.
 
 ## STANDARD LIST SCREEN PATTERN
 
-Complete pattern combining layout components with FlashList:
+Complete pattern combining layout components with FlashList (FAB navigation variant):
 
 ```typescript
-import React, { useState } from 'react';
-import { FlashList } from '@shopify/flash-list';
-import {
-  RootLayout,
-  Header,
-  LoadingState,
-  ErrorState,
-  EmptyState,
-  ItemSeparatorComponent,
-} from '@components/layout';
-import { useDebounce } from '@utils/debounce';
+import React from 'react';
+import { RootLayout, Header } from '@components/layout';
+import { ProductList } from '@modules/products/ui/components/ProductList';
 
 export function ProductsListView() {
-  const [searchText, setSearchText] = useState('');
-  const debouncedSearch = useDebounce(searchText, 500);
   const { navigate } = useNavigationProducts();
-  const { data, isLoading, isError, error } = useProducts({
-    searchText: debouncedSearch,
-  });
+  const onAddProduct = () => navigate(ProductsRoutes.ProductForm);
 
   return (
-    <RootLayout scroll={false} toolbar={false}>
-      <Header
-        title="Productos"
-        onPress={() => navigate(ProductsRoutes.ProductForm)}
-        searchText={searchText}
-        setSearchText={setSearchText}
-      />
-      {isLoading && <LoadingState message="Cargando productos..." />}
-      {isError && <ErrorState message={error?.message} onRetry={refetch} />}
-      {!isLoading && !isError && !data?.length && (
-        <EmptyState
-          title="Sin productos"
-          message="No hay productos disponibles"
-        />
-      )}
-      {!isLoading && !isError && !!data?.length && (
-        <FlashList
-          data={data}
-          renderItem={({ item }) => <ProductItem product={item} />}
-          estimatedItemSize={64}
-          ItemSeparatorComponent={ItemSeparatorComponent}
-        />
-      )}
+    <RootLayout
+      scroll={false}
+      toolbar={false}
+      fab={{ icon: 'plus', onPress: onAddProduct }}
+    >
+      <Header title="Productos" searchbar="products" />
+      <ProductList />
     </RootLayout>
   );
 }

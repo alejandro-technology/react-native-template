@@ -615,7 +615,7 @@ export function {Entities}ListView() {
 }
 ```
 
-> For a list that also needs a `Header` with a title and an "add" button, wrap the content in a `View style={{ flex: 1 }}` and add `<Header title="..." onPress={...} />` above `<{Entity}FiltersBar />`.
+> For a list that also needs navigation to `{Entity}FormView`, use either: `<Header title="..." onPress={...} pressIcon="plus" searchbar="{entities}" />` or `<RootLayout fab={{ icon: 'plus', onPress: ... }} ...>`.
 
 ---
 

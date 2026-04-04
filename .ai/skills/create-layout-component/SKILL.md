@@ -253,63 +253,112 @@ const styles = StyleSheet.create({
 #### Header
 
 ```typescript
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 // Components
-import { Text, Button, TextInput } from '@components/core';
+import {
+  AnimatedPressable,
+  Icon,
+  IconName,
+  Text,
+  TextInput,
+} from '@components/core';
 // Theme
-import { useTheme } from '@theme/index';
+import { spacing, useTheme } from '@theme/index';
+import { useAppStorage } from '@modules/core/application/app.storage';
+import { SearchbarStorage } from '@modules/core/application/app.storage';
+
+interface SearchBarProps {
+  searchbar: SearchbarStorage;
+  onPressFilter?: () => void;
+}
+
+function SearchBar({ searchbar = '', onPressFilter }: SearchBarProps) {
+  const { searchText, setSearchText } = useAppStorage(
+    state => state.searchbar[searchbar] || {},
+  );
+
+  return (
+    <View style={styles.searchbar}>
+      <TextInput
+        value={searchText}
+        onChangeText={setSearchText}
+        placeholder="Buscar..."
+        containerStyle={styles.searchInput}
+      />
+      {onPressFilter ? (
+        <AnimatedPressable onPress={onPressFilter} style={styles.filterButton}>
+          <Icon name="filter" size={spacing.base} />
+        </AnimatedPressable>
+      ) : null}
+    </View>
+  );
+}
 
 interface HeaderProps {
   title: string;
   onPress?: () => void;
-  searchText?: string;
-  setSearchText?: (text: string) => void;
+  pressIcon?: IconName;
+  searchbar?: SearchbarStorage;
+  onPressFilter?: () => void;
 }
 
 export function Header({
   title,
   onPress,
-  searchText,
-  setSearchText,
+  pressIcon,
+  searchbar = '',
+  onPressFilter,
 }: HeaderProps) {
-  const theme = useTheme();
+  const {
+    colors: { surface, border },
+  } = useTheme();
+
+  const dynamicStyles = useMemo(
+    () => [
+      styles.container,
+      { backgroundColor: surface, borderBottomColor: border },
+    ],
+    [surface, border],
+  );
 
   return (
-    <View style={[styles.container, { borderColor: theme.colors.border }]}>
+    <View style={dynamicStyles}>
       <View style={styles.row}>
         <Text variant="h1">{title}</Text>
-        {onPress && (
-          <Button variant="primary" size="sm" onPress={onPress}>
-            Agregar
-          </Button>
-        )}
+        {onPress ? (
+          <AnimatedPressable onPress={onPress} testID="header-action-button">
+            <Icon name={pressIcon || 'menu'} size={spacing.lg} />
+          </AnimatedPressable>
+        ) : null}
       </View>
-      {setSearchText && (
-        <TextInput
-          value={searchText}
-          onChangeText={setSearchText}
-          placeholder="Buscar..."
-          style={styles.search}
-        />
-      )}
+
+      <SearchBar searchbar={searchbar} onPressFilter={onPressFilter} />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 16,
+    padding: spacing.md,
     borderBottomWidth: 1,
-    gap: 12,
+    gap: spacing.md,
   },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  search: {
-    marginTop: 8,
+  searchbar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
+  },
+  searchInput: {
+    flex: 1,
+  },
+  filterButton: {
+    padding: spacing.md,
   },
 });
 ```

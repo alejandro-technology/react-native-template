@@ -8,6 +8,9 @@ The UI layer contains screens and screen-specific components.
 2. **State Handling**: Use `LoadingState`, `ErrorState`, `EmptyState` from `@components/layout`
 3. **Lists**: Use `FlashList` from `@shopify/flash-list`
 4. **Forms**: Use `react-hook-form` with `yupResolver`
+5. **Create Navigation from ListView**: There are two valid patterns to open `{Entity}FormView` from `{Entities}ListView`:
+   - Header action icon: `<Header onPress={onAdd{Entity}} pressIcon="plus" />`
+   - Floating Action Button: `<RootLayout fab={{ icon: 'plus', onPress: onAdd{Entity} }} />`
 
 ## File Structure
 
@@ -26,18 +29,37 @@ src/modules/{module}/ui/
 ## Golden Example: ListView Structure
 
 ```typescript
+// Variant A: FAB in RootLayout (Products)
 export function ProductsListView() {
-  const [searchText, setSearchText] = useState('');
-  const debouncedSearch = useDebounce(searchText, 500);
   const { navigate } = useNavigationProducts();
+  const onAddProduct = () => navigate(ProductsRoutes.ProductForm);
+
+  return (
+    <RootLayout
+      scroll={false}
+      toolbar={false}
+      fab={{ icon: 'plus', onPress: onAddProduct }}
+    >
+      <Header title="Productos" searchbar="products" />
+      <ProductList />
+    </RootLayout>
+  );
+}
+
+// Variant B: Header action icon (Users)
+export function UsersListView() {
+  const { navigate } = useNavigationUsers();
+  const onAddUser = () => navigate(UsersRoutes.UserForm);
 
   return (
     <RootLayout scroll={false} toolbar={false}>
       <Header
-        title="Productos"
-        onPress={() => navigate(ProductsRoutes.ProductForm)}
+        title="Usuarios"
+        onPress={onAddUser}
+        pressIcon="plus"
+        searchbar="users"
       />
-      <ProductList searchText={debouncedSearch} />
+      <UserList />
     </RootLayout>
   );
 }

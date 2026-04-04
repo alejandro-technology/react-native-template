@@ -35,6 +35,9 @@ This pattern complements `layer-ui.md` and `layer-application.md`.
    - Guards `onEndReached` with `isConnected && hasNextPage` to avoid offline fetches
    - Uses `ItemSeparatorComponent` from `@components/layout`
 7. **ListView Screen**: `{Entities}ListView` is layout-only — it orchestrates `FiltersBar` + `List` but contains NO data-fetching logic directly. Data fetching lives inside the list component or a dedicated hook.
+   - If the screen needs navigation to `{Entity}FormView`, use one of these valid patterns:
+     - Header action icon: `<Header onPress={onAdd{Entity}} pressIcon="plus" ... />`
+     - Floating Action Button: `<RootLayout fab={{ icon: 'plus', onPress: onAdd{Entity} }} ... />`
 8. **Persistence**: Persist active filters per source/entity via Zustand + MMKV. Re-hydrate on mount; sanitize stale keys when the source changes. Shared UI search state (e.g. for cross-screen search persistence) should live in `@modules/core/application/app.storage.ts`.
 9. **Query Key Fingerprint**: Serialize filters with `JSON.stringify` to build a stable cache fingerprint. Include the fingerprint in the `queryKey`.
 

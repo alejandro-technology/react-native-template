@@ -30,11 +30,9 @@ src/modules/{module}/ui/
 ## Step 1: `{Entities}ListView.tsx`
 
 ```typescript
-import React, { useState } from 'react';
+import React from 'react';
 // Components
 import { {Entity}List } from './components/{Entity}List';
-// Hooks
-import { useDebounce } from '@modules/core/application/core.hooks';
 // Navigation
 import { {Entities}Routes } from '@navigation/routes';
 import { useNavigation{Entities} } from '@navigation/hooks';
@@ -42,10 +40,7 @@ import { useNavigation{Entities} } from '@navigation/hooks';
 import { Header, RootLayout } from '@components/layout';
 
 export function {Entities}ListView() {
-  const [searchText, setSearchText] = useState('');
-  const debouncedSearch = useDebounce(searchText, 500);
   const { navigate } = useNavigation{Entities}();
-
   const onAdd{Entity} = () => navigate({Entities}Routes.{Entity}Form);
 
   return (
@@ -53,10 +48,30 @@ export function {Entities}ListView() {
       <Header
         title="{Entities}"
         onPress={onAdd{Entity}}
-        searchText={searchText}
-        setSearchText={setSearchText}
+        pressIcon="plus"
+        searchbar="{entities}"
       />
-      <{Entity}List searchText={debouncedSearch} />
+      <{Entity}List />
+    </RootLayout>
+  );
+}
+```
+
+Alternative in the same `{Entities}ListView.tsx`: use a Floating Action Button instead of `Header` action.
+
+```typescript
+export function {Entities}ListView() {
+  const { navigate } = useNavigation{Entities}();
+  const onAdd{Entity} = () => navigate({Entities}Routes.{Entity}Form);
+
+  return (
+    <RootLayout
+      scroll={false}
+      toolbar={false}
+      fab={{ icon: 'plus', onPress: onAdd{Entity} }}
+    >
+      <Header title="{Entities}" searchbar="{entities}" />
+      <{Entity}List />
     </RootLayout>
   );
 }
@@ -282,16 +297,19 @@ import { FlashList } from '@shopify/flash-list';
 import { {Entity}Item } from './{Entity}Item';
 import { LoadingState, ErrorState, EmptyState } from '@components/layout';
 // Hooks
+import { useDebounce } from '@modules/core/application/core.hooks';
+import { useAppStorage } from '@modules/core/application/app.storage';
 import { use{Entities} } from '../../application/{entity}.queries';
 // Types
 import type { {Entity} } from '../../domain/{entity}.model';
 
-interface Props {
-  searchText: string;
-}
-
-export function {Entity}List({ searchText }: Props) {
-  const { data, isLoading, error, refetch } = use{Entities}({ searchText });
+export function {Entity}List() {
+  const searchbar = useAppStorage(state => state.searchbar);
+  const { searchText } = searchbar.{entities} || {};
+  const debouncedSearch = useDebounce(searchText, 500);
+  const { data, isLoading, error, refetch } = use{Entities}({
+    searchText: debouncedSearch,
+  });
 
   if (isLoading) return <LoadingState />;
   if (error) return <ErrorState message={error.message} onRetry={refetch} />;
