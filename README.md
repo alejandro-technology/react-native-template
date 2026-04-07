@@ -1,15 +1,16 @@
 # React Native Clean Architecture Starter 🚀
 
-![React Native](https://img.shields.io/badge/react--native-0.83.4-blue)
-![TypeScript](https://img.shields.io/badge/typescript-5.8.3-blue)
-![License](https://img.shields.io/badge/license-MIT-green)
-
-[![Unit Tests](https://github.com/alejandro-technology/react-native-template/actions/workflows/unit-test.yml/badge.svg?branch=main)](https://github.com/alejandro-technology/react-native-template/actions/workflows/unit-test.yml)
-[![APK Build](https://github.com/alejandro-technology/react-native-template/actions/workflows/android-apk.yml/badge.svg?branch=main)](https://github.com/alejandro-technology/react-native-template/actions/workflows/android-apk.yml)
-[![iOS Build](https://github.com/alejandro-technology/react-native-template/actions/workflows/ios-build.yml/badge.svg?branch=main)](https://github.com/alejandro-technology/react-native-template/actions/workflows/ios-build.yml)
-
 [![platform - android](https://img.shields.io/badge/platform-Android-3ddc84.svg?logo=android&style=for-the-badge)](https://www.android.com)
 [![platform - ios](https://img.shields.io/badge/platform-iOS-000.svg?logo=apple&style=for-the-badge)](https://developer.apple.com/ios)
+
+[![React Native](https://img.shields.io/badge/React%20Native-0.83.4-61DAFB?logo=react&style=for-the-badge)](https://reactnative.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?logo=typescript&style=for-the-badge)](https://www.typescriptlang.org)
+[![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
+[![Unit Tests](https://img.shields.io/badge/Unit%20Tests-Passing-success?logo=github-actions&style=for-the-badge)](https://github.com/alejandro-technology/react-native-template/actions/workflows/unit-test.yml)
+[![APK Build](https://img.shields.io/badge/APK%20Build-Ready-success?logo=android&style=for-the-badge)](https://github.com/alejandro-technology/react-native-template/actions/workflows/android-apk.yml)
+[![iOS Build](https://img.shields.io/badge/iOS%20Build-Ready-success?logo=apple&style=for-the-badge)](https://github.com/alejandro-technology/react-native-template/actions/workflows/ios-build.yml)
+
 
 A **production-ready React Native starter** built with **Clean Architecture**, **TypeScript**, and **AI-First principles**.
 
@@ -25,6 +26,7 @@ Perfect for:
 ---
 
 ## 🎥 Demo
+
 <p align="center">
   <img src="./assets/rnkit_review.gif" width="45%" />
 </p>
@@ -37,7 +39,7 @@ Perfect for:
 - ⚡ Zustand + React Query state management
 - 💾 Data caching
 - 📄 Forms with validations
-- 🧰 Svg, Permissions, Image Picker 
+- 🧰 Svg, Permissions, Image Picker
 - ⚙️ Environment variables
 - 🔐 Security storage (Secrets, Keychain)
 - 🎨 Design System with theme tokens
@@ -70,7 +72,9 @@ This template will have a companion CLI to extract modules:
 ```bash
 npm init react-native-init-app
 ```
+
 or
+
 ```bash
 bunx create-react-native-init-app
 # or
@@ -80,6 +84,7 @@ npx create-react-native-init-app
 # 🚀 Manual Installation
 
 ## Prerequisites
+
 - Node.js (v22+ recommended)
 - Ruby (for CocoaPods)
 - JDK 17+
@@ -88,12 +93,14 @@ npx create-react-native-init-app
 ## Installation
 
 1.  **Clone the repository:**
+
     ```bash
     git clone https://github.com/alejandro-technology/react-native-template.git
     cd react-native-template
     ```
 
 2.  **Install dependencies:**
+
     ```bash
     npm install
     ```
@@ -108,11 +115,13 @@ npx create-react-native-init-app
 ## Running the App
 
 - **Start Metro Bundler:**
+
   ```bash
   npm start
   ```
 
 - **Run on iOS:**
+
   ```bash
   npm run ios
   ```
@@ -121,7 +130,6 @@ npx create-react-native-init-app
   ```bash
   npm run android
   ```
-
 
 # 📂 Project Structure
 
@@ -143,7 +151,9 @@ src/
 ```
 
 ## 🧠 Module Anatomy (Clean Architecture)
+
 Each module (e.g., `src/modules/products/`) is divided into:
+
 1.  **Domain:** Entities, Repository Interfaces, Errors (Pure TS, no React/Lib dependencies).
 2.  **Application:** Use Cases, State Management (Zustand/Query), Logic.
 3.  **Infrastructure:** API calls, Database implementation, Third-party adapters.
