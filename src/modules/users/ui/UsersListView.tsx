@@ -16,6 +16,7 @@ export function UsersListView() {
         onPress={onAddUser}
         pressIcon="plus"
         searchbar="users"
+        placeholder="Buscar usuarios..."
       />
       <UserList />
     </RootLayout>

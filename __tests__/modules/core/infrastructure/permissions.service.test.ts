@@ -1,6 +1,8 @@
 import {
   check,
+  checkNotifications,
   request,
+  requestNotifications,
   checkMultiple,
   requestMultiple,
   openSettings,
@@ -13,7 +15,9 @@ import permissionsService from '@modules/core/infrastructure/permissions.service
 // Mock de react-native-permissions
 jest.mock('react-native-permissions', () => ({
   check: jest.fn(),
+  checkNotifications: jest.fn(),
   request: jest.fn(),
+  requestNotifications: jest.fn(),
   checkMultiple: jest.fn(),
   requestMultiple: jest.fn(),
   openSettings: jest.fn(),
@@ -34,12 +38,19 @@ jest.mock('react-native-permissions', () => ({
       CAMERA: 'android.permission.CAMERA',
       READ_MEDIA_IMAGES: 'android.permission.READ_MEDIA_IMAGES',
       ACCESS_FINE_LOCATION: 'android.permission.ACCESS_FINE_LOCATION',
+      POST_NOTIFICATIONS: 'android.permission.POST_NOTIFICATIONS',
     },
   },
 }));
 
 const mockCheck = check as jest.MockedFunction<typeof check>;
+const mockCheckNotifications = checkNotifications as jest.MockedFunction<
+  typeof checkNotifications
+>;
 const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockRequestNotifications = requestNotifications as jest.MockedFunction<
+  typeof requestNotifications
+>;
 const mockCheckMultiple = checkMultiple as jest.MockedFunction<
   typeof checkMultiple
 >;
@@ -195,6 +206,18 @@ describe('PermissionsService', () => {
         }
       });
     });
+
+    it('debe verificar permisos de notificaciones', async () => {
+      mockCheckNotifications.mockResolvedValue({
+        status: RESULTS.GRANTED,
+        settings: {},
+      } as any);
+
+      const result = await permissionsService.check('notifications');
+
+      expect(mockCheckNotifications).toHaveBeenCalled();
+      expect(result).toBe('granted');
+    });
   });
 
   describe('request', () => {
@@ -250,6 +273,23 @@ describe('PermissionsService', () => {
       expect(result).toBeInstanceOf(Error);
       if (result instanceof Error) {
         expect(result.message).toBe('Request failed');
+      }
+    });
+
+    it('debe solicitar permisos de notificaciones', async () => {
+      mockRequestNotifications.mockResolvedValue({
+        status: RESULTS.GRANTED,
+        settings: {},
+      } as any);
+
+      const result = await permissionsService.request('notifications');
+
+      expect(mockRequestNotifications).toHaveBeenCalled();
+      expect(result).not.toBeInstanceOf(Error);
+      if (!(result instanceof Error)) {
+        expect(result.type).toBe('notifications');
+        expect(result.status).toBe('granted');
+        expect(result.canAskAgain).toBe(true);
       }
     });
   });
@@ -320,6 +360,27 @@ describe('PermissionsService', () => {
 
       expect(result).toBeInstanceOf(Error);
     });
+
+    it('debe solicitar notificaciones cuando están denegadas', async () => {
+      mockCheckNotifications.mockResolvedValue({
+        status: RESULTS.DENIED,
+        settings: {},
+      } as any);
+      mockRequestNotifications.mockResolvedValue({
+        status: RESULTS.GRANTED,
+        settings: {},
+      } as any);
+
+      const result = await permissionsService.checkAndRequest('notifications');
+
+      expect(mockCheckNotifications).toHaveBeenCalled();
+      expect(mockRequestNotifications).toHaveBeenCalled();
+      expect(result).not.toBeInstanceOf(Error);
+      if (!(result instanceof Error)) {
+        expect(result.type).toBe('notifications');
+        expect(result.status).toBe('granted');
+      }
+    });
   });
 
   describe('openSettings', () => {
@@ -380,6 +441,37 @@ describe('PermissionsService', () => {
       }
     });
 
+    it('debe verificar notificaciones dentro de checkMultiple', async () => {
+      mockCheckNotifications.mockResolvedValue({
+        status: RESULTS.GRANTED,
+        settings: {},
+      } as any);
+      mockCheckMultiple.mockResolvedValue({
+        [PERMISSIONS.IOS.CAMERA]: RESULTS.GRANTED,
+      } as any);
+
+      const result = await permissionsService.checkMultiple([
+        'notifications',
+        'camera',
+      ]);
+
+      expect(mockCheckNotifications).toHaveBeenCalled();
+      expect(mockCheckMultiple).toHaveBeenCalledWith([PERMISSIONS.IOS.CAMERA]);
+      expect(result).not.toBeInstanceOf(Error);
+      if (!(result instanceof Error)) {
+        expect(result[0]).toEqual({
+          type: 'notifications',
+          status: 'granted',
+          canAskAgain: true,
+        });
+        expect(result[1]).toEqual({
+          type: 'camera',
+          status: 'granted',
+          canAskAgain: true,
+        });
+      }
+    });
+
     it('debe retornar unavailable para todos si no hay permisos válidos', async () => {
       const result = await permissionsService.checkMultiple(['health']);
 
@@ -425,6 +517,39 @@ describe('PermissionsService', () => {
         expect(result).toHaveLength(2);
         expect(result[0].status).toBe('granted');
         expect(result[1].status).toBe('denied');
+      }
+    });
+
+    it('debe solicitar notificaciones dentro de requestMultiple', async () => {
+      mockRequestNotifications.mockResolvedValue({
+        status: RESULTS.GRANTED,
+        settings: {},
+      } as any);
+      mockRequestMultiple.mockResolvedValue({
+        [PERMISSIONS.IOS.CAMERA]: RESULTS.GRANTED,
+      } as any);
+
+      const result = await permissionsService.requestMultiple([
+        'notifications',
+        'camera',
+      ]);
+
+      expect(mockRequestNotifications).toHaveBeenCalled();
+      expect(mockRequestMultiple).toHaveBeenCalledWith([
+        PERMISSIONS.IOS.CAMERA,
+      ]);
+      expect(result).not.toBeInstanceOf(Error);
+      if (!(result instanceof Error)) {
+        expect(result[0]).toEqual({
+          type: 'notifications',
+          status: 'granted',
+          canAskAgain: true,
+        });
+        expect(result[1]).toEqual({
+          type: 'camera',
+          status: 'granted',
+          canAskAgain: true,
+        });
       }
     });
 

@@ -9,6 +9,8 @@ interface Config {
     PASSWORD: string;
   };
   RAWG_API_KEY: string;
+  CURRENCY: string;
+  LOCALE: string;
 }
 
 const SERVICE_PROVIDER = Config.SERVICE_PROVIDER as ServiceProvider;
@@ -16,9 +18,10 @@ const SERVICE_PROVIDER = Config.SERVICE_PROVIDER as ServiceProvider;
 export const CONFIG: Config = {
   SERVICE_PROVIDER: SERVICE_PROVIDER || 'mock',
   ROOT_CREDENTIALS: {
-    // Root credentials for mock service (read from .env)
     USERNAME: Config.ROOT_USERNAME || 'pruebas@gmail.com',
     PASSWORD: Config.ROOT_PASSWORD || 'pruebas123',
   },
   RAWG_API_KEY: Config.RAWG_API_KEY || '',
+  CURRENCY: Config.CURRENCY || 'COP',
+  LOCALE: Config.LOCALE || 'es-CO',
 };

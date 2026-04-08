@@ -97,6 +97,17 @@ jest.mock('react-native-keychain', () => ({
   },
 }));
 
+// Mock de react-native-config
+jest.mock('react-native-config', () => ({
+  API_URL: 'https://api.example.com',
+  SERVICE_PROVIDER: 'mock',
+  ROOT_USERNAME: 'pruebas@gmail.com',
+  ROOT_PASSWORD: 'pruebas123',
+  RAWG_API_KEY: '',
+  CURRENCY: 'COP',
+  LOCALE: 'es-CO',
+}));
+
 // Mock de react-native-svg
 jest.mock('react-native-svg', () => {
   const React = require('react');

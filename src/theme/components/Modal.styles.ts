@@ -32,12 +32,12 @@ function getSizeStyles(size: ModalSize): {
         width: '94%',
         padding: spacing.xl,
       };
+    default:
+      return {
+        width: '90%',
+        padding: spacing.lg,
+      };
   }
-
-  return {
-    width: '90%',
-    padding: spacing.lg,
-  };
 }
 
 function getVariantStyles(
@@ -89,6 +89,7 @@ export function getModalStyle({
       right: 0,
     },
     container: {
+      maxHeight: '80%',
       borderRadius: borderRadius[borderRadiusToken],
       padding: sizeConfig.padding,
       width: sizeConfig.width,

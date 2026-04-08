@@ -17,9 +17,14 @@ import { SearchbarStorage } from '@modules/core/application/app.storage';
 interface SearchBarProps {
   searchbar: SearchbarStorage;
   onPressFilter?: () => void;
+  placeholder?: string;
 }
 
-function SearchBar({ searchbar = '', onPressFilter }: SearchBarProps) {
+function SearchBar({
+  searchbar = '',
+  placeholder = 'Buscar...',
+  onPressFilter,
+}: SearchBarProps) {
   const { searchText, setSearchText } = useAppStorage(
     state => state.searchbar[searchbar] || {},
   );
@@ -29,7 +34,7 @@ function SearchBar({ searchbar = '', onPressFilter }: SearchBarProps) {
       <TextInput
         value={searchText}
         onChangeText={setSearchText}
-        placeholder="Buscar usuarios..."
+        placeholder={placeholder}
         containerStyle={styles.searchInput}
       />
       {onPressFilter && (
@@ -51,11 +56,12 @@ interface HeaderProps {
   pressIcon?: IconName;
   searchbar?: SearchbarStorage;
   onPressFilter?: () => void;
+  placeholder?: string;
 }
 
 export function Header(props: HeaderProps) {
   const { onPress, onPressFilter } = props;
-  const { title, searchbar = '', pressIcon } = props;
+  const { title, searchbar = '', pressIcon, placeholder } = props;
   const {
     colors: { surface, border },
   } = useTheme();
@@ -79,7 +85,11 @@ export function Header(props: HeaderProps) {
         )}
       </View>
 
-      <SearchBar searchbar={searchbar} onPressFilter={onPressFilter} />
+      <SearchBar
+        searchbar={searchbar}
+        onPressFilter={onPressFilter}
+        placeholder={placeholder}
+      />
     </View>
   );
 }

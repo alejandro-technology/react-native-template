@@ -2,17 +2,16 @@
  * Utilidades reutilizables para formateo monetario.
  */
 
+import { CONFIG } from '@config/config';
+
 export interface CurrencyFormatOptions extends Intl.NumberFormatOptions {
   locale?: string;
   currency?: string;
 }
 
-const DEFAULT_CURRENCY = 'MXN';
-const DEFAULT_LOCALE = 'es-MX';
-
 function createCurrencyFormatter({
-  locale = DEFAULT_LOCALE,
-  currency = DEFAULT_CURRENCY,
+  locale = CONFIG.LOCALE,
+  currency = CONFIG.CURRENCY,
   ...options
 }: CurrencyFormatOptions = {}): Intl.NumberFormat {
   return new Intl.NumberFormat(locale, {
@@ -53,7 +52,7 @@ export function formatCompactCurrency(
 export function formatNumber(
   value: number,
   options: Intl.NumberFormatOptions = {},
-  locale = DEFAULT_LOCALE,
+  locale = CONFIG.LOCALE,
 ): string {
   if (!Number.isFinite(value)) {
     return '';

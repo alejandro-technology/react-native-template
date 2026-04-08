@@ -1,6 +1,8 @@
 import {
   check,
+  checkNotifications,
   request,
+  requestNotifications,
   checkMultiple,
   requestMultiple,
   openSettings,
@@ -19,8 +21,15 @@ import type {
   PermissionsRepository,
 } from '../domain/permissions/permissions.model';
 
+const POST_NOTIFICATIONS =
+  'android.permission.POST_NOTIFICATIONS' as Permission;
+
 // Map our permission types to react-native-permissions Permission type
 function getPermission(type: PermissionType): Permission | null {
+  if (type === 'notifications') {
+    return null;
+  }
+
   if (Platform.OS === 'ios') {
     const iosMap: Record<PermissionType, Permission | null> = {
       location: PERMISSIONS.IOS.LOCATION_WHEN_IN_USE,
@@ -41,6 +50,7 @@ function getPermission(type: PermissionType): Permission | null {
       appTracking: PERMISSIONS.IOS.APP_TRACKING_TRANSPARENCY,
       faceID: PERMISSIONS.IOS.FACE_ID,
       health: null,
+      notifications: null,
     };
     return iosMap[type] ?? null;
   }
@@ -68,6 +78,7 @@ function getPermission(type: PermissionType): Permission | null {
     appTracking: null,
     faceID: null,
     health: PERMISSIONS.ANDROID.BODY_SENSORS,
+    notifications: POST_NOTIFICATIONS,
   };
   return androidMap[type] ?? null;
 }
@@ -83,9 +94,26 @@ function mapStatus(status: RNPermissionStatus): PermissionStatus {
   return map[status] ?? 'unavailable';
 }
 
+function buildResult(
+  type: PermissionType,
+  status: PermissionStatus,
+  canAskAgain: boolean,
+): PermissionResult {
+  return {
+    type,
+    status,
+    canAskAgain,
+  };
+}
+
 class PermissionsService implements PermissionsRepository {
   async check(type: PermissionType): Promise<PermissionStatus | Error> {
     try {
+      if (type === 'notifications') {
+        const response = await checkNotifications();
+        return response.status;
+      }
+
       const permission = getPermission(type);
       if (!permission) {
         return 'unavailable';
@@ -101,6 +129,15 @@ class PermissionsService implements PermissionsRepository {
 
   async request(type: PermissionType): Promise<PermissionResult | Error> {
     try {
+      if (type === 'notifications') {
+        const response = await requestNotifications();
+        return buildResult(
+          type,
+          mapStatus(response.status),
+          response.status !== RESULTS.BLOCKED,
+        );
+      }
+
       const permission = getPermission(type);
       if (!permission) {
         return {
@@ -110,11 +147,7 @@ class PermissionsService implements PermissionsRepository {
         };
       }
       const status = await request(permission);
-      return {
-        type,
-        status: mapStatus(status),
-        canAskAgain: status !== RESULTS.BLOCKED,
-      };
+      return buildResult(type, mapStatus(status), status !== RESULTS.BLOCKED);
     } catch (error) {
       return new Error(
         error instanceof Error ? error.message : 'Error al solicitar permiso',
@@ -126,6 +159,25 @@ class PermissionsService implements PermissionsRepository {
     type: PermissionType,
   ): Promise<PermissionResult | Error> {
     try {
+      if (type === 'notifications') {
+        const currentStatus = await checkNotifications();
+
+        if (currentStatus.status === RESULTS.GRANTED) {
+          return buildResult(type, 'granted', false);
+        }
+
+        if (currentStatus.status === RESULTS.BLOCKED) {
+          return buildResult(type, 'blocked', false);
+        }
+
+        const newStatus = await requestNotifications();
+        return buildResult(
+          type,
+          mapStatus(newStatus.status),
+          newStatus.status !== RESULTS.BLOCKED,
+        );
+      }
+
       const permission = getPermission(type);
       if (!permission) {
         return {
@@ -137,27 +189,19 @@ class PermissionsService implements PermissionsRepository {
       const currentStatus = await check(permission);
 
       if (currentStatus === RESULTS.GRANTED) {
-        return {
-          type,
-          status: 'granted',
-          canAskAgain: false,
-        };
+        return buildResult(type, 'granted', false);
       }
 
       if (currentStatus === RESULTS.BLOCKED) {
-        return {
-          type,
-          status: 'blocked',
-          canAskAgain: false,
-        };
+        return buildResult(type, 'blocked', false);
       }
 
       const newStatus = await request(permission);
-      return {
+      return buildResult(
         type,
-        status: mapStatus(newStatus),
-        canAskAgain: newStatus !== RESULTS.BLOCKED,
-      };
+        mapStatus(newStatus),
+        newStatus !== RESULTS.BLOCKED,
+      );
     } catch (error) {
       return new Error(
         error instanceof Error
@@ -181,28 +225,52 @@ class PermissionsService implements PermissionsRepository {
     types: PermissionType[],
   ): Promise<PermissionResult[] | Error> {
     try {
-      const permissions = types
+      const notificationTypes = types.filter(type => type === 'notifications');
+      const regularTypes = types.filter(type => type !== 'notifications');
+
+      const notificationResults = await Promise.all(
+        notificationTypes.map(async type => {
+          const response = await checkNotifications();
+          return buildResult(
+            type,
+            mapStatus(response.status),
+            response.status !== RESULTS.BLOCKED,
+          );
+        }),
+      );
+
+      const permissions = regularTypes
         .map(type => getPermission(type))
         .filter((p): p is Permission => p !== null);
 
-      if (permissions.length === 0) {
-        return types.map(type => ({
-          type,
-          status: 'unavailable' as PermissionStatus,
-          canAskAgain: false,
-        }));
+      const results =
+        permissions.length > 0 ? await checkMultiple(permissions) : null;
+
+      const hasSupportedType =
+        notificationResults.length > 0 || permissions.length > 0;
+
+      if (!results && notificationResults.length === 0) {
+        return types.map(type => buildResult(type, 'unavailable', false));
       }
 
-      const results = await checkMultiple(permissions);
-
       return types.map(type => {
+        const notificationResult = notificationResults.find(
+          result => result.type === type,
+        );
+
+        if (notificationResult) {
+          return notificationResult;
+        }
+
         const permission = getPermission(type);
-        const status = permission ? results[permission] : RESULTS.UNAVAILABLE;
-        return {
+        const status = permission
+          ? results?.[permission] ?? RESULTS.UNAVAILABLE
+          : RESULTS.UNAVAILABLE;
+        return buildResult(
           type,
-          status: mapStatus(status),
-          canAskAgain: status !== RESULTS.BLOCKED,
-        };
+          mapStatus(status),
+          permission ? status !== RESULTS.BLOCKED : hasSupportedType,
+        );
       });
     } catch (error) {
       return new Error(
@@ -215,28 +283,52 @@ class PermissionsService implements PermissionsRepository {
     types: PermissionType[],
   ): Promise<PermissionResult[] | Error> {
     try {
-      const permissions = types
+      const notificationTypes = types.filter(type => type === 'notifications');
+      const regularTypes = types.filter(type => type !== 'notifications');
+
+      const notificationResults = await Promise.all(
+        notificationTypes.map(async type => {
+          const response = await requestNotifications();
+          return buildResult(
+            type,
+            mapStatus(response.status),
+            response.status !== RESULTS.BLOCKED,
+          );
+        }),
+      );
+
+      const permissions = regularTypes
         .map(type => getPermission(type))
         .filter((p): p is Permission => p !== null);
 
-      if (permissions.length === 0) {
-        return types.map(type => ({
-          type,
-          status: 'unavailable' as PermissionStatus,
-          canAskAgain: false,
-        }));
+      const results =
+        permissions.length > 0 ? await requestMultiple(permissions) : null;
+
+      const hasSupportedType =
+        notificationResults.length > 0 || permissions.length > 0;
+
+      if (!results && notificationResults.length === 0) {
+        return types.map(type => buildResult(type, 'unavailable', false));
       }
 
-      const results = await requestMultiple(permissions);
-
       return types.map(type => {
+        const notificationResult = notificationResults.find(
+          result => result.type === type,
+        );
+
+        if (notificationResult) {
+          return notificationResult;
+        }
+
         const permission = getPermission(type);
-        const status = permission ? results[permission] : RESULTS.UNAVAILABLE;
-        return {
+        const status = permission
+          ? results?.[permission] ?? RESULTS.UNAVAILABLE
+          : RESULTS.UNAVAILABLE;
+        return buildResult(
           type,
-          status: mapStatus(status),
-          canAskAgain: status !== RESULTS.BLOCKED,
-        };
+          mapStatus(status),
+          permission ? status !== RESULTS.BLOCKED : hasSupportedType,
+        );
       });
     } catch (error) {
       return new Error(

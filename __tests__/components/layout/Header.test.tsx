@@ -38,12 +38,12 @@ describe('Header', () => {
 
   it('debe renderizar el campo de búsqueda con placeholder', () => {
     const { getByPlaceholderText } = render(<Header {...defaultProps} />);
-    expect(getByPlaceholderText('Buscar usuarios...')).toBeTruthy();
+    expect(getByPlaceholderText('Buscar...')).toBeTruthy();
   });
 
   it('debe ejecutar setSearchText al escribir en búsqueda', () => {
     const { getByPlaceholderText } = render(<Header {...defaultProps} />);
-    fireEvent.changeText(getByPlaceholderText('Buscar usuarios...'), 'Juan');
+    fireEvent.changeText(getByPlaceholderText('Buscar...'), 'Juan');
     expect(mockSetSearchText).toHaveBeenCalledWith('Juan');
   });
 });

@@ -3,11 +3,12 @@
  * Estas utilidades son transversales y pueden ser usadas por cualquier módulo.
  */
 
+import { CONFIG } from '@config/config';
+
 export interface DateFormatOptions extends Intl.DateTimeFormatOptions {
   locale?: string;
 }
 
-const DEFAULT_LOCALE = 'es-MX';
 const JOIN_DATE_MONTH_MAP: Record<string, string> = {
   ene: 'Ene',
   feb: 'Feb',
@@ -33,7 +34,7 @@ function isValidDate(date: Date): boolean {
 }
 
 function createDateFormatter({
-  locale = DEFAULT_LOCALE,
+  locale = CONFIG.LOCALE,
   ...options
 }: DateFormatOptions): Intl.DateTimeFormat {
   return new Intl.DateTimeFormat(locale, options);
@@ -71,7 +72,7 @@ export function formatDateTime(
 
 export function formatRelativeDate(
   date: Date | string | number,
-  locale = DEFAULT_LOCALE,
+  locale = CONFIG.LOCALE,
 ): string {
   const parsedDate = parseDateInput(date);
 
@@ -150,7 +151,7 @@ export function formatJoinDate(isoDate: string): string {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
-    locale: DEFAULT_LOCALE,
+    locale: CONFIG.LOCALE,
   });
 
   const day = parts.find(part => part.type === 'day')?.value;

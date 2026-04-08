@@ -24,6 +24,12 @@ interface State {
     show: (params: ToastShowParams) => void;
     hide: () => void;
   };
+  onboarding: {
+    enabled: boolean;
+    completed: boolean;
+    steps: number;
+    step: number;
+  };
   searchbar: {
     [key in SearchbarStorage]: {
       searchText: string;
@@ -47,6 +53,12 @@ const initialState: State = {
     position: 'bottom',
     show: () => {},
     hide: () => {},
+  },
+  onboarding: {
+    enabled: false,
+    completed: false,
+    steps: 0,
+    step: 0,
   },
   searchbar: {
     '': {

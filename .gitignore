@@ -89,3 +89,5 @@ yarn-error.log
 # Firebase credentials (use dummy for CI)
 ios/GoogleService-Info.plist
 android/app/google-services.json
+
+.env

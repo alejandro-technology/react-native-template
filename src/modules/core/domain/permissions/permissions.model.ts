@@ -23,7 +23,8 @@ export type PermissionType =
   | 'mediaLibrary'
   | 'appTracking'
   | 'faceID'
-  | 'health';
+  | 'health'
+  | 'notifications';
 
 export interface PermissionResult {
   type: PermissionType;

@@ -1,10 +1,11 @@
 import { useState, useCallback } from 'react';
-import permissionsService from '../../infrastructure/permissions.service';
+// Module
 import type {
   PermissionType,
   PermissionStatus,
   PermissionResult,
 } from '../../domain/permissions/permissions.model';
+import permissionsService from '../../infrastructure/permissions.service';
 
 export function usePermission(type: PermissionType) {
   const [status, setStatus] = useState<PermissionStatus>('unavailable');
