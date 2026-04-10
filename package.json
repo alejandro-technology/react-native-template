@@ -13,7 +13,10 @@
   ],
   "scripts": {
     "android": "react-native run-android",
+    "android:build": "react-native build-android --mode=release",
+    "android:apk": "cd android && ./gradlew assembleRelease",
     "ios": "react-native run-ios",
+    "ios:build": "npx react-native build-ios --mode 'Release'",
     "lint": "eslint .",
     "prettier": "prettier --write 'src/**/*.{js,jsx,ts,tsx}'",
     "start": "react-native start",
