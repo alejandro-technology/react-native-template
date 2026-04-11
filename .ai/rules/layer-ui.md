@@ -4,11 +4,13 @@ The UI layer contains screens and screen-specific components.
 
 ## Core Mandates
 
-1. **Screen Naming**: `{Entities}ListView`, `{Entity}DetailView`, `{Entity}FormView`
-2. **State Handling**: Use `LoadingState`, `ErrorState`, `EmptyState` from `@components/layout`
-3. **Lists**: Use `FlashList` from `@shopify/flash-list`
-4. **Forms**: Use `react-hook-form` with `yupResolver`
-5. **Create Navigation from ListView**: There are two valid patterns to open `{Entity}FormView` from `{Entities}ListView`:
+1. **Screen Naming**:
+   - CRUD modules: `{Entities}ListView`, `{Entity}DetailView`, `{Entity}FormView`
+   - Non-CRUD modules: semantic names ending in `View` such as `SignInView`, `LandingView`, `DynamicListView`
+2. **State Handling**: Use `LoadingState`, `ErrorState`, and `EmptyState` from `@components/layout` when the screen or screen component depends on async data.
+3. **Lists**: Use `FlashList` from `@shopify/flash-list`.
+4. **Forms**: Use `react-hook-form` with `yupResolver` for real form flows.
+5. **Create Navigation from CRUD ListView**: When a CRUD list screen needs navigation to `{Entity}FormView`, there are two valid patterns:
    - Header action icon: `<Header onPress={onAdd{Entity}} pressIcon="plus" />`
    - Floating Action Button: `<RootLayout fab={{ icon: 'plus', onPress: onAdd{Entity} }} />`
 
@@ -16,17 +18,27 @@ The UI layer contains screens and screen-specific components.
 
 ```
 src/modules/{module}/ui/
-  {Entities}ListView.tsx    # List screen with search
-  {Entity}DetailView.tsx    # Detail screen (layout only)
-  {Entity}FormView.tsx      # Create/Edit form
+  # CRUD screens
+  {Entities}ListView.tsx
+  {Entity}DetailView.tsx
+  {Entity}FormView.tsx
   components/
-    {Entity}List.tsx        # FlashList container
-    {Entity}Item.tsx        # Single item row
-    {Entity}Form.tsx        # Form fields
-    {Entity}Detail.tsx      # Detail content + data fetching
+    {Entity}List.tsx
+    {Entity}Item.tsx
+    {Entity}Form.tsx
+    {Entity}Detail.tsx
+
+  # Non-CRUD screens
+  SignInView.tsx
+  SignUpView.tsx
+  LandingView.tsx
+  DynamicListView.tsx
+  providers/
 ```
 
-## Golden Example: ListView Structure
+Use the subset that makes sense for the module. A module does not need to implement list/detail/form just to satisfy the folder convention.
+
+## Golden Example: CRUD ListView Structure
 
 ```typescript
 // Variant A: FAB in RootLayout (Products)
@@ -65,7 +77,7 @@ export function UsersListView() {
 }
 ```
 
-## Golden Example: DetailView Structure
+## Golden Example: CRUD DetailView Structure
 
 `{Entity}DetailView` is layout-only — it receives the route param and delegates everything to `{Entity}Detail`.
 
@@ -83,7 +95,7 @@ export function ProductDetailView({
 }
 ```
 
-## Golden Example: Detail Component
+## Golden Example: CRUD Detail Component
 
 `{Entity}Detail` owns data fetching, loading/error/empty states, and all actions (edit, delete).
 
@@ -92,7 +104,7 @@ export function ProductDetail({ productId }: { productId: string }) {
   const { goBack, navigate } = useNavigationProducts();
   const { data: product, isLoading, isError, error } = useProduct(productId);
   const { mutateAsync: deleteProductAsync } = useProductDelete();
-  const { open, close } = useAppStorage(state => state.modal);
+  const { open } = useAppStorage(state => state.modal);
 
   function handleEdit() {
     product && navigate(ProductsRoutes.ProductForm, { product });
@@ -125,16 +137,18 @@ export function ProductDetail({ productId }: { productId: string }) {
 
   return <View style={styles.content}>{/* cards + action buttons */}</View>;
 }
+```
 
-export function ProductDetailEmpty({ onBack }: { onBack: () => void }) {
+## Golden Example: Non-CRUD View
+
+Non-CRUD screens can orchestrate authentication, demos, source selection, or integrations without forcing a list/detail/form split.
+
+```typescript
+export function SignInView() {
   return (
-    <EmptyState
-      title="Producto no encontrado"
-      message="El producto que buscas no existe o fue eliminado"
-      icon={<Icon name="package" size={42} />}
-      onAction={onBack}
-      actionLabel="Volver"
-    />
+    <RootLayout padding="lg" title="Iniciar Sesión">
+      <SignInForm />
+    </RootLayout>
   );
 }
 ```

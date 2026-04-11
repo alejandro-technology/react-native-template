@@ -13,10 +13,20 @@ const mockManageError = manageSupabaseError as jest.Mock;
 
 // Builds a chainable Supabase query mock that resolves to `resolvedValue`
 // when awaited directly (getAll/delete) or via .single() (getById/create/update).
+type ProductQueryChain = {
+  select: jest.Mock;
+  insert: jest.Mock;
+  update: jest.Mock;
+  delete: jest.Mock;
+  eq: jest.Mock;
+  ilike: jest.Mock;
+  or: jest.Mock;
+  single: jest.Mock;
+  then: (resolve: any, reject?: any) => Promise<unknown>;
+};
+
 function createQueryChain(resolvedValue: unknown) {
-  const chain: Record<string, jest.Mock> & {
-    then: (resolve: any, reject?: any) => Promise<unknown>;
-  } = {
+  const chain: ProductQueryChain = {
     select: jest.fn(),
     insert: jest.fn(),
     update: jest.fn(),
@@ -27,7 +37,10 @@ function createQueryChain(resolvedValue: unknown) {
     single: jest.fn().mockResolvedValue(resolvedValue),
     // Makes the chain itself awaitable (used by getAll and delete)
     then(resolve: any, reject?: any) {
-      return new Promise<unknown>(res => res(resolvedValue)).then(resolve, reject);
+      return new Promise<unknown>(res => res(resolvedValue)).then(
+        resolve,
+        reject,
+      );
     },
   };
 
@@ -132,7 +145,10 @@ describe('ProductSupabaseService', () => {
     });
 
     it('debe retornar Error cuando el producto no existe', async () => {
-      const pgError = { message: 'JSON object requested, multiple (or no) rows returned', code: 'PGRST116' };
+      const pgError = {
+        message: 'JSON object requested, multiple (or no) rows returned',
+        code: 'PGRST116',
+      };
       const chain = createQueryChain({ data: null, error: pgError });
       mockFrom.mockReturnValue(chain);
 
@@ -168,7 +184,11 @@ describe('ProductSupabaseService', () => {
       const chain = createQueryChain({ data: mockProductRow, error: null });
       mockFrom.mockReturnValue(chain);
 
-      await productService.create({ name: 'Test', price: 5000, type: 'bebidas' });
+      await productService.create({
+        name: 'Test',
+        price: 5000,
+        type: 'bebidas',
+      });
 
       expect(chain.insert).toHaveBeenCalledWith(
         expect.objectContaining({ description: '' }),
@@ -180,7 +200,11 @@ describe('ProductSupabaseService', () => {
       const chain = createQueryChain({ data: null, error: pgError });
       mockFrom.mockReturnValue(chain);
 
-      const result = await productService.create({ name: 'Test', price: 1000, type: 'otros' });
+      const result = await productService.create({
+        name: 'Test',
+        price: 1000,
+        type: 'otros',
+      });
 
       expect(result).toBeInstanceOf(Error);
     });
@@ -191,10 +215,16 @@ describe('ProductSupabaseService', () => {
       const chain = createQueryChain({ data: mockProductRow, error: null });
       mockFrom.mockReturnValue(chain);
 
-      const result = await productService.update('1', { name: 'Nuevo nombre', price: 20000 });
+      const result = await productService.update('1', {
+        name: 'Nuevo nombre',
+        price: 20000,
+      });
 
       expect(result).toEqual(expectedProduct);
-      expect(chain.update).toHaveBeenCalledWith({ name: 'Nuevo nombre', price: 20000 });
+      expect(chain.update).toHaveBeenCalledWith({
+        name: 'Nuevo nombre',
+        price: 20000,
+      });
       expect(chain.eq).toHaveBeenCalledWith('id', '1');
     });
 

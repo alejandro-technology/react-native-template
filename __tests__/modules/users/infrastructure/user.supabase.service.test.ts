@@ -15,10 +15,19 @@ const mockFrom = supabaseClient.from as jest.Mock;
 const mockStorageFrom = supabaseClient.storage.from as jest.Mock;
 const mockManageError = manageSupabaseError as jest.Mock;
 
+type UserQueryChain = {
+  select: jest.Mock;
+  insert: jest.Mock;
+  update: jest.Mock;
+  delete: jest.Mock;
+  eq: jest.Mock;
+  or: jest.Mock;
+  single: jest.Mock;
+  then: (resolve: any, reject?: any) => Promise<unknown>;
+};
+
 function createQueryChain(resolvedValue: unknown) {
-  const chain: Record<string, jest.Mock> & {
-    then: (resolve: any, reject?: any) => Promise<unknown>;
-  } = {
+  const chain: UserQueryChain = {
     select: jest.fn(),
     insert: jest.fn(),
     update: jest.fn(),
@@ -27,7 +36,10 @@ function createQueryChain(resolvedValue: unknown) {
     or: jest.fn(),
     single: jest.fn().mockResolvedValue(resolvedValue),
     then(resolve: any, reject?: any) {
-      return new Promise<unknown>(res => res(resolvedValue)).then(resolve, reject);
+      return new Promise<unknown>(res => res(resolvedValue)).then(
+        resolve,
+        reject,
+      );
     },
   };
 
@@ -220,7 +232,10 @@ describe('UserSupabaseService', () => {
 
     it('debe subir avatar local y actualizar el usuario con la URL', async () => {
       const insertedRow = { ...mockUserRow, id: 'user-new', avatar: null };
-      const updatedRow = { ...insertedRow, avatar: 'https://storage.url/user-new/avatars/123.jpg' };
+      const updatedRow = {
+        ...insertedRow,
+        avatar: 'https://storage.url/user-new/avatars/123.jpg',
+      };
 
       const insertChain = createQueryChain({ data: insertedRow, error: null });
       const updateChain = createQueryChain({ data: updatedRow, error: null });
@@ -251,7 +266,9 @@ describe('UserSupabaseService', () => {
       expect(mockBucket.getPublicUrl).toHaveBeenCalled();
       expect(result).not.toBeInstanceOf(Error);
       if (!(result instanceof Error)) {
-        expect(result.avatar).toBe('https://storage.url/user-new/avatars/123.jpg');
+        expect(result.avatar).toBe(
+          'https://storage.url/user-new/avatars/123.jpg',
+        );
       }
     });
 
@@ -271,10 +288,16 @@ describe('UserSupabaseService', () => {
       const chain = createQueryChain({ data: mockUserRow, error: null });
       mockFrom.mockReturnValue(chain);
 
-      const result = await userService.update('user-1', { name: 'Nuevo Nombre', phone: '3009876543' });
+      const result = await userService.update('user-1', {
+        name: 'Nuevo Nombre',
+        phone: '3009876543',
+      });
 
       expect(result).toEqual(expectedUser);
-      expect(chain.update).toHaveBeenCalledWith({ name: 'Nuevo Nombre', phone: '3009876543' });
+      expect(chain.update).toHaveBeenCalledWith({
+        name: 'Nuevo Nombre',
+        phone: '3009876543',
+      });
       expect(chain.eq).toHaveBeenCalledWith('id', 'user-1');
     });
 
@@ -303,10 +326,14 @@ describe('UserSupabaseService', () => {
       const chain = createQueryChain({ data: mockUserRow, error: null });
       mockFrom.mockReturnValue(chain);
 
-      await userService.update('user-1', { avatar: 'https://cdn.example.com/photo.jpg' });
+      await userService.update('user-1', {
+        avatar: 'https://cdn.example.com/photo.jpg',
+      });
 
       expect(chain.update).toHaveBeenCalledWith(
-        expect.objectContaining({ avatar: 'https://cdn.example.com/photo.jpg' }),
+        expect.objectContaining({
+          avatar: 'https://cdn.example.com/photo.jpg',
+        }),
       );
       expect(mockStorageFrom).not.toHaveBeenCalled();
     });
@@ -327,11 +354,15 @@ describe('UserSupabaseService', () => {
         blob: jest.fn().mockResolvedValue(new Blob(['fake-image'])),
       }) as jest.Mock;
 
-      await userService.update('user-1', { avatar: 'file:///local/new-avatar.jpg' });
+      await userService.update('user-1', {
+        avatar: 'file:///local/new-avatar.jpg',
+      });
 
       expect(mockBucket.upload).toHaveBeenCalled();
       expect(chain.update).toHaveBeenCalledWith(
-        expect.objectContaining({ avatar: 'https://storage.url/user-1/avatars/456.jpg' }),
+        expect.objectContaining({
+          avatar: 'https://storage.url/user-1/avatars/456.jpg',
+        }),
       );
     });
 

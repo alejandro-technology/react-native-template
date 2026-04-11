@@ -12,8 +12,9 @@
 
 ## Core Module
 
-- `application/app.storage.ts` is the app-wide transient UI store for `modal`, `toast`, and `searchbar`. Keep it focused on global UX orchestration, not feature state or persisted data.
+- `application/app.storage.ts` is the app-wide transient UI store for shared UX orchestration such as `modal`, `toast`, `searchbar`, and other truly global flows like onboarding. Keep it focused on cross-cutting UI coordination, not feature state or persisted business data.
 - `ui/Modal.tsx` and `ui/Toast.tsx` are thin adapters over `useAppStorage`. New modal/toast variants should be modeled first in `domain/app.model.ts`, then wired through the store and global wrapper.
+- Global search state, if exposed from `app.storage.ts`, should remain generic and reusable across screens. Do not turn it into a dumping ground for feature-specific filters.
 - `domain/utils/*` are pure shared utilities. Keep them framework-free and reusable.
 - Permissions follow `domain -> infrastructure -> application`: define types and contracts in `domain/permissions`, platform mapping in `infrastructure/permissions.service.ts`, and React hooks in `application/permissions/use-permissions.ts`.
 - Do not import feature modules into `core`.
@@ -24,7 +25,7 @@
 - `domain/network.error.ts` and `domain/network.messages.ts` are the single place for shared Axios error translation. Add new mappings there instead of duplicating Axios parsing in feature modules.
 - Connectivity is split intentionally: `application/connectivity.storage.ts` is the source of truth for non-React consumers via `getIsConnected()`, and hooks/services subscribe for React usage.
 - `application/use-netinfo.ts` should expose safe fallback values when connectivity cannot be read.
-- Keep the auth-expired integration decoupled through the callback in `axios-client.service.ts`; do not import auth module internals into `network`.
+- Keep auth-expired handling decoupled from feature auth internals. If `axios-client.service.ts` exposes a callback-based integration point, use that boundary instead of importing authentication module internals into `network`.
 
 ## Verification
 
