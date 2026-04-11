@@ -1,6 +1,7 @@
 import { ProductRepository } from '../domain/product.repository';
 import productHttpService from './product.http.service';
 import productFirebaseService from './product.firebase.service';
+import productSupabaseService from './product.supabase.service';
 import { CONFIG } from '@config/config';
 import productMockService from './product.mock.service';
 
@@ -19,6 +20,8 @@ function createProductService(): ProductRepository {
       return productHttpService;
     case 'firebase':
       return productFirebaseService;
+    case 'supabase':
+      return productSupabaseService;
     case 'mock':
       return productMockService;
     default:

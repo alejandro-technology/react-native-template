@@ -1,6 +1,7 @@
 import { UserRepository } from '../domain/user.repository';
 import userHttpService from './user.http.service';
 import userFirebaseService from './user.firebase.service';
+import userSupabaseService from './user.supabase.service';
 import userMockService from './user.mock.service';
 import { CONFIG } from '@config/config';
 
@@ -19,6 +20,8 @@ function createUserService(): UserRepository {
       return userHttpService;
     case 'firebase':
       return userFirebaseService;
+    case 'supabase':
+      return userSupabaseService;
     case 'mock':
       return userMockService;
     default:

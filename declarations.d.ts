@@ -14,6 +14,8 @@ declare module 'react-native-config' {
     RAWG_API_KEY?: string;
     CURRENCY?: string;
     LOCALE?: string;
+    SUPABASE_URL?: string;
+    SUPABASE_ANON_KEY?: string;
   }
 
   export const Config: NativeConfig;
