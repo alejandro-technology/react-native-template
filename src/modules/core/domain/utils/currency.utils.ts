@@ -44,6 +44,7 @@ export function formatCompactCurrency(
 
   return createCurrencyFormatter({
     notation: 'compact',
+    minimumFractionDigits: 0,
     maximumFractionDigits: 1,
     ...options,
   }).format(amount);
