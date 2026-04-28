@@ -2,6 +2,9 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
+// React Native Config
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 // Only apply Google Services plugin if the google-services.json file exists
 def googleServicesFile = file('google-services.json')
 if (googleServicesFile.exists()) {
@@ -123,4 +126,7 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // React Native Config
+    implementation project(':react-native-config')
 }
