@@ -91,3 +91,5 @@ ios/GoogleService-Info.plist
 android/app/google-services.json
 
 .env
+# Local AI runtime state
+.atl/
