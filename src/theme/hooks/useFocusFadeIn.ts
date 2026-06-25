@@ -2,6 +2,7 @@ import { useCallback, useRef } from 'react';
 import { Animated } from 'react-native';
 import { useFocusEffect } from '@react-navigation/native';
 import { ANIMATION_DURATION } from '../animations';
+import { isIOS } from '@theme/responsive';
 
 interface FocusFadeInConfig {
   duration?: number;
@@ -14,11 +15,11 @@ export function useFocusFadeIn({
   delay = 0,
   offset = 20,
 }: FocusFadeInConfig = {}) {
-  const opacity = useRef(new Animated.Value(0)).current;
-  const translateY = useRef(new Animated.Value(offset)).current;
-
+  const opacity = useRef(new Animated.Value(isIOS ? 1 : 0)).current;
+  const translateY = useRef(new Animated.Value(isIOS ? 0 : offset)).current;
   useFocusEffect(
     useCallback(() => {
+      if (isIOS) return;
       opacity.setValue(0);
       translateY.setValue(offset);
 

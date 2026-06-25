@@ -104,7 +104,10 @@ export function ImagePicker({
       selectionLimit: 1,
     };
 
-    const result = await checkLibrary();
+    // On Android, we skip permission check, because it's not required (Photo Picker Everywhere)
+    // Since Android 11(API 30)
+    const skip = Platform.OS === 'android';
+    const result = await checkLibrary(skip);
     if (result.status === 'granted') {
       launchImageLibrary(options, handleImageResponse);
     } else {

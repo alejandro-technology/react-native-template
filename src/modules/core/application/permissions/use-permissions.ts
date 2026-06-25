@@ -42,23 +42,34 @@ export function usePermission(type: PermissionType) {
     return result;
   }, [type]);
 
-  const checkAndRequest = useCallback(async () => {
-    setIsLoading(true);
-    const result = await permissionsService.checkAndRequest(type);
-    setIsLoading(false);
-    if (result instanceof Error) {
-      setStatus('unavailable');
-      setCanAskAgain(false);
-      return {
-        type,
-        status: 'unavailable' as PermissionStatus,
-        canAskAgain: false,
-      };
-    }
-    setStatus(result.status);
-    setCanAskAgain(result.canAskAgain);
-    return result;
-  }, [type]);
+  const checkAndRequest = useCallback(
+    async (skip?: boolean) => {
+      if (skip) {
+        return {
+          type,
+          status: 'granted' as PermissionStatus,
+          canAskAgain: false,
+        };
+      }
+
+      setIsLoading(true);
+      const result = await permissionsService.checkAndRequest(type);
+      setIsLoading(false);
+      if (result instanceof Error) {
+        setStatus('unavailable');
+        setCanAskAgain(false);
+        return {
+          type,
+          status: 'unavailable' as PermissionStatus,
+          canAskAgain: false,
+        };
+      }
+      setStatus(result.status);
+      setCanAskAgain(result.canAskAgain);
+      return result;
+    },
+    [type],
+  );
 
   const openSettings = useCallback(async () => {
     await permissionsService.openSettings();
