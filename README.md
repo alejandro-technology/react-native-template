@@ -70,15 +70,15 @@ This template focuses on:
 This template will have a companion CLI to extract modules:
 
 ```bash
-npm init react-native-init-app
+npm init react-native-tui
 ```
 
 or
 
 ```bash
-bunx create-react-native-init-app
+bunx create-react-native-tui
 # or
-npx create-react-native-init-app
+npx create-react-native-tui
 ```
 
 # 🚀 Manual Installation
