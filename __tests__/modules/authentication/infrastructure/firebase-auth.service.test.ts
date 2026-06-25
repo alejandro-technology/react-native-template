@@ -17,7 +17,7 @@ jest.mock('@modules/firebase/domain/firebase.error', () => ({
 
 import firebaseAuthService from '@modules/firebase/infrastructure/authentication.service';
 import { manageFirebaseError } from '@modules/firebase/domain/firebase.error';
-import firebaseAuthServiceAuth from '../../../../src/modules/authentication/infrastructure/firebase-auth.service';
+import firebaseAuthServiceAuth from '../../../../src/modules/authentication/infrastructure/auth.firebase.service';
 
 describe('FirebaseAuthService', () => {
   const mockFirebaseUser = {
