@@ -1,3 +1,10 @@
+// El hook hace un early return cuando isIOS es true; forzamos false en el test
+jest.mock('@theme/responsive', () => ({
+  isIOS: false,
+  isAndroid: true,
+  __esModule: true,
+}));
+
 import { renderHook } from '@testing-library/react-native';
 import { Animated } from 'react-native';
 import { useFocusFadeIn } from '../../../src/theme/hooks/useFocusFadeIn';
