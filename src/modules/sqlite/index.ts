@@ -1,2 +1,3 @@
-export { sqliteDb } from './sqlite.db';
-export { manageSqliteError } from './sqlite.error';
+export { sqliteDb } from './infrastructure/sqlite.db';
+export { manageSqliteError } from './domain/sqlite.error';
+export type { Migration } from './domain/sqlite.model';

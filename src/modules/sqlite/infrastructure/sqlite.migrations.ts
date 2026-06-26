@@ -1,8 +1,4 @@
-export interface Migration {
-  id: number;
-  name: string;
-  up: string;
-}
+import type { Migration } from '../domain/sqlite.model';
 
 export const migrations: Migration[] = [
   {
