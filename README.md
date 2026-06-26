@@ -142,6 +142,7 @@ src/
 ├── config/               # App-wide configuration (API, Storage)
 ├── modules/              # Feature Modules
 │   ├── authentication/   # Auth module
+│   ├── users/            # Example CRUD module
 │   ├── products/         # Example CRUD module
 │   └── examples/         # UI Component Showcase
 ├── navigation/           # Root navigation configuration
@@ -173,6 +174,14 @@ Each module (e.g., `src/modules/products/`) is divided into:
 - **Products:** A full CRUD example demonstrating the 4-layer architecture with listing, details, and creation forms.
 - **Users:** A module for user profile management.
 - **Examples:** A gallery of UI components to visualize the design system.
+
+# Premium Modules (Contact Me for Details)
+- **In App Purchase:** A module for in-app purchases with Apple Pay / Google Pay.
+- **Code Push:** A module for code push OTA updates.
+- **Offline-first:** A module for offline-first functionality (engine-sync).
+- **Observability:** A module for observability metrics collection.
+
+## 📥 Preview
 
 <p align="center">
   <img src="./assets/rnkit_preview_android.png" width="45%" />
