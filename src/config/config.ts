@@ -1,6 +1,11 @@
 import Config from 'react-native-config';
 
-export type ServiceProvider = 'http' | 'firebase' | 'supabase' | 'mock';
+export type ServiceProvider =
+  | 'http'
+  | 'firebase'
+  | 'supabase'
+  | 'mock'
+  | 'local';
 
 interface Config {
   SERVICE_PROVIDER: ServiceProvider;

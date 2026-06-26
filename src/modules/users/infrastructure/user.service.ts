@@ -3,6 +3,7 @@ import userHttpService from './user.http.service';
 import userFirebaseService from './user.firebase.service';
 import userSupabaseService from './user.supabase.service';
 import userMockService from './user.mock.service';
+import userLocalService from './user.local.service';
 import { CONFIG } from '@config/config';
 
 /**
@@ -24,6 +25,8 @@ function createUserService(): UserRepository {
       return userSupabaseService;
     case 'mock':
       return userMockService;
+    case 'local':
+      return userLocalService;
     default:
       throw new Error(
         `Unknown user service provider: ${CONFIG.SERVICE_PROVIDER}`,

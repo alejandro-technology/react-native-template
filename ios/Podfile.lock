@@ -1427,7 +1427,7 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
-  - NitroModules (0.33.9):
+  - NitroModules (0.35.9):
     - boost
     - DoubleConversion
     - fast_float
@@ -4175,6 +4175,35 @@ PODS:
     - ReactCommon/turbomodule/core
     - SocketRocket
     - Yoga
+  - RNNitroSQLite (9.6.0):
+    - boost
+    - DoubleConversion
+    - fast_float
+    - fmt
+    - glog
+    - hermes-engine
+    - NitroModules
+    - RCT-Folly
+    - RCT-Folly/Fabric
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - SocketRocket
+    - Yoga
   - RNPermissions (5.5.1):
     - boost
     - DoubleConversion
@@ -4421,6 +4450,7 @@ DEPENDENCIES:
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNNitroSQLite (from `../node_modules/react-native-nitro-sqlite`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - RNSVG (from `../node_modules/react-native-svg`)
@@ -4639,6 +4669,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNNitroSQLite:
+    :path: "../node_modules/react-native-nitro-sqlite"
   RNPermissions:
     :path: "../node_modules/react-native-permissions"
   RNScreens:
@@ -4679,7 +4711,7 @@ SPEC CHECKSUMS:
   MMKVCore: f2dd4c9befea04277a55e84e7812f930537993df
   nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
   NitroMmkv: 4a2d747ce97a4ae740b3cb3a3853366813faf831
-  NitroModules: 18e41c298d86fc753fc754969fa9f84044e70711
+  NitroModules: d2d7b8a417d5f498ef5affa78d82113ad8c35c59
   RCT-Folly: 846fda9475e61ec7bcbf8a3fe81edfcaeb090669
   RCTDeprecation: 9da1d0cf93db23ca8b41e8efe9ae558fd9c0077f
   RCTRequired: 92a63c7041031a131fa5206eb082d53f95729b79
@@ -4762,6 +4794,7 @@ SPEC CHECKSUMS:
   RNFBStorage: 4c9ed291257a3d9984470b855b9c343b00460b5a
   RNGestureHandler: c6327cf6e2bd384dc90351ccfff0da8142d62f54
   RNKeychain: 76d042fc1dfba47f3945920bc82e0bce9ad1ff55
+  RNNitroSQLite: a9b5965d511ed6e99ce903380e64934d043a0d2c
   RNPermissions: aaab489562f31af142c1c67e8a2f91d8ad3cd1ba
   RNScreens: e902eba58a27d3ad399a495d578e8aba3ea0f490
   RNSVG: 4a2ac4d20e011e0168f79adc3c04d42bcd69f7b5

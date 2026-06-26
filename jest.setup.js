@@ -273,3 +273,21 @@ afterEach(() => {
   // Limpiar timers pendientes
   jest.clearAllTimers();
 });
+
+// Mock react-native-nitro-sqlite (JSI native module)
+jest.mock('react-native-nitro-sqlite', () => ({
+  open: () => ({
+    execute: jest.fn(() => ({ results: [], rowsAffected: 0 })),
+    executeAsync: jest.fn(async () => ({ results: [], rowsAffected: 0 })),
+    executeBatch: jest.fn(() => ({ results: [], rowsAffected: 0 })),
+    executeBatchAsync: jest.fn(async () => ({ results: [], rowsAffected: 0 })),
+    transaction: jest.fn(async (cb) => {
+      const tx = {
+        execute: jest.fn(() => ({ results: [], rowsAffected: 0 })),
+        executeAsync: jest.fn(async () => ({ results: [], rowsAffected: 0 })),
+      };
+      await cb(tx);
+    }),
+    close: jest.fn(),
+  }),
+}));
