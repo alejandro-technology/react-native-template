@@ -65,7 +65,15 @@ export function AuthProvider({ children }: PropsWithChildren) {
       }
     });
 
-    // Conectar callback de token expirado del HTTP service
+    // Registrar el getter de token para que el request interceptor del
+    // AxiosClient pueda adjuntar `Authorization: Bearer <token>` a las
+    // llamadas HTTP (REQ-AUTHHTTP-006). Si el provider no implementa
+    // `getStoredToken`, pasamos `null` para no romper la inyección.
+    axiosService.setGetToken(authService.getStoredToken ?? null);
+
+    // Conectar callback de token expirado del HTTP service. Se REGISTRA
+    // sin invocarse (REQ-AUTHHTTP-001) y se dispara únicamente en un 401
+    // terminal vía el response interceptor (REQ-AUTHHTTP-002, 011).
     axiosService.setAuthExpiredCallback(() => {
       setUnauthenticated();
     });
@@ -73,6 +81,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
     // Limpiar suscripción al desmontar
     return () => {
       unsubscribe();
+      axiosService.setGetToken(null);
       axiosService.setAuthExpiredCallback(null);
     };
   }, [setAuthenticated, setUnauthenticated, setLoading]);
