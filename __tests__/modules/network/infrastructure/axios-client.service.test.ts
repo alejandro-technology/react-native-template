@@ -16,7 +16,38 @@
  */
 
 import axios from 'axios';
+import { AxiosError } from 'axios';
 import { AxiosClient } from '@modules/network/infrastructure/axios-client.service';
+
+// Mock refresh-token.manager so we can control refreshTokenOnce() outcomes
+// without making real HTTP calls.
+const mockRefreshTokenOnce = jest.fn();
+jest.mock('@modules/network/application/refresh-token.manager', () => ({
+  refreshTokenOnce: (...args: unknown[]) => mockRefreshTokenOnce(...args),
+}));
+
+/**
+ * Build an AxiosError that the response interceptor's error handler will
+ * receive — mirrors what the real fetch/http adapter produces after
+ * `settle()` rejects via `validateStatus`. A raw 401 from a custom adapter
+ * without this wrapping will land in the SUCCESS handler because the custom
+ * adapter bypasses axios's settle step.
+ */
+function buildAxiosError(config: any, status: number, data: unknown) {
+  return new AxiosError(
+    `Request failed with status code ${status}`,
+    'ERR_BAD_REQUEST',
+    config,
+    {},
+    {
+      status,
+      data,
+      statusText: 'OK',
+      headers: {},
+      config,
+    },
+  );
+}
 
 interface CapturedRequest {
   url?: string;
@@ -37,6 +68,9 @@ function createClientWithStubbedAdapter() {
       data: config.data,
     });
     const next = responses.shift() ?? { status: 200, data: { ok: true } };
+    if (next.status < 200 || next.status >= 300) {
+      return Promise.reject(buildAxiosError(config, next.status, next.data));
+    }
     return Promise.resolve({
       data: next.data,
       status: next.status,
@@ -148,5 +182,132 @@ describe('AxiosClient — setGetToken + request interceptor (REQ-AUTHHTTP-003, 0
       (headers && (headers as any).Authorization) ??
       (headers && (headers as any).authorization);
     expect(auth).toBeUndefined();
+  });
+});
+
+describe('AxiosClient — terminal 401 fires stored expired callback (REQ-AUTHHTTP-002, 009, 010)', () => {
+  function createClientWithController() {
+    const captured: CapturedRequest[] = [];
+    const responses: Array<{ status: number; data?: unknown }> = [];
+
+    const adapter = (config: any) => {
+      captured.push({
+        url: config.url,
+        method: config.method,
+        headers: config.headers,
+        data: config.data,
+      });
+      const next = responses.shift() ?? { status: 200, data: { ok: true } };
+      if (next.status < 200 || next.status >= 300) {
+        return Promise.reject(buildAxiosError(config, next.status, next.data));
+      }
+      return Promise.resolve({
+        data: next.data,
+        status: next.status,
+        statusText: 'OK',
+        headers: {},
+        config,
+      });
+    };
+
+    const instance = axios.create({ adapter });
+    const client = new AxiosClient(instance);
+
+    return {
+      client,
+      instance,
+      captured,
+      queueResponse: (r: { status: number; data?: unknown }) => responses.push(r),
+    };
+  }
+
+  beforeEach(() => {
+    mockRefreshTokenOnce.mockReset();
+  });
+
+  it('fires the stored expired callback EXACTLY once when refresh fails (REQ-AUTHHTTP-002, 009)', async () => {
+    const { client, queueResponse } = createClientWithController();
+    const expiredCb = jest.fn();
+    client.setAuthExpiredCallback(expiredCb);
+    queueResponse({ status: 401, data: { error: 'unauthorized' } });
+    mockRefreshTokenOnce.mockRejectedValue(new Error('refresh-failed'));
+
+    await expect(client.get('/protected')).rejects.toThrow();
+
+    expect(expiredCb).toHaveBeenCalledTimes(1);
+    expect(mockRefreshTokenOnce).toHaveBeenCalledTimes(1);
+  });
+
+  it('does NOT fire the expired callback on a non-401 error (REQ-AUTHHTTP-002 — only terminal 401)', async () => {
+    const { client, queueResponse } = createClientWithController();
+    const expiredCb = jest.fn();
+    client.setAuthExpiredCallback(expiredCb);
+    queueResponse({ status: 500, data: { error: 'server-error' } });
+
+    await expect(client.get('/protected')).rejects.toBeDefined();
+
+    expect(expiredCb).not.toHaveBeenCalled();
+    expect(mockRefreshTokenOnce).not.toHaveBeenCalled();
+  });
+
+  it('fires the expired callback on every terminal 401 and does NOT re-refresh when _retry is already true (REQ-AUTHHTTP-002, 010 — RETRY-GUARD)', async () => {
+    const { client, queueResponse, instance } = createClientWithController();
+    const expiredCb = jest.fn();
+    client.setAuthExpiredCallback(expiredCb);
+
+    // First call: 401 + refresh succeeds. Retry: 401 again — the _retry flag
+    // short-circuits the response interceptor; the expired callback fires
+    // for this terminal 401 (REQ-AUTHHTTP-002, RETRY-GUARD scenario).
+    queueResponse({ status: 401 });
+    queueResponse({ status: 401 });
+    mockRefreshTokenOnce.mockResolvedValue(undefined);
+
+    await expect(client.get('/protected')).rejects.toBeDefined();
+
+    // After the refresh succeeded but the retry still returned 401, the
+    // callback fired once. Now simulate another _retry:true request that
+    // gets a 401 — refresh must NOT be invoked a second time, and the
+    // callback fires again for this terminal 401.
+    queueResponse({ status: 401 });
+    const requestConfig: any = {
+      url: '/protected',
+      method: 'get',
+      _retry: true,
+    };
+    await expect(
+      (instance as any)(requestConfig),
+    ).rejects.toBeDefined();
+
+    // Only the first .get() should have triggered refreshTokenOnce.
+    // The pre-marked _retry request must not.
+    expect(mockRefreshTokenOnce).toHaveBeenCalledTimes(1);
+    // The expired callback fires on EVERY terminal 401 (one per failed request).
+    expect(expiredCb).toHaveBeenCalledTimes(2);
+  });
+
+  it('does NOT throw out of the interceptor chain if the expired callback itself throws (REQ-AUTHHTTP-002 — try/catch swallow)', async () => {
+    const { client, queueResponse } = createClientWithController();
+    const throwing = jest.fn(() => {
+      throw new Error('callback exploded');
+    });
+    client.setAuthExpiredCallback(throwing);
+    queueResponse({ status: 401 });
+    mockRefreshTokenOnce.mockRejectedValue(new Error('refresh-failed'));
+
+    // The user's original request still rejects — but the chain doesn't
+    // re-throw the callback's own error. The end-state is: callback ran,
+    // and the original rejection surfaced to the caller.
+    await expect(client.get('/protected')).rejects.toThrow();
+    expect(throwing).toHaveBeenCalledTimes(1);
+  });
+
+  it('does nothing dangerous when no callback is registered (REQ-AUTHHTTP-002 — defensive)', async () => {
+    const { client, queueResponse } = createClientWithController();
+    // Intentionally do NOT call setAuthExpiredCallback.
+    queueResponse({ status: 401 });
+    mockRefreshTokenOnce.mockRejectedValue(new Error('refresh-failed'));
+
+    await expect(client.get('/protected')).rejects.toThrow();
+    // No crash, no callback invocation.
   });
 });

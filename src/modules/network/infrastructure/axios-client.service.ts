@@ -33,14 +33,26 @@ export class AxiosClient {
       async (error: AxiosError) => {
         const originalRequest = error.config as { _retry?: boolean };
 
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-
-          try {
-            await refreshTokenOnce();
-            return this.axiosInstance(originalRequest as AxiosRequestConfig);
-          } catch (refreshError) {
-            return Promise.reject(refreshError);
+        if (error.response?.status === 401) {
+          if (!originalRequest._retry) {
+            // First 401: try refresh + retry.
+            originalRequest._retry = true;
+            try {
+              await refreshTokenOnce();
+              return this.axiosInstance(originalRequest as AxiosRequestConfig);
+            } catch (refreshError) {
+              // Terminal 401: refresh failed. Fire the stored expired callback
+              // (sign-out) BEFORE re-rejecting so the app's auth state can
+              // sync (REQ-AUTHHTTP-002, 009). fireExpiredCallback swallows its
+              // own errors so the interceptor chain is never disrupted.
+              this.fireExpiredCallback();
+              return Promise.reject(refreshError);
+            }
+          } else {
+            // Already retried, still 401: terminal failure (REQ-AUTHHTTP-010 — RETRY-GUARD).
+            // Do NOT re-refresh; fire the stored expired callback and reject.
+            this.fireExpiredCallback();
+            return Promise.reject(error);
           }
         }
 
