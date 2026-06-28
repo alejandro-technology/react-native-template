@@ -64,4 +64,12 @@ export interface AuthRepository {
    * Elimina la cuenta del usuario actual
    */
   deleteAccount(): Promise<void | Error>;
+
+  /**
+   * Devuelve el token JWT almacenado por este proveedor, si aplica.
+   * - HTTP provider: lee MMKV `http-auth-token` y devuelve el string o null.
+   * - Otros providers (Mock, Firebase, Supabase): devuelven null.
+   * Es opcional en la interfaz; los consumidores deben usar `?.()` y `?? null`.
+   */
+  getStoredToken?(): string | null;
 }

@@ -304,4 +304,24 @@ describe('AuthHttpService', () => {
       expect(result).toBeUndefined();
     });
   });
+
+  describe('getStoredToken (REQ-AUTHHTTP-005)', () => {
+    it('should return null when MMKV has no http-auth-token key', () => {
+      (storage.getString as jest.Mock).mockReturnValue(undefined);
+
+      const result = authHttpService.getStoredToken?.();
+
+      expect(result).toBeNull();
+      expect(storage.getString).toHaveBeenCalledWith('http-auth-token');
+    });
+
+    it('should return the stored token when MMKV has http-auth-token', () => {
+      (storage.getString as jest.Mock).mockReturnValue('eyJhbGciOiJIUzI1NiJ9.payload.sig');
+
+      const result = authHttpService.getStoredToken?.();
+
+      expect(result).toBe('eyJhbGciOiJIUzI1NiJ9.payload.sig');
+      expect(storage.getString).toHaveBeenCalledWith('http-auth-token');
+    });
+  });
 });

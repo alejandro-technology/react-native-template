@@ -342,6 +342,13 @@ class AuthMockService implements AuthRepository {
 
     return;
   }
+
+  /**
+   * El mock no almacena un JWT HTTP. Devuelve siempre null.
+   */
+  getStoredToken(): string | null {
+    return null;
+  }
 }
 
 function createAuthMockService(): AuthRepository {

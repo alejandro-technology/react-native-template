@@ -29,6 +29,14 @@ class AuthHttpService implements AuthRepository {
   private listeners: Set<AuthStateChangeCallback> = new Set();
 
   /**
+   * Obtiene el token almacenado (acceso de paquete).
+   * Exposición pública para que `AxiosClient` lo consuma vía `getStoredToken`.
+   */
+  getStoredToken(): string | null {
+    return this.getToken();
+  }
+
+  /**
    * Obtiene el token almacenado
    */
   private getToken(): string | null {

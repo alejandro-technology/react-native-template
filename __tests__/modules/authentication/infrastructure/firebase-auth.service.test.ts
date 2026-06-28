@@ -272,4 +272,12 @@ describe('FirebaseAuthService', () => {
       expect(result).toBeInstanceOf(Error);
     });
   });
+
+  describe('getStoredToken (REQ-AUTHHTTP-005)', () => {
+    it('should return null — Firebase provider does not expose an HTTP JWT', () => {
+      const result = firebaseAuthServiceAuth.getStoredToken?.();
+
+      expect(result).toBeNull();
+    });
+  });
 });

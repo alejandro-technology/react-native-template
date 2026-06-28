@@ -170,6 +170,13 @@ class FirebaseAuthService implements AuthRepository {
       return manageFirebaseError(error);
     }
   }
+
+  /**
+   * Firebase no expone un JWT HTTP a este provider. Devuelve null.
+   */
+  getStoredToken(): string | null {
+    return null;
+  }
 }
 
 function createFirebaseAuthService(): AuthRepository {

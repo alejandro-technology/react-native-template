@@ -273,4 +273,12 @@ describe('AuthMockService', () => {
       expect(result).toBeInstanceOf(Error);
     });
   });
+
+  describe('getStoredToken (REQ-AUTHHTTP-005)', () => {
+    it('should return null — mock provider does not store an HTTP JWT', () => {
+      const result = authMockService.getStoredToken?.();
+
+      expect(result).toBeNull();
+    });
+  });
 });

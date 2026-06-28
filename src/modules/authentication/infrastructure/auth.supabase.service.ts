@@ -216,6 +216,13 @@ class SupabaseAuthService implements AuthRepository {
       return manageSupabaseError(error);
     }
   }
+
+  /**
+   * Supabase no expone un JWT HTTP a este provider. Devuelve null.
+   */
+  getStoredToken(): string | null {
+    return null;
+  }
 }
 
 function createSupabaseAuthService(): AuthRepository {
