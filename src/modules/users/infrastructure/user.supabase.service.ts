@@ -4,6 +4,7 @@ import { supabaseClient, manageSupabaseError } from '@modules/supabase';
 import { COLLECTIONS } from '@config/collections.routes';
 // Domain
 import { UserRepository } from '../domain/user.repository';
+import { UserRow, toUser } from '../domain/user.mapper';
 import type {
   CreateUserPayload,
   User,
@@ -12,34 +13,6 @@ import type {
 } from '../domain/user.model';
 
 const AVATARS_BUCKET = 'avatars';
-
-interface UserRow {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  avatar: string | null;
-  birth_date: string | null;
-  terms_accepted: boolean;
-  created_at: string;
-  updated_at: string;
-}
-
-function toUser(row: UserRow): User {
-  return {
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    phone: row.phone,
-    role: row.role,
-    avatar: row.avatar ?? undefined,
-    birthDate: row.birth_date ? new Date(row.birth_date) : undefined,
-    termsAccepted: row.terms_accepted,
-    createdAt: new Date(row.created_at),
-    updatedAt: new Date(row.updated_at),
-  };
-}
 
 async function uploadAvatarIfNeeded(
   userId: string,

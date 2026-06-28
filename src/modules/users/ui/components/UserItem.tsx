@@ -15,10 +15,9 @@ import { formatJoinDate } from '@modules/core/domain/utils/date.utils';
 
 interface UserItemProps {
   user: User;
-  index: number;
 }
 
-export const UserItem = React.memo(function UserItem({ user }: UserItemProps) {
+export const UserItem = React.memo(function ({ user }: UserItemProps) {
   const { navigate } = useNavigationUsers();
 
   const handleCardPress = () => {

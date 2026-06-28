@@ -12,12 +12,9 @@ import { useNavigationProducts } from '@navigation/hooks';
 
 interface ProductItemProps {
   product: Product;
-  index: number;
 }
 
-export const ProductItem = React.memo(function ProductItem({
-  product,
-}: ProductItemProps) {
+export const ProductItem = React.memo(function ({ product }: ProductItemProps) {
   const { navigate } = useNavigationProducts();
 
   const handleCardPress = () => {

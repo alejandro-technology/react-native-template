@@ -6,11 +6,11 @@ import { UsersRoutes, UsersScreenProps } from '@navigation/routes';
 // UI Components
 import { UserDetail } from './components/UserDetail';
 
-export function UserDetailView({
-  route: {
-    params: { userId },
-  },
-}: UsersScreenProps<UsersRoutes.UserDetail>) {
+type ScreenProps = UsersScreenProps<UsersRoutes.UserDetail>;
+
+export function UserDetailView({ route }: ScreenProps) {
+  const { userId } = route.params;
+
   return (
     <RootLayout padding="md" title="Detalle de Usuario">
       <UserDetail userId={userId} />

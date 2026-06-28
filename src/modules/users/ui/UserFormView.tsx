@@ -1,5 +1,4 @@
-import React from 'react';
-import { Animated } from 'react-native';
+import React, { useMemo } from 'react';
 // Components
 import { RootLayout } from '@components/layout';
 import { UserForm } from './components/UserForm';
@@ -9,53 +8,46 @@ import { useUserCreate, useUserUpdate } from '../application/user.mutations';
 import type { UserFormData } from '../domain/user.scheme';
 // Navigation
 import { UsersRoutes, UsersScreenProps } from '@navigation/routes';
-// Theme
-import { useFocusSlideIn } from '@theme/hooks';
-import { ANIMATION_DURATION } from '@theme/animations';
 
-export function UserFormView({
-  route: { params },
-  navigation: { goBack },
-}: UsersScreenProps<UsersRoutes.UserForm>) {
+type ScreenProps = UsersScreenProps<UsersRoutes.UserForm>;
+
+export function UserFormView({ navigation, route }: ScreenProps) {
+  const goBack = navigation.goBack;
+  const params = route.params;
+  const user = params?.user;
+  const isEditMode = !!user;
+
+  // Mutations
   const { mutateAsync: createUser, isPending: isCreating } = useUserCreate();
   const { mutateAsync: updateUser, isPending: isUpdating } = useUserUpdate();
 
-  const isLoading = isCreating || isUpdating;
+  // Memoized values
+  const isLoading = useMemo(
+    () => isCreating || isUpdating,
+    [isCreating, isUpdating],
+  );
 
-  const user = params?.user;
-  const isEditing = !!user;
-
-  const { animatedStyle } = useFocusSlideIn({
-    direction: 'right',
-    duration: ANIMATION_DURATION.slow,
-  });
-
+  // Events
   async function handleSubmit(form: UserFormData) {
-    try {
-      if (isEditing) {
-        await updateUser({ id: user.id, form });
-      } else {
-        await createUser(form);
-      }
-      goBack();
-    } catch {
-      // Error is handled by mutation's onError callback (shows toast)
+    if (isEditMode) {
+      await updateUser({ id: user.id, form });
+    } else {
+      await createUser(form);
     }
+    goBack();
   }
 
   return (
     <RootLayout
       scroll
       padding="lg"
-      title={isEditing ? 'Editar Usuario' : 'Crear Usuario'}
+      title={isEditMode ? 'Editar Usuario' : 'Crear Usuario'}
     >
-      <Animated.View style={animatedStyle}>
-        <UserForm
-          onSubmit={handleSubmit}
-          isLoading={isLoading}
-          initialData={user}
-        />
-      </Animated.View>
+      <UserForm
+        onSubmit={handleSubmit}
+        isLoading={isLoading}
+        initialData={user}
+      />
     </RootLayout>
   );
 }

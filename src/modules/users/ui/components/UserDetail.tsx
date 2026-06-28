@@ -6,6 +6,8 @@ import { EmptyState, LoadingState, ErrorState } from '@components/layout';
 // Navigation
 import { UsersRoutes } from '@navigation/routes';
 import { useNavigationUsers } from '@navigation/hooks';
+// Modules
+import { formatDate } from '@modules/core';
 // Theme
 import { spacing } from '@theme/index';
 // Store
@@ -20,9 +22,9 @@ interface UserDetailProps {
 
 export function UserDetail({ userId }: UserDetailProps) {
   const { goBack, navigate } = useNavigationUsers();
-  const { data: user, isLoading, isError, error } = useUser(userId);
-  const { mutateAsync: deleteUserAsync } = useUserDelete();
   const { open, close } = useAppStorage(state => state.modal);
+  const { mutateAsync: deleteUserAsync } = useUserDelete();
+  const { data: user, isLoading, isError, error } = useUser(userId);
 
   if (isLoading) {
     return <LoadingState message="Cargando usuario..." />;
@@ -43,6 +45,7 @@ export function UserDetail({ userId }: UserDetailProps) {
     return <UserDetailEmpty onBack={goBack} />;
   }
 
+  // Events
   function handleEdit() {
     user && navigate(UsersRoutes.UserForm, { user });
   }
@@ -94,21 +97,15 @@ export function UserDetail({ userId }: UserDetailProps) {
         {user.birthDate && (
           <View style={styles.infoRow}>
             <Text variant="caption">Fecha de nacimiento:</Text>
-            <Text variant="body">
-              {new Date(user.birthDate).toLocaleDateString()}
-            </Text>
+            <Text variant="body">{formatDate(user.birthDate)}</Text>
           </View>
         )}
       </Card>
 
       <Card style={styles.card}>
         <Text variant="caption">Fechas</Text>
-        <Text variant="body">
-          Creado: {new Date(user.createdAt).toLocaleDateString()}
-        </Text>
-        <Text variant="body">
-          Actualizado: {new Date(user.updatedAt).toLocaleDateString()}
-        </Text>
+        <Text variant="body">Creado: {formatDate(user.createdAt)}</Text>
+        <Text variant="body">Actualizado: {formatDate(user.updatedAt)}</Text>
       </Card>
 
       <View>

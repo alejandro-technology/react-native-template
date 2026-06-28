@@ -8,7 +8,7 @@ import { Button } from '@components/core';
 import type { SelectOption } from '@components/core/Select';
 import { TextInput, Select } from '@components/form';
 // Domain
-import type { Product } from '../../domain/product.model';
+import type { Product, ProductType } from '../../domain/product.model';
 import { productSchema, ProductFormData } from '../../domain/product.scheme';
 
 const PRODUCT_TYPE_OPTIONS: SelectOption[] = [
@@ -16,6 +16,10 @@ const PRODUCT_TYPE_OPTIONS: SelectOption[] = [
   { label: 'Bebidas', value: 'bebidas' },
   { label: 'Otros', value: 'otros' },
 ];
+
+function getInitialProductType(type: ProductType) {
+  return PRODUCT_TYPE_OPTIONS.find(o => o.value === type);
+}
 
 interface ProductFormProps {
   onSubmit: (data: ProductFormData) => void;
@@ -38,10 +42,7 @@ export function ProductForm({
       name: initialData?.name || '',
       description: initialData?.description || '',
       price: initialData?.price || 0,
-      type: initialData
-        ? PRODUCT_TYPE_OPTIONS.find(o => o.value === initialData.type) ??
-          undefined
-        : undefined,
+      type: initialData ? getInitialProductType(initialData.type) : undefined,
     },
   });
 

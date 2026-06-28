@@ -1,39 +1,12 @@
 import { sqliteDb, manageSqliteError } from '@modules/sqlite';
 import { UserRepository } from '../domain/user.repository';
+import { UserRow, toUser } from '../domain/user.mapper';
 import type {
   CreateUserPayload,
   User,
   UserFilter,
   UpdateUserPayload,
 } from '../domain/user.model';
-
-interface UserRow {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  avatar: string | null;
-  birth_date: string | null;
-  terms_accepted: number; // SQLite stores booleans as 0 or 1
-  created_at: string;
-  updated_at: string;
-}
-
-function toUser(row: UserRow): User {
-  return {
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    phone: row.phone,
-    role: row.role,
-    avatar: row.avatar ?? undefined,
-    birthDate: row.birth_date ? new Date(row.birth_date) : undefined,
-    termsAccepted: row.terms_accepted === 1,
-    createdAt: new Date(row.created_at),
-    updatedAt: new Date(row.updated_at),
-  };
-}
 
 class UserLocalService implements UserRepository {
   async getAll(filter?: UserFilter): Promise<User[] | Error> {

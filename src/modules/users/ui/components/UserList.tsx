@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useCallback } from 'react';
+import { RefreshControl, StyleSheet } from 'react-native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { Icon } from '@components/core';
 // Components
@@ -19,20 +19,23 @@ import type { User } from '../../domain/user.model';
 // Theme
 import { spacing } from '@theme/index';
 
-const renderUserItem: ListRenderItem<User> = ({ item, index }) => (
-  <UserItem user={item} index={index} />
-);
-
 export function UserList() {
-  const searchbar = useAppStorage(state => state.searchbar);
-  const { searchText } = searchbar.users || {};
+  const searchText = useAppStorage(state => state.searchbar.users.searchText);
   const debouncedSearch = useDebounce(searchText, 500);
+
   const {
     data: users,
     isLoading,
+    isRefetching,
     isError,
     error,
+    refetch,
   } = useUsers({ searchText: debouncedSearch });
+
+  const renderUserItem = useCallback<ListRenderItem<User>>(
+    ({ item }) => <UserItem user={item} />,
+    [],
+  );
 
   if (isLoading) {
     return <LoadingState message="Cargando usuarios..." />;
@@ -41,18 +44,8 @@ export function UserList() {
   if (isError) {
     return (
       <ErrorState
-        title="Error al cargar"
+        title="Error al cargar los usuarios"
         message={error?.message || 'No se pudieron cargar los usuarios'}
-      />
-    );
-  }
-
-  if (!users || users.length === 0) {
-    return (
-      <EmptyState
-        title="Usuario no encontrado"
-        message="El usuario que buscas no existe o fue eliminado"
-        icon={<Icon name="user" size={42} />}
       />
     );
   }
@@ -67,6 +60,16 @@ export function UserList() {
       showsVerticalScrollIndicator={false}
       keyboardShouldPersistTaps="handled"
       keyboardDismissMode="on-drag"
+      refreshControl={
+        <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
+      }
+      ListEmptyComponent={
+        <EmptyState
+          title="Usuario no encontrado"
+          message="El usuario que buscas no existe o fue eliminado"
+          icon={<Icon name="user" size={42} />}
+        />
+      }
     />
   );
 }

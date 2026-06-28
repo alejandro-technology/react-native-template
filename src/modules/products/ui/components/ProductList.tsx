@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useCallback } from 'react';
 import { RefreshControl, StyleSheet } from 'react-native';
 import { FlashList, ListRenderItem } from '@shopify/flash-list';
 import { Icon } from '@components/core';
@@ -9,25 +9,20 @@ import {
   ErrorState,
   ItemSeparatorComponent,
   LoadingState,
-  OfflineBanner,
 } from '@components/layout';
 // Modules
 import { useAppStorage } from '@modules/core';
 import { useDebounce } from '@modules/core/application/core.hooks';
 import { useProducts } from '@modules/products/application/product.queries';
-import { useIsConnected } from '@modules/network/application/connectivity.storage';
 // Types
 import type { Product } from '../../domain/product.model';
 // Theme
 import { spacing } from '@theme/index';
 
-const renderProductItem: ListRenderItem<Product> = ({ item, index }) => (
-  <ProductItem product={item} index={index} />
-);
-
 export function ProductList() {
-  const searchbar = useAppStorage(state => state.searchbar);
-  const { searchText } = searchbar.products || {};
+  const searchText = useAppStorage(
+    state => state.searchbar.products.searchText,
+  );
   const debouncedSearch = useDebounce(searchText, 500);
 
   const {
@@ -38,11 +33,10 @@ export function ProductList() {
     error,
     refetch,
   } = useProducts({ searchText: debouncedSearch });
-  const isConnected = useIsConnected();
 
-  const headerComponent = useMemo(
-    () => (!isConnected ? <OfflineBanner /> : null),
-    [isConnected],
+  const renderProductItem = useCallback<ListRenderItem<Product>>(
+    ({ item }) => <ProductItem product={item} />,
+    [],
   );
 
   if (isLoading) {
@@ -52,18 +46,8 @@ export function ProductList() {
   if (isError) {
     return (
       <ErrorState
-        title="Error al cargar"
+        title="Error al cargar los productos"
         message={error?.message || 'No se pudieron cargar los productos'}
-      />
-    );
-  }
-
-  if (!products || products.length === 0) {
-    return (
-      <EmptyState
-        title="Producto no encontrado"
-        message="El producto que buscas no existe o fue eliminado"
-        icon={<Icon name="package" size={42} />}
       />
     );
   }
@@ -81,7 +65,13 @@ export function ProductList() {
       refreshControl={
         <RefreshControl refreshing={isRefetching} onRefresh={refetch} />
       }
-      ListHeaderComponent={headerComponent}
+      ListEmptyComponent={
+        <EmptyState
+          title="Producto no encontrado"
+          message="El producto que buscas no existe o fue eliminado"
+          icon={<Icon name="package" size={42} />}
+        />
+      }
     />
   );
 }

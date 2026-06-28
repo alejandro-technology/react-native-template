@@ -6,11 +6,11 @@ import { ProductsRoutes, ProductsScreenProps } from '@navigation/routes';
 // UI Components
 import { ProductDetail } from './components/ProductDetail';
 
-export function ProductDetailView({
-  route: {
-    params: { productId },
-  },
-}: ProductsScreenProps<ProductsRoutes.ProductDetail>) {
+type ScreenProps = ProductsScreenProps<ProductsRoutes.ProductDetail>;
+
+export function ProductDetailView({ route }: ScreenProps) {
+  const { productId } = route.params;
+
   return (
     <RootLayout padding="md" title="Detalle de Producto">
       <ProductDetail productId={productId} />

@@ -6,13 +6,14 @@ import { EmptyState, LoadingState, ErrorState } from '@components/layout';
 // Navigation
 import { ProductsRoutes } from '@navigation/routes';
 import { useNavigationProducts } from '@navigation/hooks';
-// Theme
-import { spacing } from '@theme/index';
-// Store
+// Modules
+import { formatCurrency, formatDate } from '@modules/core';
 import { useAppStorage } from '@modules/core/application/app.storage';
 // Application
 import { useProduct } from '../../application/product.queries';
 import { useProductDelete } from '../../application/product.mutations';
+// Theme
+import { spacing } from '@theme/index';
 
 interface ProductDetailProps {
   productId: string;
@@ -20,9 +21,9 @@ interface ProductDetailProps {
 
 export function ProductDetail({ productId }: ProductDetailProps) {
   const { goBack, navigate } = useNavigationProducts();
-  const { data: product, isLoading, isError, error } = useProduct(productId);
-  const { mutateAsync: deleteProductAsync } = useProductDelete();
   const { open, close } = useAppStorage(state => state.modal);
+  const { mutateAsync: deleteProductAsync } = useProductDelete();
+  const { data: product, isLoading, isError, error } = useProduct(productId);
 
   if (isLoading) {
     return <LoadingState message="Cargando producto..." />;
@@ -43,6 +44,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
     return <ProductDetailEmpty onBack={goBack} />;
   }
 
+  // Events
   function handleEdit() {
     product && navigate(ProductsRoutes.ProductForm, { product });
   }
@@ -73,7 +75,7 @@ export function ProductDetail({ productId }: ProductDetailProps) {
           <Text variant="body">{product.description}</Text>
         )}
 
-        <Text variant="h3">${product.price.toFixed(2)}</Text>
+        <Text variant="h3">{formatCurrency(product.price)}</Text>
 
         <Text variant="caption" color="textSecondary">
           Tipo: {product.type}
@@ -82,12 +84,8 @@ export function ProductDetail({ productId }: ProductDetailProps) {
 
       <Card style={styles.card}>
         <Text variant="caption">Fechas</Text>
-        <Text variant="body">
-          Creado: {product.createdAt.toLocaleDateString()}
-        </Text>
-        <Text variant="body">
-          Actualizado: {product.updatedAt.toLocaleDateString()}
-        </Text>
+        <Text variant="body">Creado: {formatDate(product.createdAt)}</Text>
+        <Text variant="body">Actualizado: {formatDate(product.updatedAt)}</Text>
       </Card>
 
       <View>
