@@ -3,6 +3,7 @@ import authHttpService from './auth.http.service';
 import authFirebaseService from './auth.firebase.service';
 import authSupabaseService from './auth.supabase.service';
 import authMockService from './auth.mock.service';
+import authLocalService from './auth.local.service';
 import { CONFIG } from '@config/config';
 
 function createAuthService(): AuthRepository {
@@ -13,6 +14,8 @@ function createAuthService(): AuthRepository {
       return authFirebaseService;
     case 'supabase':
       return authSupabaseService;
+    case 'local':
+      return authLocalService;
     case 'mock':
       return authMockService;
     default:
