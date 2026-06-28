@@ -155,7 +155,7 @@ src/
 
 Each module (e.g., `src/modules/products/`) is divided into:
 
-1.  **Domain:** Entities, Repository Interfaces, Errors (Pure TS, no React/Lib dependencies).
+1.  **Domain:** Entities, Repository Interfaces, Errors (Pure TS, no React/Lib dependencies), Mapper (Data Transformation Layer), Adapter (Interface Layer).
 2.  **Application:** Use Cases, State Management (Zustand/Query), Logic.
 3.  **Infrastructure:** API calls, Database implementation, Third-party adapters.
 4.  **UI:** Screens, Components, Navigation.

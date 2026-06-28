@@ -33,7 +33,7 @@ bun run pod-install                  # Bundle exec pod install (iOS)
 
 Clean Architecture with 4 layers per feature module under `src/modules/{module}/`:
 
-- **domain/** — Entity interfaces (`{Entity}`, `Create{Entity}Payload`, `Update{Entity}Payload`, `{Entity}Filter`), repository interface, Yup schema, adapter
+- **domain/** — Entity interfaces (`{Entity}`, `Create{Entity}Payload`, `Update{Entity}Payload`, `{Entity}Filter`), repository interface, Yup schema, adapter, mapper
 - **infrastructure/** — Service factory (switches on `CONFIG.SERVICE_PROVIDER`), HTTP (axios), Firebase (firestore), Mock implementations
 - **application/** — React Query hooks (queries with offline fallback, mutations with toast), Zustand stores with MMKV persistence
 - **ui/** — Screens (`{Entities}ListView`, `{Entity}DetailView`, `{Entity}FormView`) and screen-specific components
@@ -87,6 +87,18 @@ async getById(id: string): Promise<Product | Error> {
 // Mutation: check and re-throw
 const result = await productService.getById(id);
 if (result instanceof Error) throw result;
+
+// Or show toast
+const show = useAppStorage(state => state.toast.show);
+useMutation({
+  mutationFn: () => {},
+  onError: (error: Error) => {
+    show({
+      message: error.message,
+      type: 'error',
+    });
+  },
+})
 ```
 
 ## React Patterns
