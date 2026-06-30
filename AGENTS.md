@@ -40,6 +40,35 @@ Clean Architecture with 4 layers per feature module under `src/modules/{module}/
 
 Entry: `App.tsx` → `AppProvider` → `RootNavigator`. Service provider set in `src/config/config.ts`.
 
+### Service Backends (swappable)
+
+`CONFIG.SERVICE_PROVIDER` selects the backend; default is `mock`. Each module's `{entity}.service.ts` factory resolves the implementation.
+
+| Value | Uses | Configure |
+|---|---|---|
+| `http` | Axios → REST API | `API_ROUTES.ROOT` in `src/config/api.routes.ts` |
+| `firebase` | Firestore + Storage | `ios/GoogleService-Info.plist` + `android/app/google-services.json` |
+| `supabase` | Supabase client | `src/modules/supabase/infrastructure/supabase.client.ts` |
+| `local` | SQLite (nitro-sqlite) | `src/modules/sqlite` (schema in `sqlite.migrations.ts`) |
+| `mock` | Hardcoded data | none |
+
+Secrets come from `react-native-config` (`.env`), never hardcoded.
+
+### Module Taxonomy
+
+| Module | Type | Purpose |
+|---|---|---|
+| `products` | Feature | CRUD reference — copy this when creating new modules |
+| `users` | Feature | User management, all 4 layers |
+| `authentication` | Feature | Login/registro across http, firebase, mock |
+| `core` | Shared | Global UI state (Zustand) + permissions |
+| `network` | Infrastructure | Axios client (auth refresh + retry queue), error mapper, connectivity |
+| `firebase` | Infrastructure | Firestore + Storage services |
+| `supabase` | Infrastructure | Supabase client |
+| `sqlite` | Infrastructure | SQLite DB + migrations (the `local` backend) |
+| `examples` | Showcase | Visual component gallery |
+| `iap` | — | Empty placeholder — not implemented |
+
 ## Imports
 
 Use path aliases: `@assets/*`, `@components/*`, `@modules/*`, `@theme/*`, `@utils/*`, `@config/*`, `@navigation/*`. Aliases defined in both `tsconfig.json` and `babel.config.js`. Group imports with blank lines and comment labels:
@@ -84,14 +113,14 @@ async getById(id: string): Promise<Product | Error> {
   catch (e) { return manageAxiosError(e); }
 }
 
-// Mutation: check and re-throw
-const result = await productService.getById(id);
-if (result instanceof Error) throw result;
-
-// Or show toast
+// Show toast
 const show = useAppStorage(state => state.toast.show);
 useMutation({
-  mutationFn: () => {},
+  mutationFn: () => {
+    // Mutation: check and re-throw
+    const result = await productService.getById(id);
+    if (result instanceof Error) throw result;
+  },
   onError: (error: Error) => {
     show({
       message: error.message,
@@ -164,3 +193,10 @@ Global thresholds: branches 20%, functions 20%, lines 25%, statements 25%. Core 
 - MMKV for persistence, not AsyncStorage
 - Module creation rules in `.opencode/rules/create-module.md`
 - The `.ai/` directory is the source of truth — copied to `.opencode/`, `.claude/`, `.trae/` via package.json scripts
+- `.opencode/` and `.claude/` are gitignored — always edit `.ai/` then sync
+
+## Rules & Skills
+
+This repo has a full rule set at `.opencode/rules/*.md` (architecture, error handling, state management, components, views, dependencies, theme, testing, providers, conventions). These are loaded automatically by OpenCode via `opencode.json`. Reference implementation: `src/modules/products`.
+
+Skills live at `.opencode/skills/` and cover module creation, component creation, form handling, testing, and navigation registration.

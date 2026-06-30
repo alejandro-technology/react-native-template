@@ -1,150 +1,162 @@
 # CLAUDE.md
 
-> **Last updated:** 2026-03-25
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-Template React Native con Clean Architecture. Las reglas arquitectónicas y de diseño están en `.claude/rules/`. Los skills de enforcement, generación y especialidad están en `.claude/skills/`. Los agentes están en `.claude/agents/`. Este archivo documenta **solo lo que no está en esos archivos**.
+## Overview
 
-## Stack y Versiones
+React Native template built on **Clean Architecture** (4 layers per feature module). React Native 0.83.9, React 19.2.0, TypeScript 5.8.3 (strict), New Architecture enabled. Package manager: **bun** — never npm/yarn. Node >= 20.
 
-| Dependencia | Versión | Notas |
-|---|---|---|
-| React Native | 0.83.4 | New Architecture habilitada |
-| React | 19.2.0 | |
-| TypeScript | 5.8.3 | |
-| Node | >=20 | Definido en `engines` |
-| Package manager | bun | CI usa `bun install`, dev local también |
+- **Architecture rules (canonical, 11 rules with detail files):** `.ai/rules/index.md`
+- **Reference module that exercises every layer:** `src/modules/products` — copy it when creating a new module.
+- **Agent guide (overlapping companion doc):** `AGENTS.md`
 
-## Scripts Principales
+## Commands
 
 ```bash
-bun run android          # Compilar y correr en Android
-bun run ios              # Compilar y correr en iOS
-bun run start            # Metro bundler
-bun run test             # Jest
-bun run lint             # ESLint
-bun run prettier         # Formatear src/
-bun run pod-cocoa        # bundle install en ios/
-bun run pod-install      # bundle exec pod install en ios/
-bun run clean-android    # Limpiar build Android + gradlew clean
-bun run clean-ios        # Limpiar build iOS + Pods + Podfile.lock
-bun run clean-watch      # Limpiar watchman
-bun run clean-node       # Limpiar node_modules + bun.lockb
-bun run claude           # Copiar .ai/ → .claude/ (sincronizar skills)
+bun install                          # Install dependencies
+bun run test                         # Run all tests (jest)
+bun run test -- path/to/file.test.ts # Run a single test file
+bun run test:watch                   # Watch mode
+bun run test:coverage                # Coverage report
+bun run lint                         # ESLint
+bun run lint:fix                     # ESLint --fix
+bun run typecheck                    # tsc --noEmit
+bun run prettier                     # Format src/
+bun run start | android | ios        # Metro / run on device
+
+# Troubleshooting / native
+bun run pod-cocoa                    # bundle install (ios/)
+bun run pod-install                  # bundle exec pod install (ios/)
+bun run clean-android                # rm Android build + gradlew clean
+bun run clean-ios                    # rm iOS build + Pods + Podfile.lock
+bun run clean-watch                  # reset watchman
+bun run clean-node                   # rm node_modules + bun.lock
 ```
 
-## Punto de Entrada y Composición de Providers
+After changes, run `bun run lint`, `bun run typecheck`, and `bun run test`.
 
-`App.tsx` → `AppProvider` → `RootNavigator`
+## Architecture
 
-Orden de providers (de afuera hacia adentro):
-```
-SecureProvider          → Bloquea dispositivos rooteados (JailMonkey)
-  QueryClientProvider   → React Query (sin config custom en prod)
-    ThemeProvider        → Contexto de tema con persistencia MMKV
-      SafeAreaProvider   → Safe area insets
-        GestureHandler   → Usa theme.colors.background como fondo
-          NavigationProvider → NavigationContainer
-```
+Every feature lives in `src/modules/{module}/`, split into four inward-pointing layers. Domain is pure TypeScript and depends on nothing; outer layers depend on inner ones, never the reverse.
 
-## Configuración del Service Provider
+- **domain/** — entity interfaces (`{Entity}`, `Create{Entity}Payload`, `Update{Entity}Payload`, `{Entity}Filter`), repository interface (`{entity}.repository.ts`), Yup scheme, adapter/mapper, and the backend error mapper (`{name}.error.ts`).
+- **infrastructure/** — service factory (`{entity}.service.ts`, switches on `CONFIG.SERVICE_PROVIDER`) plus one implementation per backend, all satisfying the domain repository interface.
+- **application/** — React Query hooks (queries with offline fallback, mutations with toast) and Zustand stores with MMKV persistence.
+- **ui/** — screens (`{Entities}ListView` / `{Entity}DetailView` / `{Entity}FormView`, or semantic names for non-CRUD modules) and screen-specific components.
 
-En `src/config/config.ts` cambiar `CONFIG.SERVICE_PROVIDER`:
+Entry: `App.tsx → AppProvider → RootNavigator`. Providers compose outside-in: `Secure → Query → Theme → SafeArea → Gesture → Navigation`. `SecureProvider` gates render until secure-storage init completes.
 
-| Valor | Usa | Configurar |
+## Service backends (swappable)
+
+`CONFIG.SERVICE_PROVIDER` in `src/config/config.ts` selects the backend; the default is `mock`. Each module's `{entity}.service.ts` factory resolves the implementation — nothing else changes.
+
+| Value | Uses | Configure |
 |---|---|---|
-| `'http'` | Axios → API REST | `src/config/api.routes.ts` (cambiar `API_ROUTES.ROOT`) |
-| `'firebase'` | Firestore directo | `ios/GoogleService-Info.plist` + `android/app/google-services.json` |
-| `'mock'` | Datos hardcoded | Sin configuración externa |
+| `http` | Axios → REST API | `API_ROUTES.ROOT` in `src/config/api.routes.ts` |
+| `firebase` | Firestore + Storage | `ios/GoogleService-Info.plist` + `android/app/google-services.json` |
+| `supabase` | Supabase client | `src/modules/supabase/infrastructure/supabase.client.ts` |
+| `local` | SQLite (nitro-sqlite) | `src/modules/sqlite` (schema in `sqlite.migrations.ts`) |
+| `mock` | Hardcoded data | none |
 
-Cada módulo tiene un factory `{entity}.service.ts` que resuelve la implementación según este valor. No se necesita cambiar nada más.
+Other `config.ts` fields: `ROOT_CREDENTIALS` (mock-only auth), `RAWG_API_KEY`, `CURRENCY` (`COP`), `LOCALE` (`es-CO`). Secrets come from `react-native-config` (`.env`), never hardcoded.
 
-## Inventario de Módulos
+## Modules
 
-| Módulo | Tipo | Propósito |
+| Module | Type | Purpose |
 |---|---|---|
-| `products` | Feature completo | CRUD de referencia con las 4 capas. Copiar este al crear un módulo nuevo |
-| `users` | Feature completo | Gestión de usuarios con las 4 capas |
-| `authentication` | Feature | Login/registro con HTTP, Firebase y mock |
-| `core` | Compartido | Estado global (Zustand): toast y modal de confirmación de borrado |
-| `network` | Infraestructura | AxiosService singleton (baseURL desde `API_ROUTES.ROOT`, timeout 10s) |
-| `firebase` | Infraestructura | Servicios de Firestore y Storage |
-| `examples` | Showcase | Galería de componentes para referencia visual |
+| `products` | Feature | CRUD reference exercising all 4 layers — copy this for new modules |
+| `users` | Feature | User management, all 4 layers |
+| `authentication` | Feature | Login/registro across http, firebase, mock |
+| `core` | Shared | Global UI state (Zustand) + permissions (`react-native-permissions`) |
+| `network` | Infrastructure | Axios client (auth refresh + retry queue), the single Axios error mapper, `getIsConnected()` |
+| `firebase` | Infrastructure | Firestore + Storage services |
+| `supabase` | Infrastructure | Supabase client |
+| `sqlite` | Infrastructure | SQLite DB + migrations (the `local` backend) |
+| `examples` | Showcase | Visual component gallery |
 
-## Repositorios de Configuración
+`iap` exists as an empty placeholder directory — not yet implemented.
 
-- **Rutas API REST**: `src/config/api.routes.ts` — `API_ROUTES.ROOT` apunta al backend
-- **Colecciones Firestore**: `src/config/collections.routes.ts` — nombres de colecciones
-- **Config general**: `src/config/config.ts` — service provider y credenciales root (solo mock)
+## Imports
 
-## Navegación
+Path aliases (defined in `tsconfig.json`, `babel.config.js`, and `jest.config.js`): `@assets @components @modules @theme @utils @config @navigation`. Prefer `@modules/...` over deep relative paths. Group imports with blank lines and comment labels (external → types → config/theme → components/modules).
 
-- **Root**: `RootNavigator` renderiza condicionalmente `PublicNavigator` o `PrivateNavigator` según `useAuth().isAuthenticated`
-- **Public stack**: `PublicStackNavigator` con `PublicRoutes` (`Examples | Authentication`)
-- **Private stack**: `PrivateStackNavigator` con `PrivateRoutes` (`Products | Users | Example`)
-- **Stacks por módulo**: `src/navigation/stacks/{Module}StackNavigator.tsx`
-- **Rutas tipadas**: `src/navigation/routes/{module}.routes.ts` con enum + ParamList
-- **Hooks de navegación**: `useNavigationPublic`, `useNavigationPrivate`, `useNavigationProducts`, `useNavigationUsers`, `useNavigationAuthentication`
-- Pantalla inicial (no auth): `Examples` (primer screen en PublicNavigator)
-- Pantalla inicial (auth): `Example` (primer screen en PrivateNavigator)
+## Naming
 
-## Componentes Disponibles
+- **Files**: kebab-case (`product.service.ts`, `use-products.ts`)
+- **Components / hooks / exports**: PascalCase / camelCase (`ProductCard`, `useProductCreate`)
+- **Interfaces**: PascalCase (`Product`, `CreateProductPayload`)
+- **Constants**: SCREAMING_SNAKE_CASE (`QUERY_KEYS`)
+- **Enums**: PascalCase members (`ProductRoutes.ProductList`)
+- `interface` for object shapes, `type` for unions/aliases; `Omit`/`Pick`/`Partial` for prop variations; `InferType` from Yup for form data.
 
-**Core** (`@components/core`): AnimatedPressable, Avatar, Badge, Button, Card, Checkbox, DatePicker, Modal, Select, Text, TextInput, Toast
+## Error handling
 
-**Form** (`@components/form`): Checkbox, DatePicker, Select, TextInput — wrappers de core con `useController` de react-hook-form
+Services **return `Promise<T | Error>` and never throw**. Each backend normalizes failures through its own mapper in `domain/{name}.error.ts` — `manageAxiosError`, `manageFirebaseError`, `manageSupabaseError`, `manageSqliteError` — which tags `error.name` and produces Spanish, UI-ready messages. The application layer checks `instanceof Error` and re-throws so React Query and the toast system react.
 
-**Layout** (`@components/layout`): DeleteConfirmationSheet, EmptyState, ErrorState, Header, ItemSeparatorComponent, LoadingState, RootLayout, Toolbar
+## State management
 
-## Estado Global (Zustand)
+- **React Query owns server state** — runtime source of truth, keyed exclusively via `QUERY_KEYS` (`@config/query.keys`). Check `getIsConnected()` for offline fallback; use `placeholderData` from the local store. Never instantiate a `QueryClient` in feature code — use the one in `AppProvider`.
+- **Zustand owns client state.** Persistent per-module stores (MMKV) are an offline cache and `placeholderData` source, **not** a second source of truth. Read with selector hooks inside components, `.getState()` outside React.
+- **Global transient UI:** `useAppStorage` (`src/modules/core/application/app.storage.ts`) — `toast` and the delete-confirmation `modal` (plus `onboarding` and per-list `searchbar` state slots). The global toast and delete-confirmation sheet are mounted once in `AppProvider` and driven from anywhere via the store.
 
-`useAppStorage` en `src/modules/core/application/app.storage.ts` expone:
+## Navigation
 
-- **modal**: `open({entityName, entityType, onConfirm})` / `close()` / `visible`
-- **toast**: `show({message, type, duration?, position?})` / `hide()` / `visible`
+`RootNavigator` renders the **Private** or **Public** stack based on `useAuth().isAuthenticated`. Navigation is typed per module: route enum + ParamList + a `useNavigation{Module}` hook. Lists use `FlashList` with `LoadingState` / `ErrorState` / `EmptyState`.
 
-Tipos de toast: `'success' | 'error' | 'info'`. Posición: `'top' | 'bottom'`. Duración default: 3000ms.
+## Components
 
-Los componentes `GlobalToast` y `GlobalDeleteConfirmation` están montados en `AppProvider` y se controlan desde cualquier parte vía el store.
+- **core** (`@components/core`) — presentational, theme-driven primitives (Button, Text, TextInput, Modal, Select…). No business logic.
+- **form** (`@components/form`) — thin `react-hook-form` wrappers over core via `useController`.
+- **layout** (`@components/layout`) — screen scaffolding (`RootLayout`, `Header`, `LoadingState`, `ErrorState`, `EmptyState`, `DeleteConfirmationSheet`, `ErrorBoundary`).
+
+Browse the live gallery in the `examples` module.
+
+## Theme & styles
+
+Design tokens (colors, typography, spacing) are consumed via `useTheme`. Styles are built with `StyleSheet.create` through a theme-aware factory (e.g. `getButtonStyle({ variant, size })`) in co-located `*.styles.ts` files. No hardcoded colors and no magic numbers — use tokens (`spacing.sm`, `colors.primary`, `borderRadius.md`). Theme persists via MMKV.
 
 ## Testing
 
-- **Custom render**: `import { render } from '@utils/test-utils'` — envuelve con QueryClient + ThemeProvider + SafeAreaProvider
-- **Mocks globales** (`jest.setup.js`): gesture-handler, MMKV, Firebase (app/auth/firestore), react-navigation, jail-monkey
-- **Coverage**: Sin threshold global. Thresholds específicos por archivo (Button, TextInput, Text al 100% lines)
-- **Excluidos de coverage**: `*.styles.ts`, `*.types.ts`, `*.scheme.ts`, `*.adapter.ts`, `*.routes.ts`, `index.ts`, `test-utils.tsx`
-- **QueryClient de test**: `retry: false`, `gcTime: 0`
+- Custom render: `import { render } from '@utils/test-utils'` — wraps QueryClient + ThemeProvider + SafeAreaProvider. Test QueryClient uses `retry: false`, `gcTime: 0`.
+- Global native mocks in `jest.setup.js`: gesture-handler, MMKV, Firebase (app/auth/firestore), react-navigation, jail-monkey, react-native-config. SVGs via `__mocks__/svgMock.js`.
+- Tests are behavior-first.
 
-## Repositorio de Interfaces (Domain)
+**Coverage** (`jest.config.js`): global thresholds — branches 20, functions 20, lines 25, statements 25. Excluded from collection: `*.styles.ts`, `*.types.ts`, `*.scheme.ts`, `*.adapter.ts`, `*.routes.ts`, `*.model.ts`, `*.repository.ts`, `index.ts`, `test-utils.tsx`, `src/config/*`, and demo modules (`examples`, `firebase`, `products`, `users`, `navigation`). Higher per-file thresholds: `Button`, `TextInput`, `Text` (core); `ErrorBoundary`, `DeleteConfirmationSheet`, `Header` (layout); `app.storage.ts`.
 
-Cada módulo feature define un `{entity}.repository.ts` en domain con la interfaz del servicio. Ejemplo de `ProductRepository`:
-```typescript
-getAll(filter?): Promise<ProductEntity[] | Error>
-getById(id): Promise<ProductEntity | Error>
-create(data): Promise<ProductEntity | Error>
-update(id, data): Promise<ProductEntity | Error>
-delete(id): Promise<void | Error>
+## Language
+
+- **Code, identifiers, types, file names, comments**: English.
+- **User-facing text** (UI copy, validation messages, toasts, errors): Spanish.
+- **Dates**: Spanish month abbreviations (`Ene`, `Feb`, …) via the `core` date utils.
+
+## Security & git
+
+`SecureProvider` blocks rooted/jailbroken devices (`jail-monkey`). Sensitive values via `react-native-config`; Firebase credentials are gitignored. Pre-commit runs Husky + lint-staged (`eslint --fix` + `prettier`) on `src/**/*.{ts,tsx}`. Use conventional commits (`feat:`, `fix:`, `test:`, `refactor:`, `docs:`).
+
+## `.ai/` is the source of truth
+
+AI rules, skills, agents, and commands live in `.ai/` and are **copied** into tool-specific directories by package.json scripts — edit `.ai/`, then sync:
+
+```bash
+bun run claude     # .ai/ -> .claude/
+bun run opencode   # .ai/ -> .opencode/
+bun run trae       # .ai/ -> .trae/
+bun run droid      # .ai/ -> .factory/ (agents -> droids)
 ```
-Las tres implementaciones (http, firebase, mock) implementan esta misma interfaz.
 
-## Idioma
+## Key dependencies
 
-- **UI y mensajes de error de validación**: Español
-- **Código, nombres de variables, tipos**: Inglés
-- **Formateo de fechas**: Meses en español (`Ene`, `Feb`, ... en `core/domain/date.utils.ts`)
-
-## Sincronización .ai ↔ .claude
-
-El directorio `.ai/` es la fuente de verdad que se comparte entre herramientas de IA. El script `bun run claude` copia `.ai/` a `.claude/` para sincronizar. Si se editan skills o reglas, hacerlo en `.ai/` y luego correr el script.
-
-## Skills Sugeridas (Pendientes de Implementación)
-
-| Skill | Tipo | Descripción |
-|-------|------|-------------|
-| internationalization | enforcement | Sistema i18n/l10n con i18next, estructura de locales, migración de strings |
-| deep-linking | enforcement | Deep links y universal links con React Navigation, configuración iOS/Android |
-| push-notifications | specialty | Notificaciones push end-to-end: permisos, tokens, foreground/background, deep linking |
-| maps-and-location | specialty | Mapas, geolocalización, geocoding, geofencing con react-native-maps |
-| payments | specialty | In-app purchases, Stripe, validación de receipts siguiendo clean architecture |
-| create-middleware | generation | Interceptores Axios: refresh tokens, retry, logging, headers dinámicos |
-| create-test | generation | Templates de test por capa (domain, infrastructure, application, UI) |
-| dependency-manager | agent | Gestión de dependencias nativas, compatibilidad New Architecture, pods, gradle |
+| Category | Library |
+|---|---|
+| Navigation | `@react-navigation/native` + `native-stack` |
+| Server state | `@tanstack/react-query` |
+| Client state | `zustand` (persisted with `react-native-mmkv`) |
+| Forms | `react-hook-form` + `@hookform/resolvers` + `yup` |
+| Lists | `@shopify/flash-list` (never `FlatList`) |
+| HTTP | `axios` |
+| Backends | `@react-native-firebase/*`, `@supabase/supabase-js`, `react-native-nitro-sqlite` |
+| Storage | `react-native-mmkv` (never `AsyncStorage`) |
+| Env / secrets | `react-native-config` |
+| Images | `react-native-fast-image`, `react-native-image-picker` |
+| Security | `jail-monkey`, `react-native-keychain` |
+| Permissions | `react-native-permissions` |
