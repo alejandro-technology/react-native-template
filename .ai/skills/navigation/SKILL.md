@@ -216,3 +216,14 @@ export function {Entity}DetailView({ route }: Props) {
 - Deep linking requires the route name to match the URL path segment — keep route names URL-friendly
 - Never navigate to a private route from a public navigator — the auth guard lives in `RootNavigator`
 - Screen components receive `ScreenProps` (route + navigation) — extract params via `route.params`
+
+## Verification
+
+After completing all 6 registration steps, run the check script:
+
+```bash
+./.ai/skills/navigation/scripts/check-registration.sh <ModuleName>
+# Example: ./.ai/skills/navigation/scripts/check-registration.sh Orders
+```
+
+This verifies routes file, index export, stack navigator, PrivateStackNavigator registration, and typed hook.

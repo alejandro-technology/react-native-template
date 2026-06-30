@@ -18,3 +18,6 @@ Run the sync script(s) selected by `$ARGUMENTS` (default: `claude`):
 
 If `$ARGUMENTS` is `all`, run every sync script. Report which directories were
 updated.
+
+> No skills required. This command syncs `.ai/` to `.agents/`, `.opencode/`, `.claude/`, `.trae/`.
+> Run after any change to `.ai/skills/`, `.ai/rules/`, or `.ai/commands/`.

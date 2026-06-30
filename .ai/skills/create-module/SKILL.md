@@ -21,6 +21,17 @@ metadata:
 
 Create a complete feature module named `$ARGUMENTS` following Clean Architecture.
 
+## Step 0: Scaffold the Directory Structure
+
+Before filling any files, run the scaffold script to create all empty files:
+
+```bash
+./.ai/skills/create-module/scripts/scaffold-module.sh <module-name> <EntityName>
+# Example: ./.ai/skills/create-module/scripts/scaffold-module.sh orders Order
+```
+
+This creates all required files as empty stubs. The remaining steps fill them in using the layer skills.
+
 ## Workflow
 
 1. **Ask for entity fields** if not provided (name, type, required/optional)
@@ -62,6 +73,17 @@ src/modules/{module-name}/
       {Entity}Detail.tsx      # Detail content + data fetching
   index.ts                    # Public exports
 ```
+
+## Assets (Starter Templates)
+
+Use these templates when filling the files created by the scaffold script.
+Copy the template content and substitute `{Entity}` / `{entity}` / `{ENTITY}`:
+
+- [`assets/entity.model.ts.template`](assets/entity.model.ts.template) → `domain/{entity}.model.ts`
+- [`assets/entity.repository.ts.template`](assets/entity.repository.ts.template) → `domain/{entity}.repository.ts`
+- [`assets/entity.messages.ts.template`](assets/entity.messages.ts.template) → `domain/{entity}.messages.ts`
+
+For full layer templates (with real implementation code), see the `layer-*` skills.
 
 ## Naming Convention
 

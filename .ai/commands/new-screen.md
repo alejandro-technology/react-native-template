@@ -17,7 +17,15 @@ Honor:
 - Forms: `{Entity}FormView` handles navigation + mutation (no `useForm`);
   `{Entity}Form` owns `useForm`, fields, and `handleSubmit`.
 
-Load skills: `layer-ui`, plus `form-handling` (forms) or
-`list-view-with-filters` (filtered lists). Register the route/stack/typed hook
-if the screen is new. Finish with `bun run lint`, `bun run typecheck`,
-`bun run test`.
+Load skills:
+- Always: `layer-ui`, `components-gallery` (for component usage reference)
+- For form screens: also load `form-handling`
+- For filtered list screens: also load `list-view-with-filters`
+- If the screen requires a **new route** (not yet in the module's navigator): also load `navigation`
+
+Finish with `bun run lint`, `bun run typecheck`, `bun run test`.
+
+If a new route was added, run the navigation check:
+```bash
+./.ai/skills/navigation/scripts/check-registration.sh <ModuleName>
+```

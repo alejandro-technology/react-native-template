@@ -9,7 +9,14 @@ set](../rules/index.md). Scope to `$ARGUMENTS` if provided, otherwise the full w
 Delegate to the `code-reviewer` subagent (read-only). It MUST:
 
 1. Inspect the diff (`git status`, `git diff`).
-2. Load the relevant rule context and skills.
+2. Load the following skills and rules before reviewing:
+   - Skills: `third-party-libraries` (library policy checks), `layer-domain` (service contracts), `layer-application` (query keys, store access patterns)
+   - Rules: [rules/index.md](../rules/index.md), [rules/architecture.md](../rules/architecture.md), [rules/error-handling.md](../rules/error-handling.md), [rules/dependencies.md](../rules/dependencies.md)
+
+   Also run the automated dependency audit as part of the review:
+   ```bash
+   ./.ai/skills/third-party-libraries/scripts/audit-deps.sh
+   ```
 3. Check, at minimum:
    - Layer boundaries (`domain` imports nothing outward).
    - Services return `Promise<T | Error>` — never throw.

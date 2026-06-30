@@ -3,6 +3,10 @@ description: Inicializa y valida el template
 agent: build
 ---
 
+Skills to load:
+- `third-party-libraries` — to verify the project's dependency stack is correctly configured
+- `core-module` — to understand the global state and permissions setup being validated
+
 Usa @TEMPLATE_USAGE.md como checklist oficial.
 
 Objetivo: ejecutar automaticamente todo lo posible para dejar el proyecto listo.

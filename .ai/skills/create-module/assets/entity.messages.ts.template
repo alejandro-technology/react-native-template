@@ -1,0 +1,18 @@
+// {Entity} — User-facing messages (Spanish)
+// Replace {Entity} with the actual entity name (PascalCase).
+
+export const {ENTITY}_MESSAGES = {
+  // Validation
+  required: 'Este campo es obligatorio',
+  invalid: 'El valor ingresado no es válido',
+  // Toast messages
+  createSuccess: '{Entity} creado correctamente',
+  updateSuccess: '{Entity} actualizado correctamente',
+  deleteSuccess: '{Entity} eliminado correctamente',
+  createError: 'No se pudo crear el {entity}',
+  updateError: 'No se pudo actualizar el {entity}',
+  deleteError: 'No se pudo eliminar el {entity}',
+  // Empty state
+  emptyTitle: 'Sin {entities}',
+  emptySubtitle: 'No hay {entities} registrados aún',
+} as const;

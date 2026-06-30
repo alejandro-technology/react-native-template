@@ -13,12 +13,19 @@ Canonical rules: [service factory](../rules/architecture.md) and
 Steps:
 
 1. Locate the module and its `{entity}.service.ts` factory.
-2. Load the `layer-infrastructure` skill.
+2. Load skills:
+   - `layer-infrastructure` — for service implementation templates and error mapper patterns
+   - `third-party-libraries` — to verify no prohibited libraries are introduced in the new provider
 3. Create `{entity}.{provider}.service.ts` implementing the domain repository
    interface — services return `Promise<T | Error>` and never throw.
 4. Normalize failures with the matching mapper (`manageAxiosError`,
    `manageFirebaseError`, `manageSupabaseError`, `manageSqliteError`).
 5. Wire the new `case` into the factory; keep the singleton default export.
 6. Run `bun run lint`, `bun run typecheck`, `bun run test`.
+
+After implementing the provider, run the dependency audit:
+```bash
+./.ai/skills/third-party-libraries/scripts/audit-deps.sh src/modules/<module>/
+```
 
 Do not force provider parity — add only the requested provider.

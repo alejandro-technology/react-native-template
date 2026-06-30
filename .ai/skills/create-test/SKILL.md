@@ -15,6 +15,18 @@ metadata:
 
 Create tests for components, providers, hooks, services, and stores.
 
+## Quick Start: Generate Boilerplate
+
+Run this script to get the correct boilerplate for each test type:
+
+```bash
+./.ai/skills/create-test/scripts/generate-test-boilerplate.sh <type> <Name>
+# Types: component | provider | query-hook | mutation-hook | service | store
+# Example: ./.ai/skills/create-test/scripts/generate-test-boilerplate.sh component Button
+```
+
+Then load [references/test-templates.md](references/test-templates.md) for the full template of the selected type.
+
 ## When to Use
 
 - Writing tests for a new component, provider, hook, or service

@@ -74,3 +74,15 @@ When working on this project, ALWAYS prefer the curated third-party libraries ov
 - [ ] Are forms managed by `react-hook-form`?
 - [ ] Is storage using `react-native-mmkv` or `react-native-keychain`?
 - [ ] Run `bun run lint` and `bun run typecheck`.
+
+## Automated Audit
+
+Run the audit script before committing to catch violations automatically:
+
+```bash
+# Scan staged changes
+./.ai/skills/third-party-libraries/scripts/audit-deps.sh
+
+# Scan a specific directory
+./.ai/skills/third-party-libraries/scripts/audit-deps.sh src/modules/orders/
+```
