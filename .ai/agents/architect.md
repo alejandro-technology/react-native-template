@@ -3,10 +3,6 @@ name: architect
 description: Analyzes requests and produces a detailed implementation plan following Clean Architecture. Use before creating modules, adding features, or refactoring. Returns a step-by-step plan with layers, files, and contracts — no code changes.
 mode: subagent
 temperature: 0.1
-tools:
-  write: false
-  edit: false
-  bash: false
 permission:
   skill:
     '*': allow

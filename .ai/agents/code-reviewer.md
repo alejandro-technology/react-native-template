@@ -3,9 +3,6 @@ name: code-reviewer
 description: Reviews code changes for Clean Architecture compliance, TypeScript correctness, forbidden patterns, and library policy. Use after implementing features or before merging. Read-only — never modifies files.
 mode: subagent
 temperature: 0.1
-tools:
-  write: false
-  edit: false
 permission:
   bash:
     'bun run lint': allow
