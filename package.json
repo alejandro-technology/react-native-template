@@ -31,6 +31,7 @@
     "clean-ios": "rm -rf ios/build ios/Pods ios/Podfile.lock",
     "clean-watch": "watchman watch-del-all && watchman shutdown-server",
     "clean-node": "rm -rf node_modules bun.lock",
+    "agents": "cp -r .ai/ .agents",
     "claude": "cp -r .ai/ .claude",
     "opencode": "cp -r .ai/ .opencode",
     "trae": "cp -r .ai/ .trae",

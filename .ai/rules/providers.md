@@ -1,3 +1,7 @@
+---
+trigger: model_decision
+---
+
 # Providers & Bootstrap Rules
 
 App-level providers live in `src/providers/` and are composed, outside-in, by

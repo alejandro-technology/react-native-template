@@ -1,3 +1,7 @@
+---
+trigger: model_decision
+---
+
 # Components Rules
 
 Shared UI lives in `src/components/` and splits into three families with strict

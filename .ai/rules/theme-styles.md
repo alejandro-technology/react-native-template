@@ -1,3 +1,7 @@
+---
+trigger: model_decision
+---
+
 # Theme & Styles Rules
 
 All visual values come from the theme in `src/theme/` — tokens, style factories,

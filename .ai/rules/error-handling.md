@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Error Handling Rules
 
 Errors are **values, not control flow**. A failure travels as a returned `Error`

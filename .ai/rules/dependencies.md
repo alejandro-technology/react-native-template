@@ -1,3 +1,7 @@
+---
+trigger: model_decision
+---
+
 # Dependencies Rules
 
 The template relies on a curated set of libraries chosen for performance,

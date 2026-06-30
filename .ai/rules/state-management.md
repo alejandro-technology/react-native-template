@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # State Management Rules
 
 State is split by **ownership**, not by convenience. **React Query owns server

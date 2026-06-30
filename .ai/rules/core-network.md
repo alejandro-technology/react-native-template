@@ -1,3 +1,7 @@
+---
+trigger: model_decision
+---
+
 # Foundational Modules — Core & Network Rules
 
 `src/modules/core/` and `src/modules/network/` are cross-cutting modules that

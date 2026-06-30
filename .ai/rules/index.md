@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Rules — Index
 
 Entry point for every architectural and development rule of this template. Each

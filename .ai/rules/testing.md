@@ -1,3 +1,7 @@
+---
+trigger: model_decision
+---
+
 # Testing Rules
 
 Tests run on Jest + `@testing-library/react-native`. They exercise behavior, mock

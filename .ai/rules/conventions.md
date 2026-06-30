@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Conventions Rules
 
 Cross-cutting code and language conventions that every module follows,

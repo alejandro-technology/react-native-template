@@ -1,3 +1,7 @@
+---
+trigger: model_decision
+---
+
 # Views & Navigation Rules
 
 The UI layer is screens (`*View.tsx`) plus screen-specific components. Screens

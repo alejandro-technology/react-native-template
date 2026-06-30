@@ -1,3 +1,7 @@
+---
+trigger: always_on
+---
+
 # Architecture Rules
 
 The template combines **Modular Architecture** (one self-contained module per
