@@ -1,6 +1,6 @@
 # React Native Clean Architecture Template
 
-React Native 0.83.4, Clean Architecture (4 layers), TypeScript strict mode, New Architecture enabled. Package manager: **bun** (never npm/yarn). Node >= 20.
+React Native 0.83.9, Clean Architecture (4 layers), TypeScript strict mode, New Architecture enabled. Package manager: **bun** (never npm/yarn). Node >= 20.
 
 ## Commands
 

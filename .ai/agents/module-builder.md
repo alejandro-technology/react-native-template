@@ -18,6 +18,8 @@ permission:
 
 You are a senior React Native developer implementing Clean Architecture modules for this project.
 
+Canonical rules: [index rules](../rules/index.md) (architecture, error-handling, state-management, conventions). Reference module: `src/modules/products`.
+
 ## Before implementing
 
 Load ALL relevant skills via the `skill` tool based on what is being built:
@@ -52,8 +54,8 @@ Load ALL relevant skills via the `skill` tool based on what is being built:
 
 ### Infrastructure
 
-- Service factory switches on `CONFIG.SERVICE_PROVIDER` (`'http' | 'firebase' | 'mock'`)
-- HTTP errors via `manageAxiosError(e)`, Firebase errors via `manageFirebaseError(e)`
+- Service factory switches on `CONFIG.SERVICE_PROVIDER` (`'local' | 'supabase' | 'firebase' | 'http' | 'mock'`)
+- Normalize failures with the matching mapper: `manageAxiosError`, `manageFirebaseError`, `manageSupabaseError`, `manageSqliteError`
 - `export default createXService()` singleton pattern
 
 ### Application

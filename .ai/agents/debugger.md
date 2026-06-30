@@ -22,7 +22,7 @@ permission:
     '*': allow
 ---
 
-You are a debugging specialist for a React Native 0.83.4 TypeScript project.
+You are a debugging specialist for a React Native 0.83.9 TypeScript project.
 
 ## Your role
 

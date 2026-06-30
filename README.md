@@ -3,7 +3,7 @@
 [![platform - android](https://img.shields.io/badge/platform-Android-3ddc84.svg?logo=android&style=for-the-badge)](https://www.android.com)
 [![platform - ios](https://img.shields.io/badge/platform-iOS-000.svg?logo=apple&style=for-the-badge)](https://developer.apple.com/ios)
 
-[![React Native](https://img.shields.io/badge/React%20Native-0.83.4-61DAFB?logo=react&style=for-the-badge)](https://reactnative.dev)
+[![React Native](https://img.shields.io/badge/React%20Native-0.83.9-61DAFB?logo=react&style=for-the-badge)](https://reactnative.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8.3-3178C6?logo=typescript&style=for-the-badge)](https://www.typescriptlang.org)
 [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](https://opensource.org/licenses/MIT)
 

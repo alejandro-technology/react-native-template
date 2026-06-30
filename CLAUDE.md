@@ -6,9 +6,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 React Native template built on **Clean Architecture** (4 layers per feature module). React Native 0.83.9, React 19.2.0, TypeScript 5.8.3 (strict), New Architecture enabled. Package manager: **bun** — never npm/yarn. Node >= 20.
 
-- **Architecture rules (canonical, 11 rules with detail files):** `.ai/rules/index.md`
 - **Reference module that exercises every layer:** `src/modules/products` — copy it when creating a new module.
-- **Agent guide (overlapping companion doc):** `AGENTS.md`
+- **Deeper architecture rules (11 detail files):** `.claude/rules/` — Claude Code's own rules directory. Optional reading; this file is self-contained. (In the template repo, generate it with `bun run claude` — see *Template maintenance* below.)
+- **Companion agent guide at repo root:** `AGENTS.md`
 
 ## Commands
 
@@ -133,16 +133,18 @@ Design tokens (colors, typography, spacing) are consumed via `useTheme`. Styles 
 
 `SecureProvider` blocks rooted/jailbroken devices (`jail-monkey`). Sensitive values via `react-native-config`; Firebase credentials are gitignored. Pre-commit runs Husky + lint-staged (`eslint --fix` + `prettier`) on `src/**/*.{ts,tsx}`. Use conventional commits (`feat:`, `fix:`, `test:`, `refactor:`, `docs:`).
 
-## `.ai/` is the source of truth
+## Template maintenance (`.ai/` → per-agent dirs)
 
-AI rules, skills, agents, and commands live in `.ai/` and are **copied** into tool-specific directories by package.json scripts — edit `.ai/`, then sync:
+This template authors all AI rules, skills, agents, and commands **once** in `.ai/`, then copies them into a directory named for each AI tool. Each tool reads only its own copy.
 
 ```bash
-bun run claude     # .ai/ -> .claude/
+bun run claude     # .ai/ -> .claude/   (Claude Code — this file's rules dir)
 bun run opencode   # .ai/ -> .opencode/
 bun run trae       # .ai/ -> .trae/
-bun run droid      # .ai/ -> .factory/ (agents -> droids)
+bun run droid      # .ai/ -> .factory/  (agents -> droids)
 ```
+
+**Referencing rule:** `.ai/` is the authoring source and does **not** ship to a scaffolded consumer project — only the chosen tool's directory does. So from this file, always point at `.claude/...`, never `.ai/...`. Edit rules in `.ai/`, run the matching sync, commit both.
 
 ## Key dependencies
 

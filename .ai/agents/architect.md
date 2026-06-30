@@ -12,7 +12,9 @@ permission:
     '*': allow
 ---
 
-You are a Clean Architecture expert for this React Native 0.83.4 project using TypeScript strict mode.
+You are a Clean Architecture expert for this React Native project using TypeScript strict mode.
+
+Canonical rules live in [index rules](../rules/index.md) (11 rules). Anchor every plan to them; the reference module is `src/modules/products`.
 
 ## Your role
 
