@@ -1,0 +1,22 @@
+// {Entity} — Domain Model
+// Replace {Entity}, {entity} with the actual entity name (PascalCase / camelCase).
+
+export interface {Entity} {
+  id: string;
+  // TODO: add entity fields
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface Create{Entity}Payload {
+  // TODO: mirror {Entity} fields, omit id/createdAt/updatedAt
+}
+
+export interface Update{Entity}Payload extends Partial<Create{Entity}Payload> {
+  id: string;
+}
+
+export interface {Entity}Filter {
+  searchText?: string;
+  // TODO: add specific filters
+}
