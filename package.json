@@ -37,6 +37,7 @@
     "trae": "cp -r .ai/ .trae",
     "droid": "cp -r .ai/ .factory && mv .factory/agents .factory/droids",
     "ai": "claude --dangerously-skip-permissions",
+    "ai:sync": "bun agents && bun claude && bun opencode && bun trae && bun droid",
     "prepare": "husky"
   },
   "lint-staged": {
