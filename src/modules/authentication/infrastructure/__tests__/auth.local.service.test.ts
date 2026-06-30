@@ -12,10 +12,7 @@
  * inicialicen en el momento de la declaración.
  */
 
-import type {
-  AuthStateChangeCallback,
-  AuthUser,
-} from '../../domain/auth.model';
+import type { AuthUser } from '../../domain/auth.model';
 
 // Store compartido por storage y secureStorage. Inicializado inline
 // (no lazy) para que esté disponible cuando jest.mock() ejecute su
@@ -222,6 +219,10 @@ describe('AuthLocalService', () => {
 
       const result = await authLocalService.getCurrentUser();
       expect(result).not.toBeNull();
+      expect(result).not.toBeInstanceOf(Error);
+      if (result instanceof Error) {
+        return;
+      }
       expect(result!.email).toBe('frank@example.com');
       expect(result!.id).toBe(signup.user.id);
     });
@@ -247,7 +248,7 @@ describe('AuthLocalService', () => {
         password: 'Secret123',
       });
 
-      const callback = jest.fn<AuthStateChangeCallback>();
+      const callback = jest.fn<void, [AuthUser | null]>();
       const unsubscribe = authLocalService.onAuthStateChanged(callback);
 
       expect(callback).toHaveBeenCalledTimes(1);
@@ -258,15 +259,15 @@ describe('AuthLocalService', () => {
     });
 
     it('notifica null si no hay sesión activa', () => {
-      const callback = jest.fn<AuthStateChangeCallback>();
+      const callback = jest.fn<void, [AuthUser | null]>();
       authLocalService.onAuthStateChanged(callback);
 
       expect(callback).toHaveBeenCalledWith(null);
     });
 
     it('notifica a todos los listeners en signup / signout', async () => {
-      const cb1 = jest.fn<AuthStateChangeCallback>();
-      const cb2 = jest.fn<AuthStateChangeCallback>();
+      const cb1 = jest.fn<void, [AuthUser | null]>();
+      const cb2 = jest.fn<void, [AuthUser | null]>();
       const off1 = authLocalService.onAuthStateChanged(cb1);
       const off2 = authLocalService.onAuthStateChanged(cb2);
 
@@ -301,7 +302,7 @@ describe('AuthLocalService', () => {
     });
 
     it('la función devuelta cancela la suscripción', async () => {
-      const callback = jest.fn<AuthStateChangeCallback>();
+      const callback = jest.fn<void, [AuthUser | null]>();
       const unsubscribe = authLocalService.onAuthStateChanged(callback);
 
       callback.mockClear();
@@ -331,6 +332,10 @@ describe('AuthLocalService', () => {
       expect(result).toBeUndefined();
 
       const current = await authLocalService.getCurrentUser();
+      expect(current).not.toBeInstanceOf(Error);
+      if (current instanceof Error) {
+        return;
+      }
       expect(current!.emailVerified).toBe(true);
     });
 
@@ -379,6 +384,10 @@ describe('AuthLocalService', () => {
       expect(result.photoURL).toBe('https://example.com/avatar.png');
 
       const current = await authLocalService.getCurrentUser();
+      expect(current).not.toBeInstanceOf(Error);
+      if (current instanceof Error) {
+        return;
+      }
       expect(current!.displayName).toBe('Liam Updated');
       expect(current!.photoURL).toBe('https://example.com/avatar.png');
     });
