@@ -4,6 +4,8 @@ description: Create new theme tokens, style factories, or animation hooks in src
 license: MIT
 compatibility: opencode
 metadata:
+  version: "1.0"
+  category: theming-styling
   layer: theme
   workflow: scaffold
   output: src/theme/**

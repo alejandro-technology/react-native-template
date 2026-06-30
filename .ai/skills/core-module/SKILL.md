@@ -4,6 +4,8 @@ description: Work safely inside src/modules/core for global modal or toast state
 license: MIT
 compatibility: opencode
 metadata:
+  version: "1.0"
+  category: cross-cutting
   layer: core
   workflow: scaffold
   output: src/modules/core/**

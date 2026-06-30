@@ -4,6 +4,8 @@ description: Create a layout component for screen structure or state display. Us
 license: MIT
 compatibility: opencode
 metadata:
+  version: "1.0"
+  category: component-creation
   layer: ui
   workflow: scaffold
   output: src/components/layout/{Component}.tsx

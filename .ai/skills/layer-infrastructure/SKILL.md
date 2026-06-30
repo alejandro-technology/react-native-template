@@ -1,9 +1,18 @@
 ---
 name: layer-infrastructure
-description: Create the infrastructure layer for a Clean Architecture module (service factory, HTTP, Mock, Firebase implementations).
+description: >
+  Create the infrastructure layer for a Clean Architecture module: service factory
+  (switches on CONFIG.SERVICE_PROVIDER), HTTP service with axios and error mapping,
+  Mock service with in-memory data, and Firebase/Firestore service. Use when
+  implementing the data access layer, adding a new backend provider, or wiring
+  up a repository interface to a real or mock data source.
 license: MIT
-compatibility: opencode
+compatibility: >
+  React Native New Architecture enabled. Firebase services require google-services.json
+  and GoogleService-Info.plist. HTTP service requires network module axios client.
 metadata:
+  version: "1.0"
+  category: architecture-layer
   layer: infrastructure
   workflow: scaffold
   output: src/modules/{module}/infrastructure/**
@@ -340,3 +349,20 @@ export default create{Entity}FirebaseService();
 ## Reference
 
 - Example module: `src/modules/products/infrastructure/`
+
+## Gotchas
+
+- Services NEVER throw — catch all errors and return `manageAxiosError(e)` / `manageFirebaseError(e)` / etc.
+- Never return the raw caught `error` object — always pass through the backend's error mapper
+- The service factory must be a singleton: check `if (!instance) instance = new ...` pattern
+- Firebase Timestamps must be converted to `Date` before returning — never expose `Timestamp` to the domain
+- The mock service's in-memory array is reset on every app restart — this is intentional for development
+- HTTP service uses the shared Axios instance from `@modules/network` — never create a new `axios.create()` inside a feature service
+- `CONFIG.SERVICE_PROVIDER` values: `'http' | 'firebase' | 'supabase' | 'local' | 'mock'`
+
+## Validation
+
+- [ ] `bun run typecheck` — service class must implement all repository interface methods
+- [ ] Every `catch` block returns a mapped error (not throws, not returns raw error)
+- [ ] Service factory is a singleton — verify `if (!instance)` guard
+- [ ] Mock service has at least 3 seed items for testing

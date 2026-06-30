@@ -4,6 +4,8 @@ description: Create a new core UI primitive component with style factory. Use wh
 license: MIT
 compatibility: opencode
 metadata:
+  version: "1.0"
+  category: component-creation
   layer: ui
   workflow: scaffold
   output: src/components/core/{Component}.tsx, src/theme/components/{Component}.styles.ts
@@ -257,3 +259,13 @@ export type { {Component}Variant, {Component}Size } from '@theme/components/{Com
 
 - Example: `src/components/core/Button.tsx`
 - Example: `src/theme/components/Button.styles.ts`
+
+## Gotchas
+
+- Style factory lives in `src/theme/components/{Component}.styles.ts` — NOT co-located with the component
+- `useTheme()` is for runtime theme values (colors, shadows) — import static tokens directly when possible
+- Always include `accessibilityRole` and `accessibilityState` on interactive elements (Pressable, TouchableOpacity)
+- Use `wScale`/`hScale`/`fScale` from responsive helpers — never hardcode pixel values
+- Export the component from `src/components/core/index.ts` — it won't be available via `@components/core` alias otherwise
+- The style factory function signature: `get{Component}Style({ variant, size, isDark, colors, ... })`
+- Props interface should use `Omit` to exclude conflicting native props — e.g., `Omit<PressableProps, 'style'>`

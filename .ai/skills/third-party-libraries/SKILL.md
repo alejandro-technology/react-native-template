@@ -4,6 +4,8 @@ description: Verifies and enforces the usage of approved third-party libraries o
 license: MIT
 compatibility: opencode
 metadata:
+  version: "1.0"
+  category: enforcement
   layer: all
   workflow: review
   output: src/**/*.{ts,tsx}

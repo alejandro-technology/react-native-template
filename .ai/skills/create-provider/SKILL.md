@@ -4,6 +4,8 @@ description: Create a new app-level provider in src/providers/ following the pro
 license: MIT
 compatibility: opencode
 metadata:
+  version: "1.0"
+  category: providers
   layer: providers
   workflow: scaffold
   output: src/providers/{Name}Provider.tsx
@@ -221,3 +223,13 @@ describe('NewProvider', () => {
 - [ ] Test file created in `__tests__/providers/`
 - [ ] Dependencies mocked before import in test
 - [ ] Run `bun run lint && bun run typecheck && bun run test`
+
+## Gotchas
+
+- Provider nesting order in `AppProvider.tsx` is CRITICAL: `SecureProvider → QueryClient → Theme → SafeArea → Gesture → SecureStorage → Network → Auth → Navigation`
+- Providers take ONLY `PropsWithChildren` — no additional props
+- Async-init providers must render `null` until ready — children mount AFTER initialization
+- Never create a second `QueryClient` — use the one from `AppProvider`
+- Security-gate providers (like `SecureProvider`) use `jail-monkey` — never write custom jailbreak detection
+- Provider tests use `@testing-library/react-native` directly — NOT `test-utils` (would cause double-provider nesting)
+- The `default export` is mandatory — providers are imported dynamically in `AppProvider`

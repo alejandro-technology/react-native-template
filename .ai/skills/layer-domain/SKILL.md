@@ -1,9 +1,16 @@
 ---
 name: layer-domain
-description: Create the domain layer for a Clean Architecture module (model, repository, scheme, adapter).
+description: >
+  Create the domain layer for a Clean Architecture module: entity interfaces
+  (Entity, CreatePayload, UpdatePayload, Filter), repository interface with
+  Promise<T | Error> contracts, Yup validation schema with Spanish messages,
+  and form data adapters. Use when defining a new entity's data shape, 
+  validation rules, or repository contract before implementing services.
 license: MIT
-compatibility: opencode
+compatibility: React Native 0.83+, TypeScript strict mode, bun package manager. Requires project structure from react-native-template.
 metadata:
+  version: "1.0"
+  category: architecture-layer
   layer: domain
   workflow: scaffold
   output: src/modules/{module}/domain/**
@@ -146,9 +153,12 @@ export type {Entity}FormData = InferType<typeof {entity}Schema>;
 // String validations
 name: yup.string().required('Requerido').max(100, 'Máximo 100 caracteres'),
 email: yup.string().email('Email inválido').required('Requerido'),
-description: yup.string().optional(),
-
-// Number validations
+description: >
+  Create the domain layer for a Clean Architecture module: entity interfaces
+  (Entity, CreatePayload, UpdatePayload, Filter), repository interface with
+  Promise<T | Error> contracts, Yup validation schema with Spanish messages,
+  and form data adapters. Use when defining a new entity's data shape, 
+  validation rules, or repository contract before implementing services.
 price: yup.number().required('Requerido').min(0, 'Debe ser mayor a 0'),
 quantity: yup.number().integer('Debe ser entero').min(1, 'Mínimo 1'),
 
@@ -231,3 +241,20 @@ export const {entity}FormToPayloadAdapter = {entity}FormToCreatePayloadAdapter;
 ## Reference
 
 - Example: `src/modules/products/domain/`
+
+## Gotchas
+
+- The repository interface uses `Promise<T | Error>` — NEVER `Promise<T>` alone or `throws`
+- Yup validation messages must be in Spanish — never English user-facing strings
+- Use `InferType<typeof schema>` for form types — do NOT hand-write them separately
+- The `adapter` converts `FormData → CreatePayload` — it lives in domain (not in the UI component)
+- Entity interfaces should NOT extend each other — use composition via `Omit`, `Pick`, `Partial`
+- `CreatePayload` omits `id`, `createdAt`, `updatedAt` — derive with `Omit<Entity, 'id' | 'createdAt' | 'updatedAt'>`
+- Date fields in the model must be `Date`, not `string` — the MMKV reviver handles deserialization
+
+## Validation
+
+- [ ] `bun run typecheck` — interfaces and Yup InferType must match
+- [ ] Repository interface method signatures use `Promise<T | Error>` — no plain `Promise<T>`
+- [ ] Yup error messages are all in Spanish
+- [ ] Adapter function takes the Yup-inferred form type and returns the correct payload type

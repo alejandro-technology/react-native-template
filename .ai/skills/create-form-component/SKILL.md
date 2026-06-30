@@ -4,6 +4,8 @@ description: Create a form component wrapper that integrates with react-hook-for
 license: MIT
 compatibility: opencode
 metadata:
+  version: "1.0"
+  category: component-creation
   layer: ui
   workflow: scaffold
   output: src/components/form/{Component}.tsx

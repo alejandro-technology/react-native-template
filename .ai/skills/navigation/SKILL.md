@@ -2,8 +2,10 @@
 name: navigation
 description: Register a feature module in the navigation system (routes, stack navigator, private routes, typed hooks). Use when adding navigation for a new module or registering screens.
 license: MIT
-compatibility: opencode
+compatibility: Requires @react-navigation/native and @react-navigation/native-stack installed.
 metadata:
+  version: "1.0"
+  category: module-scaffolding
   layer: navigation
   workflow: scaffold
   output: src/navigation/routes/{entities}.routes.ts, src/navigation/stacks/{Entities}StackNavigator.tsx
@@ -204,3 +206,13 @@ export function {Entity}DetailView({ route }: Props) {
 
 - Example: `src/navigation/routes/products.routes.ts`
 - Example: `src/navigation/stacks/ProductsStackNavigator.tsx`
+
+## Gotchas
+
+- Route enum values must match the screen component name exactly — mismatches cause navigation errors
+- `ParamList` must be exported from the routes file AND re-exported from `navigation/routes/index.ts`
+- `RootPrivateParamList` in `private.routes.ts` must include the new module's param list via intersection
+- The typed hook (`useNavigation{Module}`) must use `useNavigation<NavigationProp<{Module}ParamList>>()`
+- Deep linking requires the route name to match the URL path segment — keep route names URL-friendly
+- Never navigate to a private route from a public navigator — the auth guard lives in `RootNavigator`
+- Screen components receive `ScreenProps` (route + navigation) — extract params via `route.params`

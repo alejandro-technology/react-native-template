@@ -1,9 +1,17 @@
 ---
 name: create-module
-description: Create a complete Clean Architecture module with domain, infrastructure, application, and ui layers. Use when creating a new feature module, adding a new entity, or scaffolding CRUD functionality.
+description: >
+  Scaffold a complete Clean Architecture module with all 4 layers: domain
+  (interfaces, schema, adapter), infrastructure (service factory + HTTP/Mock/Firebase),
+  application (React Query + Zustand + MMKV), and UI (screens + components).
+  Also registers routes, query keys, and API routes. Use when creating a new
+  feature, adding a new entity with CRUD operations, or starting a new module
+  from scratch.
 license: MIT
-compatibility: opencode
+compatibility: React Native 0.83+, TypeScript strict mode, bun package manager. Requires project structure from react-native-template.
 metadata:
+  version: "1.0"
+  category: module-scaffolding
   layer: domain,infrastructure,application,ui
   workflow: scaffold
   output: src/modules/{module}/**
@@ -154,3 +162,27 @@ import { Button } from '@components/core';
 ## Reference
 
 - Example module: `src/modules/products/`
+
+## Gotchas
+
+- The `products` module is the REFERENCE IMPLEMENTATION — study it before creating a new module
+- Register the entity in BOTH `@config/query.keys.ts` AND `@config/api.routes.ts` — missing either causes runtime errors
+- The service factory (`{entity}.service.ts`) must be a singleton — do not call `new` inside components
+- `CONFIG.SERVICE_PROVIDER` is read once at startup — changing it requires restart
+- Module `index.ts` should re-export ONLY what consumers outside the module need — never export internal helpers
+- Never import from a feature module inside `core` or `network` — this creates circular dependencies
+- UI text (validation messages, toast messages, empty state labels) must be in Spanish
+- Run `bun run typecheck` after generating all files — TypeScript will catch mismatched interface implementations early
+
+## Validation Checklist
+
+After generating all files, verify:
+
+- [ ] `bun run typecheck` passes — all new files compile without errors
+- [ ] `bun run lint` passes — no lint errors in generated code
+- [ ] Module `index.ts` exports the service factory and all public types
+- [ ] `QUERY_KEYS.{entity}` is registered in `src/config/query.keys.ts`
+- [ ] `API_ROUTES.{ENTITY}` is registered in `src/config/api.routes.ts` (for HTTP provider)
+- [ ] Route enum is exported from `src/navigation/routes/index.ts`
+- [ ] Module appears in the correct navigator (`PrivateStackNavigator` or `PublicNavigator`)
+- [ ] The mock service returns data that matches the entity interface

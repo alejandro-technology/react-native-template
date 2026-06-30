@@ -4,6 +4,8 @@ description: Create a complete form flow with react-hook-form, yup validation, d
 license: MIT
 compatibility: opencode
 metadata:
+  version: "1.0"
+  category: ui-patterns
   layer: ui,domain
   workflow: scaffold
   output: src/modules/{module}/ui/{Entity}FormView.tsx, src/modules/{module}/ui/components/{Entity}Form.tsx
@@ -163,3 +165,14 @@ export function ProductFormView({ route, navigation }) {
 - Are inputs using the custom wrapped ones from `@components/form`?
 - Did you use `InferType`?
 - Are mutations happening exclusively in `FormView`, while `useForm` is strictly in `Form`?
+
+## Gotchas
+
+- `useForm` lives ONLY in the `{Entity}Form` component — NEVER in `{Entity}FormView`
+- `{Entity}FormView` owns the mutation and navigation — it passes `onSubmit` down to `{Entity}Form`
+- The adapter (`domain/{entity}.adapter.ts`) converts form data to API payload — never convert inline in the component
+- Default values for edit forms come from route params or a detail query — never from the store directly
+- Form inputs come from `@components/form` (not `@components/core`) — they accept `control` and `name` props
+- Yup `schema.validate()` is NOT called manually — react-hook-form + `@hookform/resolvers/yup` handles it
+- The mutation's `onSuccess` should navigate away (not the form's `handleSubmit`)
+- `handleSubmit` from `useForm` wraps async calls — it swallows thrown errors silently, so mutations must use `onError`
