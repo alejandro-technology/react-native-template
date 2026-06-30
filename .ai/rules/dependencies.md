@@ -56,3 +56,29 @@ that duplicates one already in the stack.
 
 - Backend selection: [`architecture.md`](./architecture.md)
 - Storage and persistence: [`state-management.md`](./state-management.md)
+
+## Enforcement Checklist
+
+Before committing, verify:
+- [ ] Lists use `FlashList` (`@shopify/flash-list`) — never `FlatList` or `SectionList`
+- [ ] Images use `FastImage` (`react-native-fast-image`) — never `Image` from react-native
+- [ ] SVGs imported as components via `react-native-svg`
+- [ ] Local storage uses `react-native-mmkv` — never `AsyncStorage`
+- [ ] Sensitive data (tokens, passwords) uses `react-native-keychain`
+- [ ] Forms use `react-hook-form` + `yup` + `@hookform/resolvers/yup`
+- [ ] Server state uses `@tanstack/react-query` — never `useEffect + axios` for queries
+- [ ] Global app state uses `zustand` — not raw Context
+- [ ] HTTP calls go through the shared axios instance in `@modules/network`
+- [ ] Connectivity checks use `getIsConnected()` or `useNetInfo()` from `@modules/network`
+
+## Automated Audit
+
+Run before committing to catch violations automatically:
+
+```bash
+# Note: Replace <AGENT_DIR> with your active agent directory (e.g., .agents, .opencode, .claude)
+./<AGENT_DIR>/scripts/audit-deps.sh
+
+# Scan a specific directory
+./<AGENT_DIR>/scripts/audit-deps.sh src/modules/orders/
+```

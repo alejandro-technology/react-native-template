@@ -153,12 +153,7 @@ export type {Entity}FormData = InferType<typeof {entity}Schema>;
 // String validations
 name: yup.string().required('Requerido').max(100, 'Máximo 100 caracteres'),
 email: yup.string().email('Email inválido').required('Requerido'),
-description: >
-  Create the domain layer for a Clean Architecture module: entity interfaces
-  (Entity, CreatePayload, UpdatePayload, Filter), repository interface with
-  Promise<T | Error> contracts, Yup validation schema with Spanish messages,
-  and form data adapters. Use when defining a new entity's data shape, 
-  validation rules, or repository contract before implementing services.
+description: yup.string().optional(),
 price: yup.number().required('Requerido').min(0, 'Debe ser mayor a 0'),
 quantity: yup.number().integer('Debe ser entero').min(1, 'Mínimo 1'),
 

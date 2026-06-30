@@ -20,12 +20,11 @@ Analyze the user's request and produce a concrete, layered implementation plan. 
 
 1. Load the relevant skills via the `skill` tool before planning:
 
-   - For new modules: load `create-module`, `layer-domain`, `layer-infrastructure`, `layer-application`, `layer-ui`, `navigation`
-   - For UI work: load `create-core-component`, `create-layout-component`, `create-form-component`
-   - For forms: load `form-handling`, `layer-domain`
+   - For new modules: load `module-scaffold`, `layer-domain`, `layer-infrastructure`, `layer-application`, `layer-ui`, `navigation`
+   - For UI work: load `component-core`, `component-layout`, `component-form`
+   - For forms: load `layer-ui`, `layer-domain`
    - For navigation: load `navigation`
    - For state/queries: load `layer-application`
-   - Always load `third-party-libraries` to validate library choices
 
 2. Produce a structured plan with:
 
@@ -33,7 +32,7 @@ Analyze the user's request and produce a concrete, layered implementation plan. 
    - **Affected layers**: domain / infrastructure / application / ui / navigation / config
    - **Files to create or modify** (exact paths using kebab-case)
    - **Contracts**: interfaces, types, repository methods, query keys
-   - **Library choices**: justified against `third-party-libraries` skill
+   - **Library choices**: justified against rules/dependencies.md
    - **Registration checklist**: query keys, API routes, navigation, index exports
    - **Verification**: commands to run after implementation (`bun run lint`, `bun run typecheck`, `bun run test`)
 

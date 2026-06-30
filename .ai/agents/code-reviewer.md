@@ -28,9 +28,9 @@ Review code for correctness, architecture compliance, and project standards. You
 
 Load the following skills via the `skill` tool:
 
-- `third-party-libraries` — verify no forbidden primitives are used
+- rules/dependencies.md — verify no forbidden primitives are used
 - `layer-domain`, `layer-infrastructure`, `layer-application`, `layer-ui` — verify layer boundaries
-- Load specific skills based on what is being reviewed (e.g., `create-core-component` for component reviews, `form-handling` for form reviews)
+- Load specific skills based on what is being reviewed (e.g., `component-core` for component reviews, `layer-ui` for form reviews)
 
 ## What you check
 

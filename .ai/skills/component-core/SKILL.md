@@ -1,5 +1,5 @@
 ---
-name: create-core-component
+name: component-core
 description: Create a new core UI primitive component with style factory. Use when creating Button, Text, TextInput, Card, Modal, or any base UI component.
 license: MIT
 compatibility: opencode

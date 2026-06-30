@@ -73,3 +73,47 @@ After changing either module, run `bun run lint`, `bun run typecheck`, and
 - Layering and boundaries: [`architecture.md`](./architecture.md)
 - Error translation contract: [`error-handling.md`](./error-handling.md)
 - Connectivity and UI stores: [`state-management.md`](./state-management.md)
+
+## Core Module — Change Flows
+
+### Add a new modal variant
+1. Add the discriminated union shape in `domain/app.model.ts`.
+2. Update `application/app.storage.ts` only if the store contract needs extra state.
+3. Create or update the rendering component under `ui/components/`.
+4. Wire the variant selection in `ui/Modal.tsx`.
+5. Export new types only if consumers outside `core` need them.
+
+### Add a new toast capability
+1. Extend `ToastType`, `ToastPosition`, or `ToastShowParams` in `domain/app.model.ts`.
+2. Keep store updates in `application/app.storage.ts` minimal.
+3. Preserve `ui/Toast.tsx` as a thin adapter over the core `Toast` component.
+
+### Add or change a shared utility
+1. Keep the function pure — no React, Zustand, navigation, or storage imports.
+2. Prefer extending an existing utility file before creating a new one.
+3. Export from `index.ts` only if the helper is truly shared.
+
+### Add or change a permission
+1. Update `domain/permissions/permissions.model.ts` first.
+2. Reflect the platform mapping in `infrastructure/permissions.service.ts`.
+3. Keep hook ergonomics in `application/permissions/use-permissions.ts` simple.
+4. Unsupported permissions should degrade safely to `unavailable`.
+
+## Network Module — Change Flows
+
+### Add a new Axios error mapping
+1. Add or extend the user-facing message in `domain/network.messages.ts`.
+2. Map the status code or axios error shape in `domain/network.error.ts`.
+3. Preserve meaningful `Error.name` values.
+4. Keep feature modules consuming the centralized translation.
+
+### Change token refresh behavior
+1. Keep the refresh flow inside `infrastructure/axios-client.service.ts`.
+2. Preserve queue behavior for concurrent 401 requests.
+3. Keep auth expiration decoupled through `setAuthExpiredCallback()`.
+
+### Add connectivity behavior
+1. Adapt raw library output in `infrastructure/netinfo.service.ts`.
+2. Keep non-React state access in `application/connectivity.storage.ts`.
+3. Keep React-friendly subscription in `application/use-netinfo.ts`.
+4. Default unknown states to safe fallbacks.

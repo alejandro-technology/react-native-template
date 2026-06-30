@@ -1,17 +1,6 @@
----
-name: form-handling
-description: Create a complete form flow with react-hook-form, yup validation, domain adapters, and separation between FormView and Form component. Load when implementing create or edit screens.
-license: MIT
-compatibility: opencode
-metadata:
-  version: "1.0"
-  category: ui-patterns
-  layer: ui,domain
-  workflow: scaffold
-  output: src/modules/{module}/ui/{Entity}FormView.tsx, src/modules/{module}/ui/components/{Entity}Form.tsx
----
+> Loaded automatically via `layer-ui`. Reference when implementing create or edit screens.
 
-# Form Handling Skill
+# Form Flow Pattern
 
 **Description**: Create a complete form flow following the project's strict separation of concerns for validation, mapping, UI, and side effects.
 **Use when**: Implementing a screen to create or edit an entity.

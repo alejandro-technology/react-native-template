@@ -1,5 +1,5 @@
 ---
-name: create-form-component
+name: component-form
 description: Create a form component wrapper that integrates with react-hook-form. Use when creating form inputs, checkboxes, selects, or date pickers for forms.
 license: MIT
 compatibility: opencode

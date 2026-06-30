@@ -11,7 +11,7 @@ Canonical rules: [index rules](../rules/index.md) — especially `1. Architectur
 Reference module to copy: `src/modules/products`.
 
 Delegate the implementation to the `module-builder` subagent. It MUST load the
-relevant skills (`create-module`, `layer-domain`, `layer-infrastructure`,
+relevant skills (`module-scaffold`, `layer-domain`, `layer-infrastructure`,
 `layer-application`, `layer-ui`, `navigation`) before writing code.
 
 Steps:

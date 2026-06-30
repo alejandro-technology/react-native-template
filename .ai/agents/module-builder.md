@@ -24,15 +24,17 @@ Canonical rules: [index rules](../rules/index.md) (architecture, error-handling,
 
 Load ALL relevant skills via the `skill` tool based on what is being built:
 
-- **Full module**: `create-module`, `layer-domain`, `layer-infrastructure`, `layer-application`, `layer-ui`, `navigation`, `third-party-libraries`
+- **Full module**: `module-scaffold`, `layer-domain`, `layer-infrastructure`, `layer-application`, `layer-ui`, `navigation`
 - **Domain only**: `layer-domain`
 - **Infrastructure only**: `layer-infrastructure`
 - **Application only**: `layer-application`
-- **UI only**: `layer-ui`, `create-core-component` or `create-layout-component` or `create-form-component` as needed
+- **UI only**: `layer-ui` (covers forms and filtered lists via internal references)
+  - For new core/form/layout **components**: also load `component-core`, `component-form`, or `component-layout`
 - **Navigation only**: `navigation`
-- **Forms**: `form-handling`, `layer-domain`
-- **Core/network changes**: `core-module` or `network-module`
-- Always load `third-party-libraries`
+- **Forms**: `layer-ui`, `layer-domain` (`layer-ui` contains the form-flow pattern)
+- **Filtered list**: `layer-ui` (contains the layer-ui pattern)
+- **Core/network changes**: consult `rules/core-network.md` — no dedicated skill needed
+- **Theme/styles**: `theme`
 
 ## Implementation order (full module)
 

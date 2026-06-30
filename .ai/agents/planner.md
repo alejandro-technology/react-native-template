@@ -41,13 +41,13 @@ Determina qué categoría(s) aplica:
 | ------------------------------- | --------------------------------------------- | --------------------------------------------------------------------------- |
 | **Módulo nuevo**                | Nueva entidad con CRUD completo               | `module-builder` → `architect` primero                                      |
 | **Feature en módulo existente** | Agregar campos, endpoints, pantallas          | `architect` → `module-builder` parcial                                      |
-| **Componente UI**               | Nuevo componente genérico reutilizable        | `create-core-component`, `create-layout-component`, `create-form-component` |
-| **Formulario**                  | Pantalla de creación/edición                  | `form-handling` skill                                                       |
+| **Componente UI**               | Nuevo componente genérico reutilizable        | `component-core`, `component-layout`, `component-form` |
+| **Formulario**                  | Pantalla de creación/edición                  | `layer-ui` skill                                                       |
 | **Navegación**                  | Registrar rutas, stacks, hooks                | `navigation` skill                                                          |
 | **Tests**                       | Cobertura para código existente               | `test-writer`                                                               |
 | **Bug / Error**                 | Runtime, TypeScript, build                    | `debugger`                                                                  |
 | **Review**                      | Validar implementación existente              | `code-reviewer`                                                             |
-| **Tema / Estilos**              | Tokens, style factories, animaciones          | `create-styles`, `create-theme-token`                                       |
+| **Tema / Estilos**              | Tokens, style factories, animaciones          | `theme`, `theme`                                       |
 | **Provider**                    | Nueva infraestructura transversal             | `create-provider` skill                                                     |
 | **Refactor**                    | Cambios estructurales sin funcionalidad nueva | `code-reviewer` → implementar manualmente                                   |
 

@@ -18,9 +18,9 @@ Honor:
   `{Entity}Form` owns `useForm`, fields, and `handleSubmit`.
 
 Load skills:
-- Always: `layer-ui`, `components-gallery` (for component usage reference)
-- For form screens: also load `form-handling`
-- For filtered list screens: also load `list-view-with-filters`
+- Always: `layer-ui` (for component usage reference)
+- For form screens: also load `layer-ui`
+- For filtered list screens: also load `layer-ui`
 - If the screen requires a **new route** (not yet in the module's navigator): also load `navigation`
 
 Finish with `bun run lint`, `bun run typecheck`, `bun run test`.

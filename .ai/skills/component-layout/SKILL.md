@@ -1,5 +1,5 @@
 ---
-name: create-layout-component
+name: component-layout
 description: Create a layout component for screen structure or state display. Use when creating loading states, empty states, error states, headers, toolbars, or screen wrappers.
 license: MIT
 compatibility: opencode

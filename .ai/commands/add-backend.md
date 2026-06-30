@@ -15,7 +15,6 @@ Steps:
 1. Locate the module and its `{entity}.service.ts` factory.
 2. Load skills:
    - `layer-infrastructure` — for service implementation templates and error mapper patterns
-   - `third-party-libraries` — to verify no prohibited libraries are introduced in the new provider
 3. Create `{entity}.{provider}.service.ts` implementing the domain repository
    interface — services return `Promise<T | Error>` and never throw.
 4. Normalize failures with the matching mapper (`manageAxiosError`,
@@ -26,7 +25,7 @@ Steps:
 After implementing the provider, run the dependency audit:
 ```bash
 # Note: Replace <AGENT_DIR> with your active agent directory (e.g., .agents, .opencode, .claude)
-./<AGENT_DIR>/skills/third-party-libraries/scripts/audit-deps.sh src/modules/<module>/
+./<AGENT_DIR>/scripts/audit-deps.sh src/modules/<module>/
 ```
 
 Do not force provider parity — add only the requested provider.
