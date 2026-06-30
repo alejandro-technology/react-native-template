@@ -1,8 +1,29 @@
 # Components Rules
 
-Three categories: core (primitives), form (react-hook-form wrappers), layout (screen structure).
+Shared UI lives in `src/components/` and splits into three families with strict
+roles: **core** (presentational primitives), **form** (`react-hook-form`
+wrappers over core), and **layout** (screen scaffolding). Components render and
+delegate — they never own business logic or fetch data.
 
-## Architecture
+## Core Mandates
+
+1. **Core — presentational primitives** (`@components/core`). Stateless, theme
+   driven, no data fetching and no business rules. Props extend the native prop
+   type (e.g. `Omit<PressableProps, 'style'>`). Visual variants come from a theme
+   style factory, not inline styling.
+2. **Form — `react-hook-form` wrappers** (`@components/form`). Each wraps its
+   core counterpart through `useController({ name, control })` and forwards
+   `fieldState.error` to the core component. UI never reads form state directly.
+3. **Layout — screen scaffolding** (`@components/layout`). Composition pieces
+   (`RootLayout`, `Header`, `Toolbar`) and async-state views (`LoadingState`,
+   `ErrorState`, `EmptyState`, `OfflineBanner`, `DeleteConfirmationSheet`).
+   Local styles use `StyleSheet.create`.
+4. **One export surface.** Every component is exported from its family's
+   `index.ts`; consumers import from `@components/{core|form|layout}`.
+5. **Type by composition.** Derive props with `Omit` / `Pick` / `Partial` over
+   native or core prop types — do not redeclare them.
+
+## Inventory
 
 ```
 src/components/
@@ -14,55 +35,19 @@ src/components/
            # RootLayout, Toolbar
 ```
 
-Style factories in `src/theme/components/{Component}.styles.ts`.
+Reusable visual variants are defined as style factories in
+`src/theme/components/{Component}.styles.ts`.
 
-_For usage examples and all prop variations, load the `components-gallery` skill._
+## Do Not
 
-## Core Component Pattern
+- Do not put business logic, data fetching, or React Query/Zustand reads inside
+  core or form components.
+- Do not hardcode colors or spacing — pull from theme tokens.
+- Do not build a new primitive when an inventory component already covers it.
+- Do not bypass `@components/form` by wiring `useController` ad-hoc inside a
+  screen.
 
-```typescript
-interface ButtonProps extends Omit<PressableProps, 'style'> {
-  variant?: ButtonVariant;
-  size?: ButtonSize;
-}
+## See Also
 
-export function Button({
-  variant = 'primary',
-  size = 'md',
-  ...rest
-}: ButtonProps) {
-  const { mode } = useTheme();
-  const styles = getButtonStyle({ mode, variant, size });
-  return (
-    <AnimatedPressable
-      style={styles.container}
-      accessibilityRole="button"
-      {...rest}
-    />
-  );
-}
-```
-
-## Form Component Pattern
-
-```typescript
-export const TextInput = React.forwardRef<RNTextInput, TextInputProps>(
-  ({ name, control, ...rest }, ref) => {
-    const { field, fieldState } = useController({ name, control });
-    return (
-      <TextInputCore
-        error={fieldState.error?.message}
-        value={field.value}
-        onChangeText={field.onChange}
-        {...rest}
-      />
-    );
-  },
-);
-```
-
-## Creating Components
-
-- **Core**: Component + style factory + export in `index.ts`
-- **Form**: Wrapper with `useController` + export in `index.ts`
-- **Layout**: Self-contained with `StyleSheet.create` + export in `index.ts`
+- Form flow and screens: [`views-navigation.md`](./views-navigation.md)
+- Tokens and style factories: [`theme-styles.md`](./theme-styles.md)

@@ -1,64 +1,46 @@
-# Providers Rules
+# Providers & Bootstrap Rules
 
-App-level providers live in `src/providers/`. They wrap the entire app in `AppProvider`.
+App-level providers live in `src/providers/` and are composed, outside-in, by
+`AppProvider`. Each provider configures exactly one piece of infrastructure;
+none carries domain logic. Composition order matters because inner providers
+depend on the context established by outer ones.
 
 ## Core Mandates
 
-1. **Single Responsibility**: Each provider handles exactly one concern (security, networking, storage, navigation, gestures).
-2. **Props**: Use `PropsWithChildren` — providers only receive `children`.
-3. **Default Export**: Every provider uses `export default function {Name}Provider`.
-4. **Nesting Order**: `ErrorBoundary > SecureProvider > QueryClientProvider > ThemeProvider > SafeAreaProvider > GestureHandler > SecureStorage > Network > Auth > Navigation`.
-5. **QueryClient**: Defined once in `AppProvider` — never create another in feature code.
-6. **No Business Logic**: Providers configure infrastructure, not domain rules.
+1. **Single responsibility.** One concern per provider (security, query client,
+   theme, safe area, gestures, storage, network, navigation).
+2. **`children` only.** Providers take `PropsWithChildren` and nothing else.
+3. **Default export.** `export default function {Name}Provider`.
+4. **Nesting order.** Outside-in:
+   `ErrorBoundary → SecureProvider → QueryClientProvider → ThemeProvider →
+   SafeAreaProvider → GestureHandler → SecureStorage → Network → Auth →
+   Navigation`.
+5. **One QueryClient.** Created once in `AppProvider`; never instantiate another
+   in feature code.
+6. **No business logic.** Providers configure infrastructure, not domain rules.
+7. **Gate on async init.** A provider that initializes asynchronously (e.g.
+   secure storage) renders nothing until ready, then mounts its children.
 
 ## File Structure
 
 ```
 src/providers/
   AppProvider.tsx              # Root — composes all providers
-  SecureProvider.tsx           # Blocks rooted/jailbroken devices
+  SecureProvider.tsx           # Blocks rooted/jailbroken devices (jail-monkey)
   SecureStorageProvider.tsx    # Initializes encrypted MMKV storage
-  NetworkProvider.tsx          # Monitors connectivity, shows toast
+  NetworkProvider.tsx          # Monitors connectivity, surfaces toast
   NavigationProvider.tsx       # NavigationContainer with theme mapping
   GestureHandlerProvider.tsx   # GestureHandlerRootView + StatusBar
 ```
 
-## Golden Example: Simple Provider
+## Do Not
 
-```typescript
-import React, { PropsWithChildren } from 'react';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useTheme, commonStyles } from '@theme/index';
+- Do not create a second `QueryClient` outside `AppProvider`.
+- Do not give a provider more than one responsibility or any domain logic.
+- Do not render children before an async-init provider is ready.
+- Do not reorder the nesting so an inner provider loses a context it depends on.
 
-export default function GestureHandlerProvider({
-  children,
-}: PropsWithChildren) {
-  const {
-    isDark,
-    colors: { background: backgroundColor },
-  } = useTheme();
-  return (
-    <GestureHandlerRootView style={{ ...commonStyles.flex, backgroundColor }}>
-      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
-      {children}
-    </GestureHandlerRootView>
-  );
-}
-```
+## See Also
 
-## Golden Example: Async Init Provider
-
-```typescript
-export default function SecureStorageProvider({ children }: PropsWithChildren) {
-  const [isReady, setIsReady] = useState(false);
-
-  useEffect(() => {
-    initSecureStorage()
-      .then(() => setIsReady(true))
-      .catch(() => setIsReady(true)); // fallback — continue anyway
-  }, []);
-
-  if (!isReady) return null;
-  return <>{children}</>;
-}
-```
+- App entry and layering: [`architecture.md`](./architecture.md)
+- Secure storage and connectivity stores: [`state-management.md`](./state-management.md)
