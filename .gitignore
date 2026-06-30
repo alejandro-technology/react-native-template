@@ -86,6 +86,7 @@ yarn-error.log
 .trae/
 .opencode/
 .agents/
+.factory/
 
 # Firebase credentials (use dummy for CI)
 ios/GoogleService-Info.plist

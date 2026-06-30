@@ -1,13 +1,13 @@
-# CLAUDE.md
+# TRAE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Trae IDE when working with code in this repository.
 
 ## Overview
 
 React Native template built on **Clean Architecture** (4 layers per feature module). React Native 0.83.9, React 19.2.0, TypeScript 5.8.3 (strict), New Architecture enabled. Package manager: **bun** — never npm/yarn. Node >= 20.
 
 - **Reference module that exercises every layer:** `src/modules/products` — copy it when creating a new module.
-- **Deeper architecture rules (11 detail files):** `.claude/rules/` — Claude Code's own rules directory. Optional reading; this file is self-contained. (In the template repo, generate it with `bun run claude` — see *Template maintenance* below.)
+- **Deeper architecture rules (11 detail files):** `.trae/rules/` — Trae Code's own rules directory. Optional reading; this file is self-contained. (In the template repo, generate it with `bun run trae` — see *Template maintenance* below.)
 - **Companion agent guide at repo root:** `AGENTS.md`
 
 ## Commands
