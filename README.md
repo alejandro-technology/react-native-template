@@ -65,9 +65,8 @@ This template focuses on:
 ✔ real example modules  
 ✔ compatibility with AI developer tools
 
-# ⚡ Quick Start (CLI Tool)
-
-This template will have a companion CLI to extract modules:
+# ⚡ Quick Start (React Native TUI)
+This template will have a companion [TUI](https://github.com/alejandro-technology/react-native-init-app) tool to extract modules:
 
 ```bash
 npm init react-native-tui
